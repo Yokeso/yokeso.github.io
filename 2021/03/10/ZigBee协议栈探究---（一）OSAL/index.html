@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="ZigBee协议栈探究—-（一）OSAL1.写在前面由于是毕设的要求，我开始再一次学习ZigBee协议栈。伴随着学的东西越来越多，代码结构也忘得越来越快。所以想把自己学的知识整理到几篇博客中，以方便自己随时翻看。我的记录主要是我学习时的思考历程，所以有些地方可能看着很乱。希望看这篇文章的人谅解。如果我学到的知识能帮助后人入门有些许帮助，对我来讲即是莫大的鼓励。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZigBee协议栈探究---（一）OSAL">
+<meta property="og:url" content="http://yokeso.github.io/2021/03/10/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%80%EF%BC%89OSAL/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="ZigBee协议栈探究—-（一）OSAL1.写在前面由于是毕设的要求，我开始再一次学习ZigBee协议栈。伴随着学的东西越来越多，代码结构也忘得越来越快。所以想把自己学的知识整理到几篇博客中，以方便自己随时翻看。我的记录主要是我学习时的思考历程，所以有些地方可能看着很乱。希望看这篇文章的人谅解。如果我学到的知识能帮助后人入门有些许帮助，对我来讲即是莫大的鼓励。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-10T03:45:14.000Z">
+<meta property="article:modified_time" content="2021-03-18T15:40:20.000Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="ZigBee">
+<meta property="article:tag" content="CC2530">
+<meta property="article:tag" content="协议栈">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2021/03/10/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%80%EF%BC%89OSAL/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>ZigBee协议栈探究---（一）OSAL | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6%E2%80%94-%EF%BC%88%E4%B8%80%EF%BC%89OSAL"><span class="nav-number">1.</span> <span class="nav-text">ZigBee协议栈探究—-（一）OSAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="nav-number">1.1.</span> <span class="nav-text">1.写在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">2.文档结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BB%8EMain%E5%BC%80%E5%A7%8B"><span class="nav-number">1.3.</span> <span class="nav-text">3.从Main开始</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%B0%8F%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">4.小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2021/03/10/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%80%EF%BC%89OSAL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZigBee协议栈探究---（一）OSAL
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-10 11:45:14" itemprop="dateCreated datePublished" datetime="2021-03-10T11:45:14+08:00">2021-03-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-18 23:40:20" itemprop="dateModified" datetime="2021-03-18T23:40:20+08:00">2021-03-18</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2021/03/10/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%80%EF%BC%89OSAL/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/03/10/ZigBee协议栈探究---（一）OSAL/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="ZigBee协议栈探究—-（一）OSAL"><a href="#ZigBee协议栈探究—-（一）OSAL" class="headerlink" title="ZigBee协议栈探究—-（一）OSAL"></a>ZigBee协议栈探究—-（一）OSAL</h1><h2 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1.写在前面"></a>1.写在前面</h2><p>由于是毕设的要求，我开始再一次学习ZigBee协议栈。伴随着学的东西越来越多，代码结构也忘得越来越快。所以想把自己学的知识整理到几篇博客中，以方便自己随时翻看。我的记录主要是我学习时的思考历程，所以有些地方可能看着很乱。希望看这篇文章的人谅解。如果我学到的知识能帮助后人入门有些许帮助，对我来讲即是莫大的鼓励。</p>
+<span id="more"></span>
+<p>我的Zstack协议栈采用的是2.51a而不是最新的3.02版本。内核使用的是CC2530。这个内核是8051架构的，所以代码方面写起来和8051很像。</p>
+<p>在硬件上我的目标是希望创建一套自己的终端传感器，所以有关于针脚的设置我会突出说明，并且也会另开坑记录自己设计PCB板子的心得。在记录的过程中我也会尽量的去挖掘一些内核以及操作系统的知识，</p>
+<p>关于IAR的安装使用和工具的使用我不会详述，在网上有很多文档可以参考。</p>
+<p>谢谢大家！现在正式开坑！</p>
+<h2 id="2-文档结构"><a href="#2-文档结构" class="headerlink" title="2.文档结构"></a>2.文档结构</h2><p>第一次安装ZigBee协议栈，一般最大的问题就是文档结构。这里我想通过项目结构树的方式写出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">Zstack-CC2530-<span class="number">2.5</span><span class="number">.1</span>a</span><br><span class="line">|-Components <span class="comment">#协议栈结构,包含协议栈的基本代码</span></span><br><span class="line">| |-hal  <span class="comment">#硬件层代码</span></span><br><span class="line">| |-mac  <span class="comment">#Mac层代码</span></span><br><span class="line">| |-mt   <span class="comment">#各层交互，通过串口联通</span></span><br><span class="line">| |-osal <span class="comment">#协议栈操作系统代码</span></span><br><span class="line">| |-services <span class="comment">#地址处理函数目录</span></span><br><span class="line">| |-stack <span class="comment">#</span></span><br><span class="line">| └-zmac  <span class="comment">#ZigBee Mac层参数配置和Lib库回调</span></span><br><span class="line">|-Documents  <span class="comment">#官方帮助文档，不详述结构</span></span><br><span class="line">|-ProJects   <span class="comment">#官方示例项目</span></span><br><span class="line">| └-zstack   <span class="comment">#代码都在下面这里</span></span><br><span class="line">|   |-HomeAutomation</span><br><span class="line">|   |-Libraries</span><br><span class="line">|   |-OTA</span><br><span class="line">|   |-Samples</span><br><span class="line">|   |-SE</span><br><span class="line">|   |-Tools</span><br><span class="line">|   |-Utilities</span><br><span class="line">|   |-ZBA</span><br><span class="line">|   |-ZMain <span class="comment">#Main函数所在位置</span></span><br><span class="line">|   └-ZNP</span><br><span class="line">|-Tools      <span class="comment">#官方调试工具集合</span></span><br><span class="line">| |-OTA</span><br><span class="line">| |-SBL Tool</span><br><span class="line">| |-Z-Concerter</span><br><span class="line">| |-ZOAD</span><br><span class="line">| └-Z-Tool</span><br><span class="line">|-Getting Started Guide-CC2530.pdf <span class="comment">#官方开始文档，很易懂</span></span><br></pre></td></tr></table></figure>
+<p>想建立自己项目的话，可以查阅文档中的Create New Application For CC2530DB来查看。根据官方文档，需要串口数据的话就用SerialApp Project <code>...\Projects\zstack\Utilities.</code>,一切都从新开始的话可以用GenericApp project <code>...\Projects\zstack\Samples.</code></p>
+<p>这里我使用SerialApp开始学习，并按照官方文档重命名为SmartHome。自此开始协议栈代码。后面的代码我也会用Smart_Home进行解说，这个函数对应的是自己设置的函数的名字</p>
+<h2 id="3-从Main开始"><a href="#3-从Main开始" class="headerlink" title="3.从Main开始"></a>3.从Main开始</h2><p>面对工程文件中的庞大代码，最重要的自然是先去找Main函数。ZigBee的Main函数在<code>ZMain</code>下的<code>ZMain.c</code>中，可以看到Main是这样的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      main</span></span><br><span class="line"><span class="comment"> * @brief   First function called after startup.</span></span><br><span class="line"><span class="comment"> * @return  don&#x27;t care</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">//关闭所有中断</span></span><br><span class="line">  osal_int_disable( INTS_ALL );</span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化板子相关硬件（LED等）</span></span><br><span class="line">  HAL_BOARD_INIT();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//检查电源电压以确保运行</span></span><br><span class="line">  zmain_vdd_check();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化板载 I/O</span></span><br><span class="line">  InitBoard( OB_COLD );</span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化Hal层驱动</span></span><br><span class="line">  HalDriverInit();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化NV系统</span></span><br><span class="line">  osal_nv_init( <span class="literal">NULL</span> );</span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化Mac层</span></span><br><span class="line">  ZMacInit();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//确定扩展地址</span></span><br><span class="line">  zmain_ext_addr();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ZCL_KEY_ESTABLISH</span></span><br><span class="line">  <span class="comment">//初始化Certicom证书信息</span></span><br><span class="line">  zmain_cert_init();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化基础NV事务</span></span><br><span class="line">  zgInit();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> NONWK</span></span><br><span class="line">  <span class="comment">// Since the AF isn&#x27;t a task, call it&#x27;s initialization routine</span></span><br><span class="line">  afInit();<span class="comment">//初始化AF例程</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//初始化操作系统</span></span><br><span class="line">  osal_init_system();</span><br><span class="line"></span><br><span class="line">  <span class="comment">//允许中断</span></span><br><span class="line">  osal_int_enable( INTS_ALL );</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Final board initialization</span></span><br><span class="line">  InitBoard( OB_READY );</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Display information about this device</span></span><br><span class="line">  zmain_dev_info();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Display the device info on the LCD */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> LCD_SUPPORTED</span></span><br><span class="line">  zmain_lcd_init();   <span class="comment">//初始化LCD</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WDT_IN_PM1</span></span><br><span class="line">  <span class="comment">/* If WDT is used, this is a good place to enable it. */</span></span><br><span class="line">  WatchDogEnable( WDTIMX );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  osal_start_system(); <span class="comment">//从这里开始运行</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;  <span class="comment">// Shouldn&#x27;t get here.</span></span><br><span class="line">&#125; <span class="comment">// main()</span></span><br></pre></td></tr></table></figure>
+<p>可以看出，在初始化之后真正开始运行程序的是<code>osal_start_system();</code>函数，所以从这里开始追踪。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      osal_start_system</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *   This function is the main loop function of the task system (if</span></span><br><span class="line"><span class="comment"> *   ZBIT and UBIT are not defined). This Function doesn&#x27;t return.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   void</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  none</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">osal_start_system</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined ( ZBIT ) &amp;&amp; !defined ( UBIT )</span></span><br><span class="line">  <span class="keyword">for</span>(;;)  <span class="comment">// Forever Loop</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  &#123;</span><br><span class="line">    osal_run_system();  <span class="comment">//</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在osal_start_system里只调用了这个函数。所以继续跟踪</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      osal_run_system</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *     此函数将遍历OSAL taskEvents表，并为发现至少有一个事件挂起</span></span><br><span class="line"><span class="comment"> *     的第一个任务调用task_event_processor（）函数。 如果没有</span></span><br><span class="line"><span class="comment"> *     待处理的事件（所有任务），则此功能可使处理器进入休眠状态。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   void</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  none</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">osal_run_system</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint8 idx = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  osalTimeUpdate();</span><br><span class="line">  Hal_ProcessPoll();<span class="comment">//UART轮询函数 </span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (tasksEvents[idx])        <span class="comment">//任务是已准备好的最高优先级。</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">break</span>;                     <span class="comment">//得到待处理的最高任务号 </span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">while</span> (++idx &lt; tasksCnt);    <span class="comment">//这里的taskCnt是一个const uint8 任务总数</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (idx &lt; tasksCnt)</span><br><span class="line">  &#123;</span><br><span class="line">    uint16 events;</span><br><span class="line">    halIntState_t intState;      <span class="comment">//typedef unsigned char </span></span><br><span class="line"></span><br><span class="line">    HAL_ENTER_CRITICAL_SECTION(intState); <span class="comment">//进入临界区</span></span><br><span class="line">    events = tasksEvents[idx];   <span class="comment">//将task号变成事件号</span></span><br><span class="line">    tasksEvents[idx] = <span class="number">0</span>;        <span class="comment">//将数组中的事件号改成0表明任务正在处理</span></span><br><span class="line">    HAL_EXIT_CRITICAL_SECTION(intState);  <span class="comment">//退出临界区</span></span><br><span class="line"></span><br><span class="line">    activeTaskID = idx;          <span class="comment">//正在处理的事件的事件号</span></span><br><span class="line">    events = (tasksArr[idx])( idx, events ); <span class="comment">//真正将事件号放入了事件的结构数组taxksArr[]</span></span><br><span class="line">    activeTaskID = TASK_NO_TASK;</span><br><span class="line"></span><br><span class="line">    HAL_ENTER_CRITICAL_SECTION(intState);  <span class="comment">//进入临界区</span></span><br><span class="line">    tasksEvents[idx] |= events;  <span class="comment">// 返回未处理的事件</span></span><br><span class="line">    HAL_EXIT_CRITICAL_SECTION(intState);   <span class="comment">//推出临界区</span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined( POWER_SAVING )</span></span><br><span class="line">  <span class="keyword">else</span>  <span class="comment">// Complete pass through all task events with no activity?</span></span><br><span class="line">  &#123;</span><br><span class="line">    osal_pwrmgr_powerconserve();  <span class="comment">// Put the processor/system into sleep</span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Yield in case cooperative scheduling is being used. */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined (configUSE_PREEMPTION) &amp;&amp; (configUSE_PREEMPTION == 0)</span></span><br><span class="line">  &#123;</span><br><span class="line">    osal_task_yield();</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过阅读源码和注释，我们知道，这个函数主要就是将任务列表<code>tasksEvents</code>中第<code>idx</code>号任务放入事件<code>event</code>中转化为<code>tesksEvents</code>进行处理。在这里有一个<code>tasksArr[idx]</code>，这个数组很关键，我们之后会提到他。但是首先我们需要知道这个<code>idx</code>号与任务是如何对应的呢？这就还要看回main中的<code>osal_init_system();</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      osal_init_system</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *   This function initializes the &quot;task&quot; system by creating the</span></span><br><span class="line"><span class="comment"> *   tasks defined in the task table (OSAL_Tasks.h).</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   void</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  SUCCESS</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">uint8 <span class="title">osal_init_system</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// Initialize the Memory Allocation System</span></span><br><span class="line">  osal_mem_init();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Initialize the message queue</span></span><br><span class="line">  osal_qHead = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Initialize the timers</span></span><br><span class="line">  osalTimerInit();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Initialize the Power Management System</span></span><br><span class="line">  osal_pwrmgr_init();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Initialize the system tasks.</span></span><br><span class="line">  osalInitTasks();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Setup efficient search for the first free block of heap.</span></span><br><span class="line">  osal_mem_kick();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ( SUCCESS );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个函数中与系统任务中有关系的只有一个函数<code>osalInitTasks();</code>，我们直接进入这里看看</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      osalInitTasks</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief   This function invokes the initialization function for each task.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   void</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  none</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">osalInitTasks</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint8 taskID = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  tasksEvents = (uint16 *)osal_mem_alloc( <span class="keyword">sizeof</span>( uint16 ) * tasksCnt); <span class="comment">//分配内存返回缓冲区指针</span></span><br><span class="line">  osal_memset( tasksEvents, <span class="number">0</span>, (<span class="keyword">sizeof</span>( uint16 ) * tasksCnt)); <span class="comment">//设置所分配内存空间单元值0</span></span><br><span class="line"></span><br><span class="line">  macTaskInit( taskID++ ); <span class="comment">//macTaskInit(0) ，用户不需考虑</span></span><br><span class="line">  nwk_init( taskID++ ); <span class="comment">//nwk_init(1)，用户不需考虑</span></span><br><span class="line">  Hal_Init( taskID++ ); <span class="comment">//Hal_Init(2) ，用户需考虑</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined( MT_TASK )</span></span><br><span class="line">  MT_TaskInit( taskID++ );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  APS_Init( taskID++ );  <span class="comment">//APS_Init(3) ，用户不需考虑</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( ZIGBEE_FRAGMENTATION )</span></span><br><span class="line">  APSF_Init( taskID++ );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  ZDApp_Init( taskID++ ); <span class="comment">//ZDApp_Init(4) ，用户需考虑</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )</span></span><br><span class="line">  ZDNwkMgr_Init( taskID++ );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  Smart_home_Init( taskID ); <span class="comment">//用户任务初始化用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>从这个函数中可见，在这里<code>taskID</code>进行了初始化，每初始化一个<code>taskID++</code>，其中<code>Hal_Init</code>和<code>Smart_Home_Init</code>是用户需要考虑的，（第一个可以放传感器的任务，第二个可以初始化应用层的用户任务）</p>
+<p>也就是说，用户处理进程包括串口信息都要在这里形成任务号。那下一步就来看看这个函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Smart_home_Init</span><span class="params">( uint8 task_id )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  halUARTCfg_t uartConfig;</span><br><span class="line"></span><br><span class="line">  Smart_home_TaskID = task_id;</span><br><span class="line">  Smart_home_RxSeq = <span class="number">0xC3</span>;</span><br><span class="line"></span><br><span class="line">  afRegister( (endPointDesc_t *)&amp;Smart_home_epDesc );</span><br><span class="line"></span><br><span class="line">  RegisterForKeys( task_id );</span><br><span class="line"></span><br><span class="line">  uartConfig.configured           = TRUE;              <span class="comment">// 2x30 don&#x27;t care - see uart driver.</span></span><br><span class="line">  uartConfig.baudRate             = SERIAL_APP_BAUD;</span><br><span class="line">  uartConfig.flowControl          = TRUE;</span><br><span class="line">  uartConfig.flowControlThreshold = SERIAL_APP_THRESH; <span class="comment">// 2x30 don&#x27;t care - see uart driver.</span></span><br><span class="line">  uartConfig.rx.maxBufSize        = SERIAL_APP_RX_SZ;  <span class="comment">// 2x30 don&#x27;t care - see uart driver.</span></span><br><span class="line">  uartConfig.tx.maxBufSize        = SERIAL_APP_TX_SZ;  <span class="comment">// 2x30 don&#x27;t care - see uart driver.</span></span><br><span class="line">  uartConfig.idleTimeout          = SERIAL_APP_IDLE;   <span class="comment">// 2x30 don&#x27;t care - see uart driver.</span></span><br><span class="line">  uartConfig.intEnable            = TRUE;              <span class="comment">// 2x30 don&#x27;t care - see uart driver.</span></span><br><span class="line">  uartConfig.callBackFunc         = Smart_home_CallBack;</span><br><span class="line">  HalUARTOpen (SERIAL_APP_PORT, &amp;uartConfig);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( LCD_SUPPORTED )</span></span><br><span class="line">  HalLcdWriteString( <span class="string">&quot;Smart_home&quot;</span>, HAL_LCD_LINE_2 );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  </span><br><span class="line">  ZDO_RegisterForZDOMsg( Smart_home_TaskID, End_Device_Bind_rsp );</span><br><span class="line">  ZDO_RegisterForZDOMsg( Smart_home_TaskID, Match_Desc_rsp );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数中大部分的内容是初始化UART端口，并向LCD显示了<code>Smart_home</code>这样一串字符串。但上面有一个语句值得注意：<code>afRegister( (endPointDesc_t *)&amp;Smart_home_epDesc );</code>在步入这个函数查阅函数说明后发现这个函数是希望利用<code>epDesc</code>（也就是程序中的<code>Smart_home_epDesc</code>）这个指向应用程序端点描述符的指针来注册应用程序端点描述，并返回三个值中的一个（已注册、没有足够的内存来添加描述符、重复的端点）。</p>
+<p>先不要着急了解这句话是什么意思，在<code>Smart_home_Init</code>的最下方还有两句话调用了同一个函数<code>ZDO_RegisterForZDOMsg()</code>，这是一个ZDO层的函数，所谓的ZDO层就是<code>ZigBee Device Object</code>设备对象层，通过端点0使应用程序与其他层通信。<code>ZDO_RegisterForZDOMsg()</code>在相应的任务中注册事件（每个事件智能被成功注册一次），将注册信息通过ZDO_Msg_t的形式加入到链表中，这个链表的头指针在zdoMsgCbs中保留。</p>
+<p>对于上面这两段话我们又见到了一个新名词——-端点，所谓的端点也可以理解为电脑的端口号，一个ZigBee设备中有240个端点，他们共享一个网络地址，程序之间的通信则是通过确认端点号来区分数据是发送给该设备的哪个端点的。</p>
+<p>那么按照这样，我们就找到了从应用层发送消息的路径。由<code>ZDO_RegisterForZDOMsg()</code>绑定然后从<code>afRegister</code>创建事件。这个任务在绑定之后，进入处理池进行处理的又是哪个函数呢？</p>
+<p>这就要回到函数<code>osal_run_system()</code>中了，在这个函数中可以注意到这样几句话</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">activeTaskID = idx;          <span class="comment">//正在处理的事件的事件号</span></span><br><span class="line">events = (tasksArr[idx])( idx, events ); <span class="comment">//真正将事件号放入了事件的结构数组taxksArr[]</span></span><br><span class="line">activeTaskID = TASK_NO_TASK;</span><br></pre></td></tr></table></figure>
+<p>这里使用了一个叫做<code>taskArr[idx]</code>的数组，进入数组定义可以看到</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * GLOBAL VARIABLES</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// The order in this table must be identical to the task initialization calls below in osalInitTask.</span></span><br><span class="line"><span class="keyword">const</span> pTaskEventHandlerFn tasksArr[] = &#123;</span><br><span class="line">  macEventLoop,</span><br><span class="line">  nwk_event_loop,</span><br><span class="line">  Hal_ProcessEvent,</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined( MT_TASK )</span></span><br><span class="line">  MT_ProcessEvent,</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  APS_event_loop,</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( ZIGBEE_FRAGMENTATION )</span></span><br><span class="line">  APSF_ProcessEvent,</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  ZDApp_event_loop,</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )</span></span><br><span class="line">  ZDNwkMgr_event_loop,</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  Smart_home_ProcessEvent</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/***************************************************************</span></span><br><span class="line"><span class="comment">与Smart_home_Init中事件的对比，注意看事件的顺序</span></span><br><span class="line"><span class="comment">  macTaskInit( taskID++ ); //macTaskInit(0) ，用户不需考虑</span></span><br><span class="line"><span class="comment">  nwk_init( taskID++ ); //nwk_init(1)，用户不需考虑</span></span><br><span class="line"><span class="comment">  Hal_Init( taskID++ ); //Hal_Init(2) ，用户需考虑</span></span><br><span class="line"><span class="comment">#if defined( MT_TASK )</span></span><br><span class="line"><span class="comment">  MT_TaskInit( taskID++ );</span></span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line"><span class="comment">  APS_Init( taskID++ );  //APS_Init(3) ，用户不需考虑</span></span><br><span class="line"><span class="comment">#if defined ( ZIGBEE_FRAGMENTATION )</span></span><br><span class="line"><span class="comment">  APSF_Init( taskID++ );</span></span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line"><span class="comment">  ZDApp_Init( taskID++ ); //ZDApp_Init(4) ，用户需考虑</span></span><br><span class="line"><span class="comment">#if defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )</span></span><br><span class="line"><span class="comment">  ZDNwkMgr_Init( taskID++ );</span></span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line"><span class="comment">  Smart_home_Init( taskID ); //用户任务初始化用</span></span><br><span class="line"><span class="comment">  **************************************************************/</span></span><br></pre></td></tr></table></figure>
+<p>这是一个全局变量数组，通过上面的这里面的事件是正好按照之前<code>taskID</code>的顺序排列的。也就是说，我们的任务应该设置在<code>Smart_home_ProcessEvent</code>中。</p>
+<p>这样一来我们的流程也就捋顺了。我在下面放一个流程图来方便大家理解</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">graph TD </span><br><span class="line">main--初始化系统--&gt;osal_init_system</span><br><span class="line">main--运行系统--&gt;A[osal_run_system]</span><br><span class="line">osal_init_system--初始化任务--&gt;osalInitTasks</span><br><span class="line">osalInitTasks--分配任务号--&gt;C[Smart_home_Init]</span><br><span class="line">C--注册任务端点描述--&gt;afRegister...</span><br><span class="line">C--向下传输并加入链表--&gt;ZDO_RegisterForZDOMsg</span><br><span class="line">A--&gt;idx</span><br><span class="line">A--执行任务队列--&gt;tasksArr</span><br><span class="line">A--执行任务链表--&gt;taskEvents</span><br><span class="line">tasksArr--执行用户任务--&gt;B[Smart_home_ProcessEvents]</span><br><span class="line">C--对应---B</span><br></pre></td></tr></table></figure>
+<h2 id="4-小结"><a href="#4-小结" class="headerlink" title="4.小结"></a>4.小结</h2><p>经过对代码的阅读我们发现，OSAL的执行过程就是在初始化之后从任务池中查询任务并执行。而用户函数需要做的则是写出自己的函数并将其赋予事件号放入事件池中等待OSAL执行。但我们使用协议栈的时候最重要的就是收发消息。这个又是怎么实现的呢？我们下次分析。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2021/03/10/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%80%EF%BC%89OSAL/" title="ZigBee协议栈探究---（一）OSAL">http://yokeso.github.io/2021/03/10/ZigBee协议栈探究---（一）OSAL/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/ZigBee/" rel="tag"><i class="fa fa-tag"></i> ZigBee</a>
+              <a href="/tags/CC2530/" rel="tag"><i class="fa fa-tag"></i> CC2530</a>
+              <a href="/tags/%E5%8D%8F%E8%AE%AE%E6%A0%88/" rel="tag"><i class="fa fa-tag"></i> 协议栈</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/01/11/NaiveBayes/" rel="prev" title="NaiveBayes">
+                  <i class="fa fa-chevron-left"></i> NaiveBayes
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/03/12/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E6%94%B6%E4%B8%8E%E5%8F%91%E9%80%81/" rel="next" title="ZigBee协议栈探究---（二）数据的接收与发送">
+                  ZigBee协议栈探究---（二）数据的接收与发送 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

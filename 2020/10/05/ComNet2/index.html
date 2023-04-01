@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="自顶向下计算机网络 2    应用层客户&#x2F;服务器应用模型与P2P应用模型客户&#x2F;服务器应用模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ComNet2">
+<meta property="og:url" content="http://yokeso.github.io/2020/10/05/ComNet2/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="自顶向下计算机网络 2    应用层客户&#x2F;服务器应用模型与P2P应用模型客户&#x2F;服务器应用模型">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yokeso.github.io/2020/10/05/ComNet2/Socket.jpg">
+<meta property="og:image" content="http://yokeso.github.io/2020/10/05/ComNet2/Dns.jpg">
+<meta property="og:image" content="http://yokeso.github.io/2020/10/05/ComNet2/DNSFind1.jpg">
+<meta property="og:image" content="http://yokeso.github.io/2020/10/05/ComNet2/DNSFind2.jpg">
+<meta property="article:published_time" content="2020-10-05T12:34:36.000Z">
+<meta property="article:modified_time" content="2021-03-09T12:04:30.000Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yokeso.github.io/2020/10/05/ComNet2/Socket.jpg">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2020/10/05/ComNet2/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>ComNet2 | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C-2-%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">1.</span> <span class="nav-text">自顶向下计算机网络 2    应用层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B%E4%B8%8EP2P%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">客户&#x2F;服务器应用模型与P2P应用模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7-%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BA%94%E7%94%A8%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">客户&#x2F;服务器应用模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#P2P%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">P2P模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">混合结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%BA%94%E7%94%A8%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">网络应用通信原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS%E7%B3%BB%E7%BB%9F%EF%BC%88%E5%B1%82%E6%AC%A1%E5%9F%9F%E5%90%8D%E7%A9%BA%E9%97%B4%EF%BC%8C%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%8C%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">DNS系统（层次域名空间，域名服务器，域名解析过程）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E5%9F%9F%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="nav-number">1.3.1.</span> <span class="nav-text">层次域名空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">域名服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">域名解析过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FTP%EF%BC%88FTP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%EF%BC%8C%E6%8E%A7%E5%88%B6%E8%BF%9E%E6%8E%A5%E4%B8%8E%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">FTP（FTP协议的工作原理，控制连接与数据连接）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%BF%9E%E6%8E%A5%E5%92%8C%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.2.</span> <span class="nav-text">控制连接和数据连接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">控制连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">数据连接</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84%EF%BC%8C%E9%82%AE%E4%BB%B6%E6%A0%BC%E5%BC%8F%E4%B8%8EMIME%EF%BC%8CSMTP%E4%B8%8EPOP3%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">电子邮件系统（组成结构，邮件格式与MIME，SMTP与POP3）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84"><span class="nav-number">1.5.1.</span> <span class="nav-text">组成结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%82%AE%E4%BB%B6%E6%A0%BC%E5%BC%8F%E4%B8%8EMME"><span class="nav-number">1.5.2.</span> <span class="nav-text">邮件格式与MME</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%91-%E7%94%B5%E5%AD%90%E9%82%AE%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">１.电子邮件格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E5%A4%9A%E7%94%A8%E9%80%94%E7%BD%91%E9%99%85%E9%82%AE%E4%BB%B6%E6%89%A9%E5%85%85%EF%BC%88MIME%EF%BC%89"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">2.多用途网际邮件扩充（MIME）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SMTP%E4%B8%8EPOP3"><span class="nav-number">1.5.3.</span> <span class="nav-text">SMTP与POP3</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-SMTP%EF%BC%88Simple-Mail-Transfer-Protocol%EF%BC%89"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">1.SMTP（Simple Mail Transfer Protocol）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WWW%EF%BC%88WWW%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84%EF%BC%8CHTTP%E5%8D%8F%E8%AE%AE%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">WWW（WWW的概念与组成结构，HTTP协议）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#P2P%E5%BA%94%E7%94%A8%E5%88%86%E5%8F%91%E5%8E%9F%E7%90%86"><span class="nav-number">1.7.</span> <span class="nav-text">P2P应用分发原理</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2020/10/05/ComNet2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ComNet2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-05 20:34:36" itemprop="dateCreated datePublished" datetime="2020-10-05T20:34:36+08:00">2020-10-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-09 20:04:30" itemprop="dateModified" datetime="2021-03-09T20:04:30+08:00">2021-03-09</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2020/10/05/ComNet2/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2020/10/05/ComNet2/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="自顶向下计算机网络-2-应用层"><a href="#自顶向下计算机网络-2-应用层" class="headerlink" title="自顶向下计算机网络 2    应用层"></a>自顶向下计算机网络 2    应用层</h2><h3 id="客户-服务器应用模型与P2P应用模型"><a href="#客户-服务器应用模型与P2P应用模型" class="headerlink" title="客户/服务器应用模型与P2P应用模型"></a>客户/服务器应用模型与P2P应用模型</h3><h4 id="客户-服务器应用模型"><a href="#客户-服务器应用模型" class="headerlink" title="客户/服务器应用模型"></a>客户/服务器应用模型</h4><span id="more"></span>
+<p>一个总是打开的主机被称为服务器，它要服务于许多来自于其他称为客户机的主机请求，其工作流程如下：</p>
+<p>1）服务器处于接收请求的状态</p>
+<p>2）客户机发出服务请求并等待接收结果</p>
+<p>3）服务器接收到请求后分析请求，进行必要的处理，得到结果并发送给客户机</p>
+<p>客户机必须知道服务器程序的地址，客户机上一般不需要特殊的硬件和复杂的操作系统。而服务器要运行专门用来提供某种服务的程序，可以同时处理多个远程或者本地客户的要求。系统启动后自动调用并执行。因此服务器程序不需要知道客户机的地址。</p>
+<p>客户/服务器最主要的特征是：客户是服务的请求方，服务器是服务的提供方</p>
+<p>其他主要特点还有：</p>
+<p>1）网络中各个计算机的地位不平等，服务器可以通过对用户权限的限制来达到管理客户机的目的。使它们不能进行随意的增添删除数据或其他受限的网络活动。整个网络的管理工作由少部分服务器担当，因此整个网络的管理十分方便。</p>
+<p>2）客户机之间不会直接通信</p>
+<p>3）可扩展性不佳。收服务器硬件和网络带宽的限制。服务器支持的客户机数量有限。</p>
+<h4 id="P2P模型"><a href="#P2P模型" class="headerlink" title="P2P模型"></a>P2P模型</h4><p>P2P模型的主要思想是在真个网络中传输的内容不再被保存在中心服务器上。每个节点都同时具有上传和下载的功能。其权力和义务是大体对等的。在P2P模型中，计算机没有固定的客户机与服务器的分别，，任意一对计算机都可以互相通信，每一台电脑既可以作为客户机访问其他节点的资源，也作为服务器提供资源给其他节点访问。</p>
+<p>与客户机/服务器模型相比，P2P模型的优点主要体现如下：<br>1）减轻服务器的计算压力，消除了对于服务器的完全依赖。可以将任务分配到各个节点上。提高了系统效率和资源的利用率；</p>
+<p>2）多个客户机之间直接进行文档共享。</p>
+<p>3）可拓展性好，传统服务器有响应和带宽的限制，因此只能接收一定节点的请求。</p>
+<p>4）网络健壮性强。单个节点的失效不会影响其他节点。</p>
+<p>P2P的缺点也很明显。在获取服务的同时，还要给其他节点提供服务。这样会占据很多内存，影响整机速度。经常进行p2p下载还会对硬盘造成较大损伤。</p>
+<h4 id="混合结构"><a href="#混合结构" class="headerlink" title="混合结构"></a>混合结构</h4><p>Napster文件传输使用P2P结构,文件的搜索采用C/S模式—-集中式</p>
+<hr>
+<h3 id="网络应用通信原理"><a href="#网络应用通信原理" class="headerlink" title="网络应用通信原理"></a>网络应用通信原理</h3><p>进程：主机上运行的程序</p>
+<p>同一主机之间运行的进程如何通信？</p>
+<ul>
+<li>进程间的通信机制</li>
+<li>操作系统提供</li>
+</ul>
+<p>不同主机之间的进程如何通信？</p>
+<ul>
+<li>信息交换</li>
+</ul>
+<p>进程间利用Socket接收/发送消息。</p>
+<ul>
+<li><p>发送方将消息送到门外邮箱</p>
+</li>
+<li><p>发送方依赖（门外的）传输基础设施将消息传到接收方所在主机，并送到接收方的门外</p>
+</li>
+<li><p>接收方从门外获取消息</p>
+</li>
+</ul>
+<p><img src="/2020/10/05/ComNet2/Socket.jpg" alt></p>
+<p>为了在不同主机之间通信，每个进程必须要拥有<font color="red">标识符</font></p>
+<p>如何寻址主机——IP地址</p>
+<p>但是在有了主机IP地址后，由于同一主机上可能有多个进程需要通信，所以要在每个需要通信的进程上分配一个端口号。</p>
+<p>进程的标识符：<font color="red">IP地址+端口号</font></p>
+<p>应用层协议：网络应用应该遵循应用层协议。</p>
+<ul>
+<li><p>分类</p>
+<ul>
+<li>公开协议：RFC协议-&gt;允许互操作：<strong>HTTP SMTP</strong></li>
+<li>私有协议：多数P2P文件共享应用。</li>
+</ul>
+</li>
+<li><p>内容</p>
+<ul>
+<li>消息的类型（type） <ul>
+<li>请求消息</li>
+<li>响应消息</li>
+</ul>
+</li>
+<li>消息的语法（syntax）/格式</li>
+<li>字段的语义（semantics）</li>
+<li>规则（rules）  </li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="DNS系统（层次域名空间，域名服务器，域名解析过程）"><a href="#DNS系统（层次域名空间，域名服务器，域名解析过程）" class="headerlink" title="DNS系统（层次域名空间，域名服务器，域名解析过程）"></a>DNS系统（层次域名空间，域名服务器，域名解析过程）</h3><p>域名系统（Domain Name System，DNS）是因特网使用的域名系统。用来便于把人们记忆的具有特定含义的主机名转换为便于机器处理的IP地址，相对于IP地址，人们更喜欢使用具有特定含义的字符串来标识因特网上的主机。<strong>DSN系统采用客户/服务器模型，其协议运行在UDP之上，使用53号端口</strong>。是一个多层命名服务器构成的分布式数据库。</p>
+<p>应用层协议：完成名字的解析</p>
+<ul>
+<li>Internet核心功能，用应用层协议实现。</li>
+<li>网络边界复杂</li>
+</ul>
+<h4 id="层次域名空间"><a href="#层次域名空间" class="headerlink" title="层次域名空间"></a>层次域名空间</h4><p>因特网采用层次树状结构的命名方法，采用这种命名方法，任何一个具有连接到因特网的主机或路由器都有一个唯一的层次结构名称，即域名。域是名字空间中一个可被管理的划分。域可以分为子域，子域还可以继续划分为子域的子域。这样就形成了顶级域，二级域，三级域等。每个域名都由标号序列组成，个标号之间都用<code>.</code>间隔开。</p>
+<p>需要注意以下几点：</p>
+<ul>
+<li>标号中的英文不区分大小写</li>
+<li>标号中除连词符之外不能用其他的标点符号。</li>
+<li>每个标号不超过63个字符多标号组成的完整域名不能超过255字符。</li>
+<li>级别最低的域名写在最左边，级别最高的域名写在最右边。</li>
+</ul>
+<p>DNS服务</p>
+<ul>
+<li>域名向IP地址的翻译</li>
+<li>主机别名</li>
+<li>邮件服务器别名</li>
+<li>负载均衡：Web服务器</li>
+</ul>
+<p>DNS服务器不使用集中式的原因：</p>
+<ul>
+<li>单点失败问题</li>
+<li>流量问题</li>
+<li>距离问题</li>
+<li>维护性问题</li>
+</ul>
+<h4 id="域名服务器"><a href="#域名服务器" class="headerlink" title="域名服务器"></a>域名服务器</h4><p>分布式层次数据库</p>
+<ul>
+<li><font color="red">根服务器</font> (ROOT DNS Sever)：这是最高层次的域名服务器，所有根域名服务器都知道所有的顶级域名服务器的IP地址，本地域名服务器只要有自己无法解析的域名时都会求助根域名服务器。共有13个根域名服务器。<strong>需要注意，根域名服务器不把直接待查询的地址直接转化为IP，而是告诉本地域名服务器下一步找哪个顶级域名服务器查询</strong></li>
+<li><font color="red">顶级域名服务器（TLD Top-Level Domain）</font>：服务com  .edu等顶级域名以及.uk .cn等国际顶级域名。负责管理该顶级服务器管理下的所有二级域名，并在DNS请求时返回响应的回答（最后结果或下一步应该查找的域名服务器）</li>
+<li><font color="red">授权域名服务器</font>:组织的域名解析服务器，提供组织内部的域名解析。将管辖内的主机名转换为IP地址。</li>
+<li>本地域名服务器：每个因特网服务提供者（ISP）大学或者大学的系都可以拥有本地域名服务器.当主机发出DNS请求时，查询请求报文就发送给本地域名服务器</li>
+</ul>
+<p><strong>本地域名解析服务器不严格属于层级体系</strong></p>
+<p><img src="/2020/10/05/ComNet2/Dns.jpg" alt="DNS的层次结构"></p>
+<h4 id="域名解析过程"><a href="#域名解析过程" class="headerlink" title="域名解析过程"></a>域名解析过程</h4><p>域名解析是指把域名映射成IP地址或者把IP地址映射成域名的过程.前者称为<code>正向解析</code>,后者称为<code>反向解析</code>.当客户端需要域名解析时,通过本机的DNS客户端构造一个DNS请求报文.利用UDP数据报的方式发往本地域名服务器.域名解析有两种方式，<font color="red">递归查询和迭代查询</font>。其效果如下：</p>
+<p><img src="/2020/10/05/ComNet2/DNSFind1.jpg" alt="迭代查询"></p>
+<p><img src="/2020/10/05/ComNet2/DNSFind2.jpg" alt="递归查询"></p>
+<p><strong>由于递归查询对根域名的负担较大，现在大多采用迭代查询的方式</strong>。该方式分为两个部分：</p>
+<p><strong>1）主机向本地域名服务器的查询采用的是递归查询</strong></p>
+<ul>
+<li>如果主机询问的本地域名服务器不知道被查询的IP地址，那么本地域名服务器就以DNS客户的身份向根域名服务器发出查询请求报文（替该主机查询而非让主机自己进行下一步的查询）</li>
+<li>本地域名服务器只需要向根域名服务器查询一个，后面的几次查询都是递归的在其他几个域名服务器之间进行的。</li>
+</ul>
+<p>2）本地服务器向根域名服务器的查询是迭代查询。（参照上图进行对比）</p>
+<ul>
+<li>当根服务器从本地域名服务器收到请求后，要么给出要查询的IP地址，要么告诉本地域名服务器下一步应该到哪个顶级域名服务器查询</li>
+<li>同样顶级域名服务器收到查询报文后，要么给出所要查询的IP地址，要么告诉本地服务器下一步应该像哪个权限域名服务器查询。最后知道所要解析的IP地址后，把这个结果返回给发起查询的主机。</li>
+</ul>
+<p>DNS记录的缓存与更新</p>
+<p>只要域名解析服务器获得域名——IP映射，即缓存这一映射</p>
+<ul>
+<li>一段时间过后，缓存条目失效（删除）</li>
+<li>本地域名服务器一般或缓存顶级域名服务器的映射<ul>
+<li>因此根域名服务器不经常被访问</li>
+</ul>
+</li>
+</ul>
+<p>DNS的记录和报文考纲未做要求，故未整理。</p>
+<hr>
+<h3 id="FTP（FTP协议的工作原理，控制连接与数据连接）"><a href="#FTP（FTP协议的工作原理，控制连接与数据连接）" class="headerlink" title="FTP（FTP协议的工作原理，控制连接与数据连接）"></a>FTP（FTP协议的工作原理，控制连接与数据连接）</h3><p>交互传输协议（FTP）是因特网上使用最广泛的文件传输协议。FTP提供交互式访问。允许客户指明文件的类型与格式。并允许文件拥有存取权限。它屏蔽了计算机的各种细节，适合于在异构的网络中的任意计算机之间传输文件。</p>
+<p>FTP提供一下功能：</p>
+<ul>
+<li>提供不同主机系统之间的文件传输能力。</li>
+<li>以用户权限的方式提供用户对远程FTP服务器上的文件管理能力。</li>
+<li>以匿名FTP提供公用文件共享的能力</li>
+</ul>
+<h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><p>FTP采用客户机/服务器的模式，利用TCP可靠传输服务。一个FTP服务器进程可以同时为多个客户机提供服务。FTP服务器由两大部分构成：<strong>一个主进程，负责接收新的请求，另外有若干从属进程，负责处理单个请求</strong>。工作步骤如下：</p>
+<ul>
+<li>打开控制端口21，使客户进程能连接上</li>
+<li>等待客户发起请求</li>
+<li>启动从属进程处理客户进程发起的请求，主进程与从属进程并发执行，从属进程对于客户进程的请求处理完毕后即终止。</li>
+<li>回到等待状态，继续处理其他客户请求。</li>
+</ul>
+<p>FTP服务器必须在整个会话过程中保存客户的状态信息。特别使服务器必须把指定的用户账户和控制联系起来，服务器必须追踪用户在远程目录树上的当前位置。</p>
+<h4 id="控制连接和数据连接"><a href="#控制连接和数据连接" class="headerlink" title="控制连接和数据连接"></a>控制连接和数据连接</h4><p>FTP在工作时使用两个并行的TCP连接，一个是控制连接（21端口）一个是数据连接（20端口）使用两个不同的端口号可以使协议更加简单和容易实现。</p>
+<h5 id="控制连接"><a href="#控制连接" class="headerlink" title="控制连接"></a>控制连接</h5><p>服务器监听21端口，等待客户连接，建立在这个端口上的连接称为<code>控制连接</code>，控制连接用来传输控制信息（连接请求，传送请求等）并且控制信息都以7位ASCii码发送。FTP客户发出的传送请求，通过控制连接发送给服务器端的控制进程。但控制连接并不用来传送文件，传输文件时还可以使用控制连接（如客户在中途发送终止传输命令），因此控制连接在整个会话期间一直保持打开状态。</p>
+<h5 id="数据连接"><a href="#数据连接" class="headerlink" title="数据连接"></a>数据连接</h5><p>服务端的控制进程在接收到FTP客户端发送来的文件传输请求后，就创建数据“传输进程”和“数据连接”。数据连接用来连接客户端和服务器端的数据传输进程，数据传送进程实际完成文件的传送。在传送完毕后关闭<code>数据传送连接</code>并结束运行。</p>
+<p>因为FTP使用了一个分离的控制连接，所以也称FTP的控制信息时带外（Out-of-band）传送的。使用FTP时，若要修改服务器上的文件，则需要先将此文件传送到本地主机，然后再将修改后的文件副本传送到原服务器。网络文件系统（NFS）允许进程打开一个远程文件，并在该文件的某个特定位置开始读写数据。这样，NFS可使用户复制一个大文件中的一个很小的片段，而不需要复制整个大文件。</p>
+<hr>
+<h3 id="电子邮件系统（组成结构，邮件格式与MIME，SMTP与POP3）"><a href="#电子邮件系统（组成结构，邮件格式与MIME，SMTP与POP3）" class="headerlink" title="电子邮件系统（组成结构，邮件格式与MIME，SMTP与POP3）"></a>电子邮件系统（组成结构，邮件格式与MIME，SMTP与POP3）</h3><h4 id="组成结构"><a href="#组成结构" class="headerlink" title="组成结构"></a>组成结构</h4><p>电子邮件是一种异步通讯方式，允许通信时的双方不同时在场。电子邮件将邮件放在收件人使用的邮箱服务器中，收件人可以随时上网到自己使用的邮件服务器中进行读取。</p>
+<p>一个邮件系统应该具有三部分组成，用户代理，邮件服务器和电子邮件使用协议（SMTP，POP3，IMAP等）</p>
+<ul>
+<li><font color="red">用户代理（UA）</font>用户与电子邮件的接口，用户代理使用户能够通过一个很友好的接口发送和接收邮件，用户代理至少应该具备撰写，显示和邮件处理的功能。通常情况下，用户代理就是一个运行再PC上的程序。</li>
+<li><font color="red">邮件服务器</font>：组成邮件系统的核心，邮件服务器的功能是发送和接收邮件。同时还要向发信人报告邮件的传送状况（已交付，被拒绝，被丢失等）邮件服务器采用的客户/服务器模式工作。但其能同时担当客户和服务器。</li>
+<li><font color="red">邮件发送协议和读取协议</font>：邮件发送协议用于用户代理向邮件服务器发送邮件或者再邮件服务器之间发送邮件。通常使用的是SMTP，邮件读取协议用于用户代理从邮件服务器读取邮件，如POP3，注意：SMTP采用的是推的方式，即再用户代理向邮件服务器发送邮件及在邮件服务器之间发送邮件时，SMTP客户端主动将邮件推送到SMTP服务器端，而POP3采用的是拉的模式，即用户读取邮件时，用户代理向邮件服务器发出请求，拉取用户邮箱中的邮件</li>
+</ul>
+<p>电子邮件的发送接收过程如下：</p>
+<ul>
+<li>发信人调用用户代理来撰写编辑要发送的邮件，用户代理用SMTP把邮件传送给发送方服务器。</li>
+<li>发送方邮件服务器将邮件放入缓存队列中，等待发送</li>
+<li>邮件服务器中的SMTP客户进程发现有邮件待发送，向运行在接收方邮件服务器的SMTP服务器发起建立TCP连接</li>
+<li>建立连接后开始向远方发送邮件，发送完成后关闭TCP连接</li>
+<li>接收方邮件服务器接收到邮件后，将邮件放到收信人的用户邮箱，等待收信人方便的时候读取</li>
+<li>收信人打算收信时，调用用户代理，使用POP3或者IMAP将自己的邮件从接收方邮件服务器的用户邮箱中取回</li>
+</ul>
+<h4 id="邮件格式与MME"><a href="#邮件格式与MME" class="headerlink" title="邮件格式与MME"></a>邮件格式与MME</h4><h5 id="１-电子邮件格式"><a href="#１-电子邮件格式" class="headerlink" title="１.电子邮件格式"></a>１.电子邮件格式</h5><p>一个电子邮件格式分为<code>信封</code>与<code>内容</code>两部分，邮件内容又分为首部和主题两部分。<code>RFC 822</code>规定了邮件首部的格式，主体可以由用户自由撰写。用户写好首部后，邮件系统自动的将信封所需要的信息提取出来填写到信封上，用户不需要亲自填写信封上的信息。</p>
+<p>邮件首部包括的最重要的内容有：To:和Subject:</p>
+<ul>
+<li>To后面加一个或者多个收件人的电子邮件地址（邮箱名@主机域名）</li>
+<li>Subject时可选关键字，反应邮件的主要内容</li>
+<li>From，邮件自动填入</li>
+</ul>
+<h5 id="2-多用途网际邮件扩充（MIME）"><a href="#2-多用途网际邮件扩充（MIME）" class="headerlink" title="2.多用途网际邮件扩充（MIME）"></a>2.多用途网际邮件扩充（MIME）</h5><p>由于用户的语言不一致性，为了传送非英语文字，使用了MIME。MIME未改变SMTP，指示增加了邮件的主体结构，定义了传送非ASCii码的编码规则。</p>
+<p>包括以下三部分内容：</p>
+<ul>
+<li>5个新的邮件首部字段，MIME版本，内容描述，内容标识，内容传送码，内容类型</li>
+<li>定义邮件内容格式，对多媒体电子邮件标识方法做了标准化</li>
+<li>定义传送编码，可对内容格式进行转换并不会被邮件系统改变</li>
+</ul>
+<h4 id="SMTP与POP3"><a href="#SMTP与POP3" class="headerlink" title="SMTP与POP3"></a>SMTP与POP3</h4><h5 id="1-SMTP（Simple-Mail-Transfer-Protocol）"><a href="#1-SMTP（Simple-Mail-Transfer-Protocol）" class="headerlink" title="1.SMTP（Simple Mail Transfer Protocol）"></a>1.SMTP（Simple Mail Transfer Protocol）</h5><p>SMTP运用TCP连接，端口号为25，通信过程为三个阶段</p>
+<ul>
+<li>建立连接：SMTP客户每隔一定时间对邮箱缓存扫描，若发现邮件，则使用25端口与接收方的SMTP建立TCP连接，连接建立后接收方发送220 Service ready。然后SMTP客户向SMTP服务器发送HELO命令，附上发送方的主机名。</li>
+<li></li>
+</ul>
+<hr>
+<h3 id="WWW（WWW的概念与组成结构，HTTP协议）"><a href="#WWW（WWW的概念与组成结构，HTTP协议）" class="headerlink" title="WWW（WWW的概念与组成结构，HTTP协议）"></a>WWW（WWW的概念与组成结构，HTTP协议）</h3><hr>
+<h3 id="P2P应用分发原理"><a href="#P2P应用分发原理" class="headerlink" title="P2P应用分发原理"></a>P2P应用分发原理</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2020/10/05/ComNet2/" title="ComNet2">http://yokeso.github.io/2020/10/05/ComNet2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 计算机网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/27/ComNet/" rel="prev" title="ComNet">
+                  <i class="fa fa-chevron-left"></i> ComNet
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/01/CSAPP-summarize/" rel="next" title="CSAPP-summarize">
+                  CSAPP-summarize <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

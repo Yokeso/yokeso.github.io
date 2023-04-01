@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="CSAPP重要知识点总结第一章 — 计算机系统漫游1.Hello world的生命周期1.进程创建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSAPP-summarize">
+<meta property="og:url" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="CSAPP重要知识点总结第一章 — 计算机系统漫游1.Hello world的生命周期1.进程创建">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201202203601317.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201202195155158.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201202223638552.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201205163159359.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201205170317747.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201205170418497.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201205172024421.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201206212526290.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201206213231762.png">
+<meta property="og:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201206215004182.png">
+<meta property="article:published_time" content="2020-12-01T08:45:41.000Z">
+<meta property="article:modified_time" content="2021-03-09T13:03:42.000Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="Bolg,Yokeso,BigtreeLiu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yokeso.github.io/2020/12/01/CSAPP-summarize/image-20201202203601317.png">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2020/12/01/CSAPP-summarize/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>CSAPP-summarize | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CSAPP%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">CSAPP重要知识点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E2%80%94-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%BC%AB%E6%B8%B8"><span class="nav-number">1.0.1.</span> <span class="nav-text">第一章 — 计算机系统漫游</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-Hello-world%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">1.Hello world的生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="nav-number">1.0.1.1.1.</span> <span class="nav-text">1.进程创建</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-%E7%A8%8B%E5%BA%8F%E5%8A%A0%E8%BD%BD%E8%BF%90%E8%A1%8C"><span class="nav-number">1.0.1.1.2.</span> <span class="nav-text">2.程序加载运行</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-%E6%89%A7%E8%A1%8C%E6%8C%87%E4%BB%A4"><span class="nav-number">1.0.1.1.3.</span> <span class="nav-text">3.执行指令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE"><span class="nav-number">1.0.1.1.4.</span> <span class="nav-text">4.访问数据</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-%E6%98%BE%E7%A4%BA%E8%BE%93%E5%87%BA"><span class="nav-number">1.0.1.1.5.</span> <span class="nav-text">5.显示输出</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6-%E8%BF%9B%E7%A8%8B%E7%BB%88%E6%AD%A2"><span class="nav-number">1.0.1.1.6.</span> <span class="nav-text">6.进程终止</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E4%B8%80%E4%BA%9B%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">2.一些小知识点</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E2%80%94-%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86"><span class="nav-number">1.0.2.</span> <span class="nav-text">第二章 — 信息的表示和处理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E7%AE%97%E6%95%B0%E6%BA%A2%E5%87%BA%E4%BA%A7%E7%94%9F%E7%9A%84%E6%BC%8F%E6%B4%9E"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">1.算数溢出产生的漏洞</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E6%B5%AE%E7%82%B9%E6%95%B0IEEE%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">2.浮点数IEEE表示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E5%B7%A6%E7%A7%BB%E5%8F%B3%E7%A7%BB"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">3.左移右移</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E5%B8%A6%E7%AC%A6%E5%8F%B7%E6%95%B0%E4%B8%8E%E6%97%A0%E7%AC%A6%E5%8F%B7%E6%95%B0%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.0.2.4.</span> <span class="nav-text">4.带符号数与无符号数的转换</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E2%80%94-%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%9C%BA%E5%99%A8%E7%BA%A7%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.0.3.</span> <span class="nav-text">第三章 — 程序的机器级表示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E2%80%94-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84"><span class="nav-number">1.0.4.</span> <span class="nav-text">第四章 — 处理器体系结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0-%E2%80%94-%E4%BC%98%E5%8C%96%E7%A8%8B%E5%BA%8F%E6%80%A7%E8%83%BD"><span class="nav-number">1.0.5.</span> <span class="nav-text">第五章 — 优化程序性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E2%80%94-%E5%AD%98%E5%82%A8%E5%99%A8%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.0.6.</span> <span class="nav-text">第六章 — 存储器层次结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0-%E2%80%94-%E9%93%BE%E6%8E%A5"><span class="nav-number">1.0.7.</span> <span class="nav-text">第七章 — 链接</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-ELF%E5%A4%B4%EF%BC%88%E5%8F%AF%E9%87%8D%E5%AE%9A%E4%BD%8D%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%EF%BC%89"><span class="nav-number">1.0.7.1.</span> <span class="nav-text">1.ELF头（可重定位目标文件格式）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E5%B8%B8%E8%80%83%E7%9A%84%E5%87%A0%E7%82%B9"><span class="nav-number">1.0.7.2.</span> <span class="nav-text">2.常考的几点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E5%BC%BA%E7%AC%A6%E5%8F%B7%E4%B8%8E%E5%BC%B1%E7%AC%A6%E5%8F%B7%EF%BC%88%E8%BF%9E%E6%8E%A5%E5%99%A8%E5%A6%82%E4%BD%95%E8%A7%A3%E6%9E%90%E5%A4%9A%E9%87%8D%E5%AE%9A%E4%B9%89%E7%9A%84%E5%85%A8%E5%B1%80%E7%AC%A6%E5%8F%B7%EF%BC%89"><span class="nav-number">1.0.7.3.</span> <span class="nav-text">3.强符号与弱符号（连接器如何解析多重定义的全局符号）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0-%E2%80%94-%E5%BC%82%E5%B8%B8%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">1.0.8.</span> <span class="nav-text">第八章 — 异常控制流</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%EF%BC%9A"><span class="nav-number">1.0.8.1.</span> <span class="nav-text">信号：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AE%B0%E7%9A%84%E5%87%A0%E4%B8%AA%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.0.8.1.1.</span> <span class="nav-text">需要记的几个信号</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E7%AB%A0-%E2%80%94-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.0.9.</span> <span class="nav-text">第九章 — 虚拟内存</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91%E8%BF%87%E7%A8%8B%EF%BC%9A"><span class="nav-number">1.0.9.1.</span> <span class="nav-text">1.地址翻译过程：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91%E5%B8%A6CACHE%E4%B8%8E%E5%86%85%E5%AD%98%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.0.9.2.</span> <span class="nav-text">2.地址翻译带CACHE与内存的过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-%E5%9C%B0%E5%9D%80%E7%BF%BB%E8%AF%91%E4%B8%AD%E7%9A%84%E5%9C%B0%E5%9D%80%E7%BB%93%E6%9E%84%E5%8F%98%E6%8D%A2"><span class="nav-number">1.0.9.3.</span> <span class="nav-text">3.地址翻译中的地址结构变换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E5%88%86%E9%85%8D%E5%99%A8"><span class="nav-number">1.0.9.4.</span> <span class="nav-text">4.分配器</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="nav-number">1.0.9.4.1.</span> <span class="nav-text">隐式空闲链表</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="nav-number">1.0.9.4.2.</span> <span class="nav-text">显式空闲链表</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">1.0.9.4.3.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E7%AB%A0-%E2%80%94-%E7%B3%BB%E7%BB%9F%E7%BA%A7IO"><span class="nav-number">1.0.10.</span> <span class="nav-text">第十章 — 系统级IO</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2020/12/01/CSAPP-summarize/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CSAPP-summarize
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-01 16:45:41" itemprop="dateCreated datePublished" datetime="2020-12-01T16:45:41+08:00">2020-12-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-09 21:03:42" itemprop="dateModified" datetime="2021-03-09T21:03:42+08:00">2021-03-09</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2020/12/01/CSAPP-summarize/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2020/12/01/CSAPP-summarize/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="CSAPP重要知识点总结"><a href="#CSAPP重要知识点总结" class="headerlink" title="CSAPP重要知识点总结"></a>CSAPP重要知识点总结</h2><h4 id="第一章-—-计算机系统漫游"><a href="#第一章-—-计算机系统漫游" class="headerlink" title="第一章 — 计算机系统漫游"></a>第一章 — 计算机系统漫游</h4><h5 id="1-Hello-world的生命周期"><a href="#1-Hello-world的生命周期" class="headerlink" title="1.Hello world的生命周期"></a>1.Hello world的生命周期</h5><h6 id="1-进程创建"><a href="#1-进程创建" class="headerlink" title="1.进程创建"></a>1.进程创建</h6><span id="more"></span>
+<ul>
+<li>shell程序输入<code>./hello</code>,shell将其逐一读到寄存器里并放入内存。</li>
+<li>shell利用fork()函数创建进程</li>
+</ul>
+<h6 id="2-程序加载运行"><a href="#2-程序加载运行" class="headerlink" title="2.程序加载运行"></a>2.程序加载运行</h6><ul>
+<li>调用execve()函数映射进程结构</li>
+<li>对程序所需要的共享库进行动态连接</li>
+<li>利用mmap将文件或其他对向映射到内存</li>
+</ul>
+<h6 id="3-执行指令"><a href="#3-执行指令" class="headerlink" title="3.执行指令"></a>3.执行指令</h6><ul>
+<li>执行第一条代码，产生缺页中断<ul>
+<li>处理器将VA给MMU，</li>
+<li>MMU产生TLBA传给页表，</li>
+<li>从页表中加载PTE。</li>
+<li>PTE有效位为0，产生缺页异常。</li>
+<li>缺页处理程序选择物理内存的牺牲页，如果页被修改则换出到磁盘。</li>
+<li>新页调入内存。</li>
+<li>更新PTE,返回原进程重新执行缺页指令</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2020/12/01/CSAPP-summarize/image-20201202203601317.png" alt="image-20201202203601317"></p>
+<h6 id="4-访问数据"><a href="#4-访问数据" class="headerlink" title="4.访问数据"></a>4.访问数据</h6><ul>
+<li>访问数据时同样会产生缺页中断。</li>
+</ul>
+<h6 id="5-显示输出"><a href="#5-显示输出" class="headerlink" title="5.显示输出"></a>5.显示输出</h6><ul>
+<li>调用c标准函数printf()，调用运行时会产生堆栈段缺页，调用write()函数进行屏幕显示。</li>
+</ul>
+<h6 id="6-进程终止"><a href="#6-进程终止" class="headerlink" title="6.进程终止"></a>6.进程终止</h6><ul>
+<li>显示完成后进程终止，被父进程回收</li>
+</ul>
+<h5 id="2-一些小知识点"><a href="#2-一些小知识点" class="headerlink" title="2.一些小知识点"></a>2.一些小知识点</h5><p>1.操作系统使用抽象的概念</p>
+<ul>
+<li>防止硬件被失控程序滥用</li>
+<li>提供简单的一致的机制管理复杂不同的低级硬件设备</li>
+</ul>
+<p><img src="/2020/12/01/CSAPP-summarize/image-20201202195155158.png" alt="image-20201202195155158"></p>
+<p>2.编译系统包括（预处理器 编译器 汇编器 链接器）</p>
+<h4 id="第二章-—-信息的表示和处理"><a href="#第二章-—-信息的表示和处理" class="headerlink" title="第二章 — 信息的表示和处理"></a>第二章 — 信息的表示和处理</h4><h5 id="1-算数溢出产生的漏洞"><a href="#1-算数溢出产生的漏洞" class="headerlink" title="1.算数溢出产生的漏洞"></a>1.算数溢出产生的漏洞</h5><h5 id="2-浮点数IEEE表示"><a href="#2-浮点数IEEE表示" class="headerlink" title="2.浮点数IEEE表示"></a>2.浮点数IEEE表示</h5><p>规格化数与非规格化数</p>
+<h5 id="3-左移右移"><a href="#3-左移右移" class="headerlink" title="3.左移右移"></a>3.左移右移</h5><h5 id="4-带符号数与无符号数的转换"><a href="#4-带符号数与无符号数的转换" class="headerlink" title="4.带符号数与无符号数的转换"></a>4.带符号数与无符号数的转换</h5><p>sizeof()函数输出的数值是一个无符号数。如果直接拿去进行循环对比的话可能会产生问题</p>
+<h4 id="第三章-—-程序的机器级表示"><a href="#第三章-—-程序的机器级表示" class="headerlink" title="第三章 — 程序的机器级表示"></a>第三章 — 程序的机器级表示</h4><h4 id="第四章-—-处理器体系结构"><a href="#第四章-—-处理器体系结构" class="headerlink" title="第四章 — 处理器体系结构"></a>第四章 — 处理器体系结构</h4><p>Y86-64CPU顺序结构设计与实现中分为6个阶段<code>P264</code></p>
+<p>取指 译码 执行 访存 写回 更新PC</p>
+<h4 id="第五章-—-优化程序性能"><a href="#第五章-—-优化程序性能" class="headerlink" title="第五章 — 优化程序性能"></a>第五章 — 优化程序性能</h4><h4 id="第六章-—-存储器层次结构"><a href="#第六章-—-存储器层次结构" class="headerlink" title="第六章 — 存储器层次结构"></a>第六章 — 存储器层次结构</h4><h4 id="第七章-—-链接"><a href="#第七章-—-链接" class="headerlink" title="第七章 — 链接"></a>第七章 — 链接</h4><h5 id="1-ELF头（可重定位目标文件格式）"><a href="#1-ELF头（可重定位目标文件格式）" class="headerlink" title="1.ELF头（可重定位目标文件格式）"></a>1.ELF头（可重定位目标文件格式）</h5><p><img src="/2020/12/01/CSAPP-summarize/image-20201202223638552.png" alt="image-20201202223638552"></p>
+<p>ELF头以16字节序列开始，描述了系统字大小和字节顺序，帮助连接器语法分析和解释目标文件信息（ELF头大小，目标文件类型、机器类型、节头部表的文件偏移、节头部表中条目的大小和数量）不同节的大小是由节头部hi奥描述的。目标文件中每一个节都有固定大小的条目</p>
+<p>关于几个节的解释</p>
+<ul>
+<li>.text： 已编译程序的机器代码</li>
+<li>.rodata：只读数据，printf语句中的格式串和switch的跳转表</li>
+<li>.data：已初始化的全局和静态C变量。局部C变量运行时保存在栈中，既不出现在.data中，也不出现在.bss中</li>
+<li>.bss：未初始化的全局和静态C变量。以及所有被初始化为0的全局或静态变量。<strong>在目标文件中这个节不占用实际的空间</strong>。仅仅是一个占位符。运行时内存分配变量，初始值为0</li>
+<li>.symtab：一个符号表。存放程序中定义和引用的全局变量的信息（不包含全局变量的条目、与编译器中的符号表不同）</li>
+<li>.rel.text：text节中位置的表，目标文件与其他文件组合时需要修改（调用外部函数或者引用全局变量的指令）。调用本地函数时则不需要修改。<strong>通常省略</strong></li>
+<li>.rel.data：被模块引用或定义的所有全局变量的重定位信息。如果一个初始化的全局变量的初始值时一个全局变量地址或者外部定义函数的地址，都需要被修改。</li>
+<li>.debug：调试符号表。-g选项才能得到这张表</li>
+<li>.line：C中行号和.text节中机器指令的映射。-g编译时才能得到</li>
+<li>.strtab：一个字符串表，包括.symtab和.debug中的符号表以及节头部中的节名字</li>
+</ul>
+<h5 id="2-常考的几点"><a href="#2-常考的几点" class="headerlink" title="2.常考的几点"></a>2.常考的几点</h5><ul>
+<li><strong>.symtab中的符号表不包含对应于本地非静态程序变量的任何符号。这些符号在运行时在栈中被管理</strong></li>
+<li><strong>C static属性的本地变量不在栈中管理，而是在.data或.bss中为每个定义分配空间，并在符号表中创建一个由唯一名字（eg: x.1、x.2）的本地链接器符号表</strong></li>
+<li><p>可重定位目标文件中的伪节</p>
+<ul>
+<li>ABS：不该被重定义的符号</li>
+<li>UNDEF：未定义的符号，本目标模块引用但是在其他地方定义的符号</li>
+<li>COMMON：未分配位置的未初始化数据目标</li>
+</ul>
+</li>
+<li><p>COMMON与.bss区别</p>
+<ul>
+<li>COMMON 未初始化全局变量</li>
+<li>.bss 未初始化静态变量，以及初始化未0的全局或静态变量</li>
+</ul>
+</li>
+</ul>
+<h5 id="3-强符号与弱符号（连接器如何解析多重定义的全局符号）"><a href="#3-强符号与弱符号（连接器如何解析多重定义的全局符号）" class="headerlink" title="3.强符号与弱符号（连接器如何解析多重定义的全局符号）"></a>3.强符号与弱符号（连接器如何解析多重定义的全局符号）</h5><p>在编译时，编译器向汇编器输出每个全局符号（强或者是弱），而汇编器把这个信息隐含的编码在<strong>可重定位目标文件的符号表里</strong>。函数和已初始化的全局变量是强符号，未初始化的全局变量是弱符号</p>
+<p>Linux连接器使用下面规则来定义强弱符号：</p>
+<ul>
+<li>不允许有多个同名的强符号</li>
+<li>如果有一个强符号和多个弱符号同名，那么选择强符号</li>
+<li>如果有多个弱符号同名，那么从这些弱符号中任选一个</li>
+</ul>
+<h4 id="第八章-—-异常控制流"><a href="#第八章-—-异常控制流" class="headerlink" title="第八章 — 异常控制流"></a>第八章 — 异常控制流</h4><h5 id="信号："><a href="#信号：" class="headerlink" title="信号："></a>信号：</h5><p>信号是通知进程系统中发生某种类型事件的一条小消息</p>
+<h6 id="需要记的几个信号"><a href="#需要记的几个信号" class="headerlink" title="需要记的几个信号"></a>需要记的几个信号</h6><ul>
+<li>（<strong>但除以0可能发生的情况有 显示除法溢出退出 不提示任何错误 用户程序决定处理办法</strong>）</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>信号量</th>
+<th>默认行为</th>
+<th style="text-align:left">事件</th>
+<th>何时考核</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SIGFPE</td>
+<td>终止并转储内存</td>
+<td style="text-align:left">进程试图除以0                                                                                                    但除以0可能发生的情况有 显示除法溢出退出 不提示任何错误 用户程序决定处理办法</td>
+<td>2017A</td>
+</tr>
+<tr>
+<td>SIGCHLD</td>
+<td>忽略</td>
+<td style="text-align:left">子进程终止或者停止时发送给父进程</td>
+<td>2017B，2018B</td>
+</tr>
+<tr>
+<td>SIGCONT</td>
+<td>忽略</td>
+<td style="text-align:left">继续进程如果该进程停止（预定义默认行为）</td>
+<td>2017A</td>
+</tr>
+<tr>
+<td>SIGINT</td>
+<td>终止</td>
+<td style="text-align:left">来自键盘的中断（ctrl+C）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="第九章-—-虚拟内存"><a href="#第九章-—-虚拟内存" class="headerlink" title="第九章 — 虚拟内存"></a>第九章 — 虚拟内存</h4><p>CPU生成虚拟地址(VA)访问主存，虚拟地址被送到内存之前先转化成合适的物理地址。——地址翻译</p>
+<p>虚拟页面的集合分为三个不相交的子集</p>
+<ul>
+<li>未分配</li>
+<li>缓存的</li>
+<li>未缓存的</li>
+</ul>
+<p><strong>页表条目的大小是n，也就是地址位数。</strong></p>
+<h5 id="1-地址翻译过程："><a href="#1-地址翻译过程：" class="headerlink" title="1.地址翻译过程："></a>1.地址翻译过程：</h5><p><img src="/2020/12/01/CSAPP-summarize/image-20201205163159359.png" alt="image-20201205163159359"></p>
+<ul>
+<li>第一步：处理器生成VA并发送到MMU</li>
+<li>第二步：MMU生成PTE地址并从高速缓存/主存请求它</li>
+<li>第三步：CACHE/主存向MMU返回PTE</li>
+<li>第4步:PTE中的有效位是零，所以MMU触发了一次异常，传递CPU中的控制到操作系统内核中的缺页异常处理程序。</li>
+<li>第5步:缺页处理程序确定出物理内存中的牺牲页，如果这个页面已经被修改了，则把它换出到磁盘。</li>
+<li>第6步:缺页处理程序页面调入新的页面，并更新内存中的PTE。</li>
+</ul>
+<h5 id="2-地址翻译带CACHE与内存的过程"><a href="#2-地址翻译带CACHE与内存的过程" class="headerlink" title="2.地址翻译带CACHE与内存的过程"></a>2.地址翻译带CACHE与内存的过程</h5><p><img src="/2020/12/01/CSAPP-summarize/image-20201205170317747.png" alt="image-20201205170317747"></p>
+<h5 id="3-地址翻译中的地址结构变换"><a href="#3-地址翻译中的地址结构变换" class="headerlink" title="3.地址翻译中的地址结构变换"></a>3.地址翻译中的地址结构变换</h5><p><img src="/2020/12/01/CSAPP-summarize/image-20201205170418497.png" alt="image-20201205170418497"></p>
+<p>这里默认 <strong>虚拟地址空间48位，物理地址空间52位，CACHE 块大小为64字节，L1、L2 8路组相联。L3 16路组相联。页大小为4KB</strong></p>
+<p><img src="/2020/12/01/CSAPP-summarize/image-20201205172024421.png" alt="image-20201205172024421"></p>
+<p>其中各种地址变化如下</p>
+<p>CPU  产生<code>VA</code> ，形式为 </p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">VPN(虚拟页号)</th>
+<th style="text-align:center">VPO（虚拟页偏移）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">36位（页表号）</td>
+<td style="text-align:center">12位（块大小$2^{12}$）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>VA</code>发送给MMU，MMU生成<code>PTE</code>发送给块表 产生的块表地址<code>LTBA</code>  形式为</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">LTBT（LTB标记）</th>
+<th style="text-align:center">LTBI（LTB索引）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">32位（VPN的前32位）</td>
+<td style="text-align:center">4位（组数量$2^{4}$）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>中间的不命中过程省略，主要看命中过程。<code>LTBA</code> 命中后返回一个 <code>PPO</code>，MMU将<code>VPO</code>与<code>PPO</code>组合形成<code>PA</code>形式为：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">PPN（物理页号）</th>
+<th style="text-align:center">PPO（物理页偏移）= VPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">40位</td>
+<td style="text-align:center">12位</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>MMU将<code>PA</code>传送给CACHE，变化为：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">CT</th>
+<th style="text-align:center">CI</th>
+<th style="text-align:center">CO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">40</td>
+<td style="text-align:center">6（$2^6$组）</td>
+<td style="text-align:center">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h5 id="4-分配器"><a href="#4-分配器" class="headerlink" title="4.分配器"></a>4.分配器</h5><h6 id="隐式空闲链表"><a href="#隐式空闲链表" class="headerlink" title="隐式空闲链表"></a>隐式空闲链表</h6><p><img src="/2020/12/01/CSAPP-summarize/image-20201206212526290.png" alt="image-20201206212526290"></p>
+<p>块大小为8的倍数，并且头部占据4个字节</p>
+<p>例如 malloc(13) = 4+13=17 -&gt; 24 头部是 0001 1001 也就是0x19（后三位一定是0因为盘块大小是8的整数）</p>
+<p><strong>当分配器合并的时候会在尾部设置一个和头部一样的脚部</strong></p>
+<h6 id="显式空闲链表"><a href="#显式空闲链表" class="headerlink" title="显式空闲链表"></a>显式空闲链表</h6><p><img src="/2020/12/01/CSAPP-summarize/image-20201206213231762.png" alt="image-20201206213231762"></p>
+<p><strong>简单分离存储：</strong>链表包含大小相同的块</p>
+<p><strong>分离适配：</strong>块用链表连接</p>
+<p><strong>伙伴系统：</strong>每个类大小都是2的幂</p>
+<h6 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h6><p><img src="/2020/12/01/CSAPP-summarize/image-20201206215004182.png" alt="image-20201206215004182"></p>
+<h4 id="第十章-—-系统级IO"><a href="#第十章-—-系统级IO" class="headerlink" title="第十章 — 系统级IO"></a>第十章 — 系统级IO</h4>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2020/12/01/CSAPP-summarize/" title="CSAPP-summarize">http://yokeso.github.io/2020/12/01/CSAPP-summarize/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/10/05/ComNet2/" rel="prev" title="ComNet2">
+                  <i class="fa fa-chevron-left"></i> ComNet2
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/01/03/Distributed-cloud-computing/" rel="next" title="Distributed_cloud-computing">
+                  Distributed_cloud-computing <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

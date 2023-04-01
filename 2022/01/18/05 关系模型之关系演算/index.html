@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="关系模型之关系演算1.关系演算之元组演算 关系演算以数理逻辑中的谓词演算为基础 是描述关系运算的另一种思维方式 关系演算根据谓词变量不同，分为关系元组演算和关系域演算 基本形式：${t|P(t)}$表示使用谓词P为真的元组t的集合 t是元组变量 $t\in r$表示元组在关系r中 t[A]表示元组t的分量，即t在属性A上的值 P是与谓词逻辑相似的公式，P(t)表示以元组t为变量的公式 可以递归定义">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关系模型之关系演算">
+<meta property="og:url" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="关系模型之关系演算1.关系演算之元组演算 关系演算以数理逻辑中的谓词演算为基础 是描述关系运算的另一种思维方式 关系演算根据谓词变量不同，分为关系元组演算和关系域演算 基本形式：${t|P(t)}$表示使用谓词P为真的元组t的集合 t是元组变量 $t\in r$表示元组在关系r中 t[A]表示元组t的分量，即t在属性A上的值 P是与谓词逻辑相似的公式，P(t)表示以元组t为变量的公式 可以递归定义">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120162850304.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120194242429.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122184553797.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122190150563.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122205710899.png">
+<meta property="article:published_time" content="2022-01-18T02:22:28.000Z">
+<meta property="article:modified_time" content="2022-01-18T02:48:38.000Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120162850304.png">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>关系模型之关系演算 | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97"><span class="nav-number">1.</span> <span class="nav-text">关系模型之关系演算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97%E4%B9%8B%E5%85%83%E7%BB%84%E6%BC%94%E7%AE%97"><span class="nav-number">1.1.</span> <span class="nav-text">1.关系演算之元组演算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97%E4%B9%8B%E5%85%B3%E7%B3%BB%E5%9F%9F%E6%BC%94%E7%AE%97"><span class="nav-number">1.2.</span> <span class="nav-text">2.关系演算之关系域演算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%9F%E6%BC%94%E7%AE%97%E4%B8%8E%E5%85%83%E7%BB%84%E6%BC%94%E7%AE%97%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.3.</span> <span class="nav-text">域演算与元组演算的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%9F%E6%BC%94%E7%AE%97%E8%AF%AD%E8%A8%80QBE"><span class="nav-number">1.4.</span> <span class="nav-text">域演算语言QBE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E8%BF%90%E7%AE%97%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">1.5.</span> <span class="nav-text">关系运算的安全性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%BA%A6%E6%9D%9F%E6%9C%89%E9%99%90%E9%9B%86%E5%90%88DOM"><span class="nav-number">1.5.1.</span> <span class="nav-text">安全约束有限集合DOM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%BB%84%E5%AE%89%E5%85%A8%E6%BC%94%E7%AE%97%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.5.2.</span> <span class="nav-text">元组安全演算表达式</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关系模型之关系演算
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:38" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2022/01/18/05 关系模型之关系演算/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="关系模型之关系演算"><a href="#关系模型之关系演算" class="headerlink" title="关系模型之关系演算"></a>关系模型之关系演算</h1><h2 id="1-关系演算之元组演算"><a href="#1-关系演算之元组演算" class="headerlink" title="1.关系演算之元组演算"></a>1.关系演算之元组演算</h2><ul>
+<li>关系演算以数理逻辑中的谓词演算为基础</li>
+<li>是描述关系运算的另一种思维方式</li>
+<li>关系演算根据谓词变量不同，分为关系元组演算和关系域演算</li>
+<li>基本形式：${t|P(t)}$表示使用谓词P为真的元组t的集合<ul>
+<li>t是元组变量</li>
+<li>$t\in r$表示元组在关系r中</li>
+<li>t[A]表示元组t的分量，即t在属性A上的值</li>
+<li>P是与谓词逻辑相似的公式，P(t)表示以元组t为变量的公式</li>
+<li>可以递归定义</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120162850304.png" alt="image-20210120162850304"></p>
+<p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120194242429.png" alt="image-20210120194242429"></p>
+<h2 id="2-关系演算之关系域演算"><a href="#2-关系演算之关系域演算" class="headerlink" title="2.关系演算之关系域演算"></a>2.关系演算之关系域演算</h2><p>关系域演算公式：</p>
+<p>关系域演算的基本形式：${<x_1,x_2,...,x_n>|p(x_1,x_2,…,x_n)}$</x_1,x_2,...,x_n></p>
+<p>其中，$x_1$代表域变量或常量，P为以$x_1$为变量的公式公式P可以递归构造</p>
+<ul>
+<li><p>三种形式的原子公式</p>
+<ul>
+<li><p>$<x_1,x_2,...,x_n>\in R$。其中$x_i$代表域变量或常量，表示由域变量构成的$<x_1,x_2,...,x_n>$是属于关系R的</x_1,x_2,...,x_n></x_1,x_2,...,x_n></p>
+</li>
+<li><p>$x\theta y$。其中，域变量x与常量c之间满足比较关系$\theta$，$\theta$是比较运算符$&lt;,\leq,=,&lt;&gt;,&gt;,\geq$</p>
+</li>
+<li>$x\theta y$。其中，域变量x与常量y之间满足比较关系$\theta$，</li>
+</ul>
+</li>
+<li><p>如果p是公式，那么$\lnot p$也是公式</p>
+</li>
+<li>如果P1,P2 是公式。那么$P1\and P2,P1\or P2$也是公式</li>
+<li>如果P是公式，x是域变量，则$\exists (x)(P(x))$和$\forall (x)(P(x))$也是公式、</li>
+<li>需要时可加括弧</li>
+<li>上述运算符的优先次序自高至底为：括弧；$\theta；\exists; \forall;\lnot;\and;\or$</li>
+<li>公式只限于以上形式</li>
+</ul>
+<h2 id="域演算与元组演算的区别"><a href="#域演算与元组演算的区别" class="headerlink" title="域演算与元组演算的区别"></a>域演算与元组演算的区别</h2><p>元组演算的基本形式：${t|p(t)}$</p>
+<p>域演算的基本形式：${<x_1,x_2,...,x_n>|P(x_1,x_2,…,x_n)}$</x_1,x_2,...,x_n></p>
+<p>元组演算是以元组为变量，以元组为基本处理单位，先找到元组，然后找到元组分组，然后再找到元组分量，进行谓词判断。</p>
+<p>域演算是以域变量为基本处理单位，先有域变量，然后再判断由这些域变量组成的元组是否满足谓词判断。</p>
+<p>公式的运算符是相同的，之有其中的变量不同。</p>
+<h2 id="域演算语言QBE"><a href="#域演算语言QBE" class="headerlink" title="域演算语言QBE"></a>域演算语言QBE</h2><p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122184553797.png" alt="image-20210122184553797"></p>
+<p>QBE操作框架由四个部分组成</p>
+<ul>
+<li>关系名区：用于书写欲待查询的关系名</li>
+<li>属性名区：用于显示对应关系名区关系的所有属性名</li>
+<li>操作命令区：用于书写查询操作的命令</li>
+<li>查询条件区：用于书写查询条件</li>
+</ul>
+<p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122190150563.png" alt="image-20210122190150563"></p>
+<p>QBE操作命令</p>
+<ul>
+<li>Print或P．——显示输出命令</li>
+<li>Delete或D．——删除操作</li>
+<li>Insert或I．——插入操作</li>
+<li>Update或Ｕ．——更新操作</li>
+</ul>
+<p>QBE的查询条件 —不同属性上的与条件</p>
+<ul>
+<li>QBE不同属性上的与条件可以写在同一行中</li>
+</ul>
+<p>QBE的查询条件—示例元素与投影</p>
+<ul>
+<li><p>条件$\theta$参量中的参量也可以是域参量,用任何一个值(不必是结果中的值)带有下划线表示,被称为示例元素.示例元素下划线上卖弄的值不起作用,被当做变量名用来对待,只用于占位或是链接条件.不带下划线的则是构成实际条件一部分的值</p>
+</li>
+<li><p>当不是显示出所有内容时,可在条件区对应要显示的列下面书写显示输出命令(投影运算).</p>
+</li>
+</ul>
+<p>QBE的查询条件—用示例元素实现与运算和或运算</p>
+<p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122205710899.png" alt="image-20210122205710899"></p>
+<h2 id="关系运算的安全性"><a href="#关系运算的安全性" class="headerlink" title="关系运算的安全性"></a>关系运算的安全性</h2><p><strong>不产生无限关系和无穷验证的运算被称为是安全的</strong></p>
+<ul>
+<li><p>关系代数是一种集合运算，是安全的</p>
+<ul>
+<li>集合本身是有限的，有限元素集合的有限次运算仍旧是有限的</li>
+</ul>
+</li>
+<li><p>关系演算不一定是安全的</p>
+<ul>
+<li>例如${t|\lnot (R(t)),},{t|R(t)\or t[2]&gt;3}$可能表示无限关系</li>
+<li>R(t)是有限的，但不在R(t)中的元素就可能是无限的</li>
+<li>再例如：$(\exists u)(\omega (u))$，$(\forall u)(\omega (u))$</li>
+<li>前者称为“假验证”，即验证所有元素是否都使得$\omega (u)$为false，后者被称为“真验证”，即验证所有元素是否都使得$\omega (u)$为true。检验所有元素就可能造成正无穷</li>
+</ul>
+</li>
+<li><p>对关系演算需要施加约束条件，即任何一个公式都要在一个集合范围内操作，而不是无限范围内操作，才能保证其安全性</p>
+</li>
+</ul>
+<h3 id="安全约束有限集合DOM"><a href="#安全约束有限集合DOM" class="headerlink" title="安全约束有限集合DOM"></a>安全约束有限集合DOM</h3><ul>
+<li>DOM$(\psi)$是一个有限集合，其中的每个符号要么是$\psi$中明显出现的符号，要么是出现在$\psi$ 中的某个关系R的某元组分量</li>
+<li>DOM主要用于约束$\psi$中的一些谓词的计算范围，它不必是最小集合</li>
+</ul>
+<h3 id="元组安全演算表达式"><a href="#元组安全演算表达式" class="headerlink" title="元组安全演算表达式"></a>元组安全演算表达式</h3><p>满足下面三个条件的元组演算表达式${t|\psi(t)}$称为安全表达式</p>
+<ul>
+<li>只要t满足$\psi$，他的每个分量就是DOM$(\psi)$的一个成员</li>
+<li>${t|\psi(t)}$中t的取值只能是DOM中的值，是有限的</li>
+<li>对于$\psi$中形如$(\exists u)(\omega (u))$的子表达式，若u 满足w，则u的每个分量都是DOM(w)的成员</li>
+<li>${t|\psi(t)}$中的每个$(\exists u)(\omega (u))$的子表达式，只需验证DOM中的元素是否有使$\omega (u)$为真的元素，已经明确其都不满足$\omega (u)$，无需验证</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/" title="关系模型之关系演算">http://yokeso.github.io/2022/01/18/05 关系模型之关系演算/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/07%20%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%AD%E8%A8%80%E2%80%94%E2%80%94SQL/" rel="prev" title="数据库语言--SQL">
+                  <i class="fa fa-chevron-left"></i> 数据库语言--SQL
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/18/04%20%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0/" rel="next" title="关系代数">
+                  关系代数 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

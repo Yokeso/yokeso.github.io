@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="ZigBee协议栈探究—-（三）网络创建关于设备的链接，还需要从头说起。 在（一）中我提到过一个函数osalInitTasks，这个函数位于OSAL_Smart_home.c中。我们再把这个函数拿出来看一下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZigBee协议栈探究---（三）网络创建">
+<meta property="og:url" content="http://yokeso.github.io/2021/03/15/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%89%EF%BC%89%E7%BD%91%E7%BB%9C%E5%88%9B%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="ZigBee协议栈探究—-（三）网络创建关于设备的链接，还需要从头说起。 在（一）中我提到过一个函数osalInitTasks，这个函数位于OSAL_Smart_home.c中。我们再把这个函数拿出来看一下：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-15T03:29:49.000Z">
+<meta property="article:modified_time" content="2021-03-18T15:40:42.000Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="ZigBee">
+<meta property="article:tag" content="CC2530">
+<meta property="article:tag" content="协议栈">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2021/03/15/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%89%EF%BC%89%E7%BD%91%E7%BB%9C%E5%88%9B%E5%BB%BA/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>ZigBee协议栈探究---（三）网络创建 | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6%E2%80%94-%EF%BC%88%E4%B8%89%EF%BC%89%E7%BD%91%E7%BB%9C%E5%88%9B%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">ZigBee协议栈探究—-（三）网络创建</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2021/03/15/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%89%EF%BC%89%E7%BD%91%E7%BB%9C%E5%88%9B%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZigBee协议栈探究---（三）网络创建
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-15 11:29:49" itemprop="dateCreated datePublished" datetime="2021-03-15T11:29:49+08:00">2021-03-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-03-18 23:40:42" itemprop="dateModified" datetime="2021-03-18T23:40:42+08:00">2021-03-18</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2021/03/15/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%89%EF%BC%89%E7%BD%91%E7%BB%9C%E5%88%9B%E5%BB%BA/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2021/03/15/ZigBee协议栈探究---（三）网络创建/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="ZigBee协议栈探究—-（三）网络创建"><a href="#ZigBee协议栈探究—-（三）网络创建" class="headerlink" title="ZigBee协议栈探究—-（三）网络创建"></a>ZigBee协议栈探究—-（三）网络创建</h1><p>关于设备的链接，还需要从头说起。</p>
+<p>在（一）中我提到过一个函数<code>osalInitTasks</code>，这个函数位于<code>OSAL_Smart_home.c</code>中。我们再把这个函数拿出来看一下：</p>
+<span id="more"></span>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      osalInitTasks</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief   This function invokes the initialization function for each task.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   void</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  none</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">osalInitTasks</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint8 taskID = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  tasksEvents = (uint16 *)osal_mem_alloc( <span class="keyword">sizeof</span>( uint16 ) * tasksCnt); <span class="comment">//分配内存返回缓冲区指针</span></span><br><span class="line">  osal_memset( tasksEvents, <span class="number">0</span>, (<span class="keyword">sizeof</span>( uint16 ) * tasksCnt)); <span class="comment">//设置所分配内存空间单元值0</span></span><br><span class="line"></span><br><span class="line">  macTaskInit( taskID++ ); <span class="comment">//macTaskInit(0) ，用户不需考虑</span></span><br><span class="line">  nwk_init( taskID++ ); <span class="comment">//nwk_init(1)，用户不需考虑</span></span><br><span class="line">  Hal_Init( taskID++ ); <span class="comment">//Hal_Init(2) ，用户需考虑</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined( MT_TASK )</span></span><br><span class="line">  MT_TaskInit( taskID++ );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  APS_Init( taskID++ );  <span class="comment">//APS_Init(3) ，用户不需考虑</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( ZIGBEE_FRAGMENTATION )</span></span><br><span class="line">  APSF_Init( taskID++ );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  ZDApp_Init( taskID++ ); <span class="comment">//ZDApp_Init(4) ，用户需考虑</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( ZIGBEE_FREQ_AGILITY ) || defined ( ZIGBEE_PANID_CONFLICT )</span></span><br><span class="line">  ZDNwkMgr_Init( taskID++ );</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  Smart_home_Init( taskID ); <span class="comment">//用户任务初始化用</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在最开始的流程分析中，我们已经分析了<code>Smart_home_Init( taskID );</code>的作用：初始化用户进程，为用户创建Task。在分析的时候也提过ZDO层，也就是<code>ZigBee Device Object</code>，这个层掌管着ZigBee设备的终端节点具体提供以下功能</p>
+<ul>
+<li>初始化应用支持子层，网络层。</li>
+<li>发现节点和节点功能。在无信标的网络中，加入的节点只对其父节点可见。而其他节点可以通过ZDO的功能来确定网络的整体拓扑结构已经节点所能提供的功能。</li>
+<li>安全加密管理：主要包括安全key的建立和发送，已经安全授权。</li>
+<li>网络的维护功能。</li>
+<li>绑定管理：绑定的功能由应用支持子层提供，但是绑定功能的管理却是由ZDO提供，它确定了绑定表的大小，绑定的发起和绑定的解除等功能。</li>
+<li>节点管理：对于网络协调器和路由器，ZDO提供网络监测、获取路由和绑定信息、发起脱离网络过程等一系列节点管理功能。</li>
+</ul>
+<p>也就是说，我们想要探究的设备发现与绑定，ZigBee组网的过程都在ZDO层进行实现。那就进入<code>ZDApp_Init()</code>这个函数来看看吧。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      ZDApp_Init</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief   ZDApp Initialization function.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   task_id - ZDApp Task ID</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  None</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ZDApp_Init</span><span class="params">( uint8 task_id )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// 存储task ID</span></span><br><span class="line">  ZDAppTaskID = task_id;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化并存储ZDO设备短地址</span></span><br><span class="line">  ZDAppNwkAddr.addrMode = Addr16Bit;</span><br><span class="line">  ZDAppNwkAddr.addr.shortAddr = INVALID_NODE_ADDR;</span><br><span class="line">  (<span class="keyword">void</span>)NLME_GetExtAddr();  <span class="comment">// 加载saveExtAddr指针</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 检查手动“保持自动启动”</span></span><br><span class="line">  ZDAppCheckForHoldKey();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化ZDO项目并设置设备-要创建的设备类型。</span></span><br><span class="line">  ZDO_Init();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 向AF注册端点描述</span></span><br><span class="line">  <span class="comment">// 此任务没有简单描述，但我们仍然需要</span></span><br><span class="line">  <span class="comment">// 以注册端点。</span></span><br><span class="line">  afRegister( (endPointDesc_t *)&amp;ZDApp_epDesc );</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined( ZDO_USERDESC_RESPONSE )</span></span><br><span class="line">  ZDApp_InitUserDesc();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// ZDO_USERDESC_RESPONSE</span></span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 是否启动设备</span></span><br><span class="line">  <span class="keyword">if</span> ( devState != DEV_HOLD )</span><br><span class="line">  &#123;</span><br><span class="line">    ZDOInitDevice( <span class="number">0</span> );</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    ZDOInitDevice( ZDO_INIT_HOLD_NWK_START );</span><br><span class="line">    <span class="comment">// LED闪烁来标识设备启动</span></span><br><span class="line">    HalLedBlink ( HAL_LED_4, <span class="number">0</span>, <span class="number">50</span>, <span class="number">500</span> );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化ZDO回调函数指针zdoCBFunc []</span></span><br><span class="line">  ZDApp_InitZdoCBFunc();</span><br><span class="line"></span><br><span class="line">  ZDApp_RegisterCBs();</span><br><span class="line">&#125; <span class="comment">/* ZDApp_Init() */</span></span><br></pre></td></tr></table></figure>
+<p>在这个函数中可以看到，最重要的一步就是<code>ZDOInitDevice()</code>设备在这里开始启动，并让LED闪烁。那么我们从这里来看看设备是如何启动的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      ZDOInitDevice</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief   启动网络中的设备。该功能将读取ZCD_NV_STARTUP_OPTION（NV项目）以确定是否要</span></span><br><span class="line"><span class="comment"> *          恢复设备的网络状态。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   startDelay - 启动设备的时间延迟（以毫秒为单位）。</span></span><br><span class="line"><span class="comment"> *                       此延迟增加了抖动：((NWK_START_DELAY + startDelay)+</span></span><br><span class="line"><span class="comment"> *                       (osal_rand()&amp;EXTENDED_JOINING_RANDOM_MASK))</span></span><br><span class="line"><span class="comment"> *                       当startDelay设置为ZDO_INIT_HOLD_NWK_START时</span></span><br><span class="line"><span class="comment"> *                       此功能将保持网络初始化。应用可以启动设备。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">NOTE:</span>    如果应用程序想要强制“新”加入，则应用程序在调用这个函数之前应设置在</span></span><br><span class="line"><span class="comment"> *          ZCD_NV_STARTUP_OPTION NV中的ZCD_STARTOPT_DEFAULT_NETWORK_STATE位。“新”加  </span></span><br><span class="line"><span class="comment"> *          入意味着不恢复网络设备状态。使用zgWriteStartupOptions（）设置这些选项。        </span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> *    ZDO_INITDEV_RESTORED_NETWORK_STATE  - 设备的网络状态为已存储</span></span><br><span class="line"><span class="comment"> *    ZDO_INITDEV_NEW_NETWORK_STATE - 网络状态复位</span></span><br><span class="line"><span class="comment"> *          这可能表示ZCD_NV_STARTUP_OPTION 无法还原, 或者没有网络状态需要还原</span></span><br><span class="line"><span class="comment"> *    ZDO_INITDEV_LEAVE_NOT_STARTED - 重置之前，network leave将重加入选项设为真，因此，</span></span><br><span class="line"><span class="comment"> *          该设备不是在网络中启动（仅一次）。下次这个函数调用它将启动。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">uint8 <span class="title">ZDOInitDevice</span><span class="params">( uint16 startDelay )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint8 networkStateNV = ZDO_INITDEV_NEW_NETWORK_STATE;</span><br><span class="line">  uint16 extendedDelay = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( devState == DEV_HOLD )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 如果已更新NV项目，则初始化RAM项目表</span></span><br><span class="line">    zgInitItems( FALSE );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ZDConfig_InitDescriptors();</span><br><span class="line">  <span class="comment">//devtag.071807.todo - fix this temporary solution</span></span><br><span class="line">  _NIB.CapabilityFlags = ZDO_Config_Node_Descriptor.CapabilityFlags;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined ( NV_RESTORE )</span></span><br><span class="line">  <span class="comment">// 直接获取键盘以查看是否需要重置nv。</span></span><br><span class="line">  <span class="comment">// 按住SW_BYPASS_NV键（在OnBoard.h中定义）</span></span><br><span class="line">  <span class="comment">// 在引导时跳过过去的NV 复位。</span></span><br><span class="line">  <span class="keyword">if</span> ( HalKeyRead() == SW_BYPASS_NV )</span><br><span class="line">    networkStateNV = ZDO_INITDEV_NEW_NETWORK_STATE;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 确定是否应恢复NV</span></span><br><span class="line">    networkStateNV = ZDApp_ReadNetworkRestoreState();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( networkStateNV == ZDO_INITDEV_RESTORED_NETWORK_STATE )</span><br><span class="line">  &#123;</span><br><span class="line">    networkStateNV = ZDApp_RestoreNetworkState();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 清除NV中的网络状态</span></span><br><span class="line">    NLME_InitNV();</span><br><span class="line">    NLME_SetDefaultNV();</span><br><span class="line">    <span class="comment">// 清除NWK键值</span></span><br><span class="line">    ZDSecMgrClearNVKeyValues();</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( networkStateNV == ZDO_INITDEV_NEW_NETWORK_STATE )</span><br><span class="line">  &#123;</span><br><span class="line">    ZDAppDetermineDeviceType();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 仅在加入网络时延迟-无法恢复网络状态</span></span><br><span class="line">    extendedDelay = (uint16)((NWK_START_DELAY + startDelay)</span><br><span class="line">              + (osal_rand() &amp; EXTENDED_JOINING_RANDOM_MASK));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化设备类型的安全性e</span></span><br><span class="line">  ZDApp_SecInit( networkStateNV );</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>( ZDO_INIT_HOLD_NWK_START != startDelay )</span><br><span class="line">  &#123;</span><br><span class="line">    devState = DEV_INIT;    <span class="comment">// 删除保持状态</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化请假控制逻辑</span></span><br><span class="line">    ZDApp_LeaveCtrlInit();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查请假控制重置设置</span></span><br><span class="line">    ZDApp_LeaveCtrlStartup( &amp;devState, &amp;startDelay );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 离开可能为持有态</span></span><br><span class="line">    <span class="keyword">if</span> ( devState == DEV_HOLD )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// 设置NV启动选项以强制执行“新”连接。</span></span><br><span class="line">      zgWriteStartupOptions( ZG_STARTUP_SET, ZCD_STARTOPT_DEFAULT_NETWORK_STATE );</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 通知申请</span></span><br><span class="line">      osal_set_event( ZDAppTaskID, ZDO_STATE_CHANGE_EVT );</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> ( ZDO_INITDEV_LEAVE_NOT_STARTED );   <span class="comment">// Don&#x27;t join - (one time).</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 触发网络启动</span></span><br><span class="line">    ZDApp_NetworkInit( extendedDelay );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 设置广播地址掩码以支持广播过滤</span></span><br><span class="line">  NLME_SetBroadcastFilter( ZDO_Config_Node_Descriptor.CapabilityFlags );</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ( networkStateNV );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过阅读可以看到，这个函数的主要目的就是计算启动延迟，并启动网络设备，主要启动设备的语句为<code>ZDApp_NetworkInit( extendedDelay );</code>那我们就来看看这个函数又做了什么</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************</span></span><br><span class="line"><span class="comment"> * @fn      ZDApp_NetworkInit()</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @brief   用来启动网络加入程序</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param   delay - 启动前需等待的毫秒数</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @return  none</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ZDApp_NetworkInit</span><span class="params">( uint16 delay )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> ( delay )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 启动设备前稍等片刻</span></span><br><span class="line">    osal_start_timerEx( ZDAppTaskID, ZDO_NETWORK_INIT, delay );</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    osal_set_event( ZDAppTaskID, ZDO_NETWORK_INIT );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从这两个函数名称和形参来看，都是要将<code>ZDAppTaskID</code>的标识设置为<code>ZDO_NETWORK_INIT</code>。而被设置了flag的任务在这个时候就会被处理。接收这个处理的函数就是<code>ZDApp_event_loop()</code>，由于这个函数过长，所以只看与<code>ZDO_NETWORK_INIT</code>处理相关的部分。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( events &amp; ZDO_NETWORK_INIT )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 初始化APP并启动网络</span></span><br><span class="line">  devState = DEV_INIT;</span><br><span class="line">  osal_set_event( ZDAppTaskID, ZDO_STATE_CHANGE_EVT );</span><br><span class="line"></span><br><span class="line">  ZDO_StartDevice( (uint8)ZDO_Config_Node_Descriptor.LogicalType, devStartMode,</span><br><span class="line">                   DEFAULT_BEACON_ORDER, DEFAULT_SUPERFRAME_ORDER );</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 返回未启动事件c</span></span><br><span class="line">  <span class="keyword">return</span> (events ^ ZDO_NETWORK_INIT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里又调用了ZDO_StartDevice()函数，其中</p>
+<p>ZDO_Config_Node_Descriptor.LogicalType = NODETYPE_COORDINATOR</p>
+<p>devStartMode = MODE_HARD</p>
+<p>且协调器编译了ZDO_COORDINATOR</p>
+<p>也就是说，在这里就要分为协调器的开始组建网络，路由器的辅助转发网络消息，以及终端节点的加入网络进行区别，对于我们现在来说，主要的部分就来看协调器的组建网络：</p>
+<p>我们把这一部分建网的代码拿来看一下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//This function starts a device in a network.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ZDO_StartDevice</span><span class="params">( byte logicalType, devStartModes_t startMode, byte beaconOrder, byte superframeOrder )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   ......</span><br><span class="line">   <span class="keyword">if</span> ( ZG_BUILD_COORDINATOR_TYPE &amp;&amp; logicalType == NODETYPE_COORDINATOR )</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="keyword">if</span> ( startMode == MODE_HARD )</span><br><span class="line">     &#123;</span><br><span class="line">       devState = DEV_COORD_STARTING;</span><br><span class="line">       ret = NLME_NetworkFormationRequest( zgConfigPANID, </span><br><span class="line">                                           zgApsUseExtendedPANID, </span><br><span class="line">                                           zgDefaultChannelList,</span><br><span class="line">                                           zgDefaultStartingScanDuration, </span><br><span class="line">                                           beaconOrder,</span><br><span class="line">                                           superframeOrder, </span><br><span class="line">                                           <span class="literal">false</span> );</span><br><span class="line">     &#125;</span><br><span class="line">     ......</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说，组建网络的重要一环原来是在<code>NLME_NetworkFormationRequest()</code>这个函数中，很遗憾，这部分函数并不开源，但从网络查询中得知，这个函数是用来判断网络状态的，主要要分为两种状态</p>
+<ul>
+<li>nwkStatus为ZSuccess时，也就是网络创建成功了，将设备状态<code>decSAtatue</code>设置为对应的<code>DEV_ZB_COORD</code>,然后设置事件<code>ZDO_STATE_CHANGE_EVENT</code>也就是网络状态发生转变的事件，返回到<code>ZD_App_event_loop()</code>中继续执行</li>
+<li>nwkStatus为非ZSuccess时，也就是网络创建不成功，那么就将增大功率返回到<code>ZD_App_event_loop()</code>中加大功率，如果功率已经是最大了，那么就将<code>devState</code>设置为<code>DEV_INIT</code>（创建网络失败）再设置事件<code>ZDO_STATE_CHANGE_EVENT</code>，返回到<code>ZD_App_event_loop()</code></li>
+</ul>
+<p>所以，无论如何，返回值都是在上面提到的语句中执行，也就是这一条</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">osal_set_event( ZDAppTaskID, ZDO_STATE_CHANGE_EVT );</span><br></pre></td></tr></table></figure>
+<p>那再回过来看<code>ZD_App_event_loop()</code>是怎么处理这个状态的呢？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( events &amp; ZDO_STATE_CHANGE_EVT )</span><br><span class="line">&#123;</span><br><span class="line">  ZDO_UpdateNwkStatus( devState );</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 启动时，如果设备是集中器，则执行一次MTO路由发现</span></span><br><span class="line">  <span class="keyword">if</span> ( zgConcentratorEnable == TRUE )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// Start next event</span></span><br><span class="line">    osal_start_timerEx( NWK_TaskID, NWK_MTO_RTG_REQ_EVT, <span class="number">100</span> );</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>调用了<code>ZDO_UpdateNwkStatus( devState )</code>,网络状态改变,这个函数会更新和发送信息通知每个注册登记过的应用终端.我们再接着来看这个函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ZDO_UpdateNwkStatus</span><span class="params">( devStates_t state )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// Endpoint/Interface descriptor list.</span></span><br><span class="line">  epList_t *epDesc = epList;</span><br><span class="line">  byte bufLen = <span class="keyword">sizeof</span>(<span class="keyword">osal_event_hdr_t</span>);</span><br><span class="line">  <span class="keyword">osal_event_hdr_t</span> *msgPtr;</span><br><span class="line"></span><br><span class="line"> ZDAppNwkAddr.addr.shortAddr = NLME_GetShortAddr();</span><br><span class="line"> (<span class="keyword">void</span>)NLME_GetExtAddr();  <span class="comment">// Load the saveExtAddr pointer.</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">while</span> ( epDesc )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( epDesc-&gt;epDesc-&gt;endPoint != ZDO_EP )</span><br><span class="line">    &#123;</span><br><span class="line">     msgPtr = (<span class="keyword">osal_event_hdr_t</span> *)osal_msg_allocate( bufLen );</span><br><span class="line">     <span class="keyword">if</span> ( msgPtr )</span><br><span class="line">     &#123;</span><br><span class="line">       msgPtr-&gt;event = ZDO_STATE_CHANGE; <span class="comment">// Command ID</span></span><br><span class="line">       msgPtr-&gt;status = (byte)state;</span><br><span class="line"></span><br><span class="line">       osal_msg_send( *(epDesc-&gt;epDesc-&gt;task_id), (byte *)msgPtr ); <span class="comment">//发往应用任务</span></span><br><span class="line">     &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    epDesc = epDesc-&gt;nextDesc;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对SampleApp的协调器来说，这里触发应用任务SampleApp_TaskID的ZDO_STATE_CHANGE事件,看下对ZDO_STATE_CHANGE的处理:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Ccase ZDO_STATE_CHANGE:   </span><br><span class="line">SampleApp_NwkState = (devStates_t)(MSGpkt-&gt;hdr.status); <span class="comment">//获取设备当前状态</span></span><br><span class="line"><span class="keyword">if</span> ( (SampleApp_NwkState == DEV_ZB_COORD)</span><br><span class="line">    || (SampleApp_NwkState == DEV_ROUTER)</span><br><span class="line">    || (SampleApp_NwkState == DEV_END_DEVICE) )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// Start sending the periodic message in a regular interval.</span></span><br><span class="line">  osal_start_timerEx( SampleApp_TaskID,</span><br><span class="line">                    SAMPLEAPP_SEND_PERIODIC_MSG_EVT,</span><br><span class="line">                    SAMPLEAPP_SEND_PERIODIC_MSG_TIMEOUT );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// Device is no longer in the network</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+<p>可以看到当协调器建立网络成功,通过回调函数触发应用任务的ZDO_STATE_CHANGE事件,最终开启定时器发送周期信息.</p>
+<p>路由器也可以按这个思路进行分析。</p>
+<p>最后来给一下大致的流程</p>
+<p>main()  -&gt;  osal_init_system()  -&gt;  osalInitTasks()  -&gt;  ZDApp_Init()  -&gt;  ZDOInitDevice()  -&gt;  ZDApp_NetworkInit  -&gt;  触发ZDAppTaskID的ZDO_NETWORK_INIT       -&gt;  ZDO_StartDevice()-&gt; NLME_NetworkFormationRequest()  -&gt;  网络建立成功ZDO_NetworkFormationConfirmCB    -&gt;                           触发ZDAppTaskID的ZDO_NETWORK_START  -&gt;  ZDApp_NetworkStartEvt()-&gt;触发ZDAppTaskID的ZDO_STATE_CHANGE_EVT-&gt;ZDO_UpdateNwkStatus()  -&gt;  触发SampleApp_TaskID的ZDO_STATE_CHANGE   -&gt;开户周期信息发送的定时器.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2021/03/15/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%B8%89%EF%BC%89%E7%BD%91%E7%BB%9C%E5%88%9B%E5%BB%BA/" title="ZigBee协议栈探究---（三）网络创建">http://yokeso.github.io/2021/03/15/ZigBee协议栈探究---（三）网络创建/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/ZigBee/" rel="tag"><i class="fa fa-tag"></i> ZigBee</a>
+              <a href="/tags/CC2530/" rel="tag"><i class="fa fa-tag"></i> CC2530</a>
+              <a href="/tags/%E5%8D%8F%E8%AE%AE%E6%A0%88/" rel="tag"><i class="fa fa-tag"></i> 协议栈</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/12/ZigBee%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%8E%A2%E7%A9%B6---%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E7%9A%84%E6%8E%A5%E6%94%B6%E4%B8%8E%E5%8F%91%E9%80%81/" rel="prev" title="ZigBee协议栈探究---（二）数据的接收与发送">
+                  <i class="fa fa-chevron-left"></i> ZigBee协议栈探究---（二）数据的接收与发送
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/03/20/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="next" title="正则表达式">
+                  正则表达式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

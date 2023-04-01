@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="嵌入式SQL语言交互式SQL的局限普通用户无法很好的书写SQL 复杂检索结果难以用一条交互式SQL完成，需要结合高级语言中的循环判断来完成 解决方法：高级语言+SQL  既继承了高级语言的过程控制性 又结合SQL语言复杂结果的非过程性 同时为数据库操作者提供安全可靠的操作方式：通过应用程序进行操作  嵌入式SQL：  将SQL嵌入到高级语言中，这种高级语言又称为宿主语言 嵌入在宿主语言的SQL与前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式SQL">
+<meta property="og:url" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="嵌入式SQL语言交互式SQL的局限普通用户无法很好的书写SQL 复杂检索结果难以用一条交互式SQL完成，需要结合高级语言中的循环判断来完成 解决方法：高级语言+SQL  既继承了高级语言的过程控制性 又结合SQL语言复杂结果的非过程性 同时为数据库操作者提供安全可靠的操作方式：通过应用程序进行操作  嵌入式SQL：  将SQL嵌入到高级语言中，这种高级语言又称为宿主语言 嵌入在宿主语言的SQL与前">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users/Yokeso/AppData/Roaming/Typora/typora-user-images/image-20210128130153443.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users/Yokeso/AppData/Roaming/Typora/typora-user-images/image-20210128130514167.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users/Yokeso/AppData/Roaming/Typora/typora-user-images/image-20210128130919048.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128131404635.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128164623447.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128170114120.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128172220301.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128173336071.png">
+<meta property="article:published_time" content="2022-01-18T02:22:28.000Z">
+<meta property="article:modified_time" content="2022-01-18T02:48:16.000Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users/Yokeso/AppData/Roaming/Typora/typora-user-images/image-20210128130153443.png">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>嵌入式SQL | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8FSQL%E8%AF%AD%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">嵌入式SQL语言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8FSQL%E7%9A%84%E5%B1%80%E9%99%90"><span class="nav-number">1.1.</span> <span class="nav-text">交互式SQL的局限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">要解决的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E%E4%B8%8E%E6%95%B0%E6%8D%AE%E9%93%BE%E6%8E%A5"><span class="nav-number">1.3.</span> <span class="nav-text">变量声明与数据链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%A3%B0%E6%98%8E%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">变量的声明与使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E8%BF%9E%E6%8E%A5%E5%92%8C%E6%96%AD%E5%BC%80"><span class="nav-number">1.3.2.</span> <span class="nav-text">程序与数据库的连接和断开</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%89%A7%E8%A1%8C%E7%9A%84%E6%8F%90%E4%BA%A4%E4%B8%8E%E6%92%A4%E9%94%80"><span class="nav-number">1.3.3.</span> <span class="nav-text">SQL执行的提交与撤销</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E7%89%B9%E6%80%A7"><span class="nav-number">1.4.</span> <span class="nav-text">事务的概念和特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.4.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E7%89%B9%E6%80%A7%EF%BC%9AACID"><span class="nav-number">1.4.2.</span> <span class="nav-text">事务的特性：ACID</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E4%B8%8E%E6%B8%B8%E6%A0%87"><span class="nav-number">1.5.</span> <span class="nav-text">数据集与游标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E8%A1%8C%E7%BB%93%E6%9E%9C%E4%B8%8E%E5%A4%9A%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%A4%84%E7%90%86%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-number">1.5.1.</span> <span class="nav-text">单行结果与多行结果处理的差异</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E6%BB%9A%E5%8A%A8%E6%B8%B8%E6%A0%87"><span class="nav-number">1.5.2.</span> <span class="nav-text">可滚动游标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%B0%E5%BD%95%E7%9A%84%E5%88%A0%E9%99%A4"><span class="nav-number">1.5.3.</span> <span class="nav-text">数据库记录的删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%B0%E5%BD%95%E7%9A%84%E6%9B%B4%E6%96%B0"><span class="nav-number">1.5.4.</span> <span class="nav-text">数据库记录的更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%8D%95%E8%8E%B7%E5%8F%8A%E5%85%B6%E5%A4%84%E7%90%86"><span class="nav-number">1.6.</span> <span class="nav-text">状态捕获及其处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E9%80%9A%E4%BF%A1%E6%9C%BA%E5%88%B6%EF%BC%9ASQLCA"><span class="nav-number">1.6.1.</span> <span class="nav-text">SQL通信机制：SQLCA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%8D%95%E8%8E%B7%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">状态捕获语句</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          嵌入式SQL
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:16" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2022/01/18/10 嵌入式SQL/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="嵌入式SQL语言"><a href="#嵌入式SQL语言" class="headerlink" title="嵌入式SQL语言"></a>嵌入式SQL语言</h1><h2 id="交互式SQL的局限"><a href="#交互式SQL的局限" class="headerlink" title="交互式SQL的局限"></a>交互式SQL的局限</h2><p>普通用户无法很好的书写SQL</p>
+<p>复杂检索结果难以用一条交互式SQL完成，需要结合高级语言中的循环判断来完成</p>
+<p>解决方法：高级语言+SQL</p>
+<ul>
+<li>既继承了高级语言的过程控制性</li>
+<li>又结合SQL语言复杂结果的非过程性</li>
+<li>同时为数据库操作者提供安全可靠的操作方式：通过应用程序进行操作</li>
+</ul>
+<p>嵌入式SQL：</p>
+<ul>
+<li>将SQL嵌入到高级语言中，这种高级语言又称为宿主语言</li>
+<li>嵌入在宿主语言的SQL与前面介绍的不太相同</li>
+</ul>
+<h2 id="要解决的问题"><a href="#要解决的问题" class="headerlink" title="要解决的问题"></a>要解决的问题</h2><p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users\Yokeso\AppData\Roaming\Typora\typora-user-images\image-20210128130153443.png" alt="问题"></p>
+<h2 id="变量声明与数据链接"><a href="#变量声明与数据链接" class="headerlink" title="变量声明与数据链接"></a>变量声明与数据链接</h2><h3 id="变量的声明与使用"><a href="#变量的声明与使用" class="headerlink" title="变量的声明与使用"></a>变量的声明与使用</h3><p>在嵌入式SQL语句中可以出现宿主原因呢语句所使用的变量</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exec</span> <span class="keyword">sql</span> <span class="keyword">select</span> Sname,Sage <span class="keyword">into</span> :vSname,:vSage <span class="keyword">from</span> Student <span class="keyword">where</span> Sname :specName</span><br></pre></td></tr></table></figure>
+<p>需要特殊声明的变量：</p>
+<p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users\Yokeso\AppData\Roaming\Typora\typora-user-images\image-20210128130514167.png" alt="特殊声明"></p>
+<p>变量声明和赋值中，要注意：</p>
+<ul>
+<li><p>宿主程序的字符串变量长度应比字符型字段的长度多一个。因宿主程序的字符串尾部多一个终止符为“\0”，而程序中用双引号描述</p>
+</li>
+<li><p>宿主程序变量类型与数据库字段之间有些是有差异的，有些DBMS可支持自动转换，有些不能。</p>
+</li>
+<li><p>声明的变量，可以在宿主程序中赋值，然后传递给SQL的where等子句中，使SQL语句能够按照指定的要求（可变化的进行检索）</p>
+</li>
+</ul>
+<p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/Users\Yokeso\AppData\Roaming\Typora\typora-user-images\image-20210128130919048.png" alt="动态赋值"></p>
+<p>嵌入式比交互式SQL语句灵活了一些，只需要改变一下变量值，SQL语句便可以反复使用以检测出不同结果</p>
+<h3 id="程序与数据库的连接和断开"><a href="#程序与数据库的连接和断开" class="headerlink" title="程序与数据库的连接和断开"></a>程序与数据库的连接和断开</h3><p>在嵌入式SQL执行前，首先要与数据库进行链接，不同的DBMS链接语句方式略有差异</p>
+<p>同样在执行后需要断开链接</p>
+<h3 id="SQL执行的提交与撤销"><a href="#SQL执行的提交与撤销" class="headerlink" title="SQL执行的提交与撤销"></a>SQL执行的提交与撤销</h3><p>SQL执行过程中必须有提交和撤销语句才能确认其操作结果</p>
+<p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128131404635.png" alt="提交和撤销"></p>
+<h2 id="事务的概念和特性"><a href="#事务的概念和特性" class="headerlink" title="事务的概念和特性"></a>事务的概念和特性</h2><h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>一个存取或或改变数据库内容的一次执行，或者说一条或多条SQL语句的一次执行被看作一个任务</p>
+<p>事务是数据库管理系统提供的控制数据操作的一种手段，通过这一手段，应用程序员将一系列的数据库操作组合在一起作为以一个整体进行操作和控制，以便数据库系统能够提供一致性状态转换保证</p>
+<ul>
+<li>事务一般是由应用程序员提出，因此有开始和结束，结束前需要提前提交或撤销。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Begin</span> Transaction</span><br><span class="line">     <span class="keyword">exec</span> <span class="keyword">sql</span> ...</span><br><span class="line">     ...</span><br><span class="line">     <span class="keyword">exec</span> <span class="keyword">sql</span> ...</span><br><span class="line">     <span class="keyword">exec</span> <span class="keyword">sql</span> consit work<span class="operator">|</span><span class="keyword">exec</span> <span class="keyword">sql</span> <span class="keyword">rollback</span> work</span><br><span class="line"><span class="keyword">End</span> Transaction</span><br></pre></td></tr></table></figure>
+<p>在嵌入式SQL程序中，任何一条数据库操纵语句（如exec sql select等）都会引发一个新事物的开始，只要该程序当前没有正在处理的事务。而事务的结束时需要应用程序员通过commit或rollback确认的。因此Begin Transaction 和End Transaction两行语句是不需要的。</p>
+<h3 id="事务的特性：ACID"><a href="#事务的特性：ACID" class="headerlink" title="事务的特性：ACID"></a>事务的特性：ACID</h3><ul>
+<li>原子性Atomicity：DBMS能够保证事务的一组更新操作是原子不可分的，即对于DB而言，要么不做，要么全做</li>
+<li>一致性Consistency：DBMS保证事务的操作状态时正确的，符合一致性的操作规则，它时由进一步隔离性来保证的</li>
+<li>隔离性Isolation：DBMS保证并发执行的多个事务之间互相不受影响，例如两个事务T1和T2，即使并发执行，也相当于先执行了T1，再执行T2，或者先执行了T2，再执行T1。</li>
+<li>持久性Durability：DBMS保证已提交的事务的影响是持久的，被撤销事务的影响是可恢复的</li>
+</ul>
+<h2 id="数据集与游标"><a href="#数据集与游标" class="headerlink" title="数据集与游标"></a>数据集与游标</h2><h3 id="单行结果与多行结果处理的差异"><a href="#单行结果与多行结果处理的差异" class="headerlink" title="单行结果与多行结果处理的差异"></a>单行结果与多行结果处理的差异</h3><p>单行结果可以直接传送到宿主程序的变量中</p>
+<p>多行结果则需要使用游标</p>
+<ul>
+<li>游标是指向某检索记录集的指针</li>
+<li><p>通过这个指针的移动，每次读一行，处理一行，直到结束</p>
+</li>
+<li><p>读一行的操作通过Fetch…into语句实现的，每一次Fetch，都先向下移动指针，然后读取</p>
+</li>
+<li>记录集有结束标识EOF，用来标记后面没有记录了</li>
+</ul>
+<p>游标的使用需要先定义，再打开（执行），一条接着一条处理，最后关闭</p>
+<p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128164623447.png" alt="游标"></p>
+<h3 id="可滚动游标"><a href="#可滚动游标" class="headerlink" title="可滚动游标"></a>可滚动游标</h3><p>标准的游标自开始向结束方向移动，每fetch一次，向结束方向移动一次，一条记录之恶能访问一次</p>
+<p>可滚动游标使指针在记录集之间灵活移动，使每条记录可以被反复访问的一种游标。</p>
+<p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128170114120.png" alt="可滚动游标"></p>
+<h3 id="数据库记录的删除"><a href="#数据库记录的删除" class="headerlink" title="数据库记录的删除"></a>数据库记录的删除</h3><p>一种是查找删除（Delete语句），<strong>一种是定位删除（删除游标对应位置）</strong></p>
+<p>EXEC SQL DELETE FROM tablename [corrname]</p>
+<p>​            WHERE search_condition|<strong>WHERE CURRENT cursor_name</strong></p>
+<h3 id="数据库记录的更新"><a href="#数据库记录的更新" class="headerlink" title="数据库记录的更新"></a>数据库记录的更新</h3><p>一种是查找更新（UPdate语句），<strong>一种是定位更新（更新游标对应位置）</strong></p>
+<h2 id="状态捕获及其处理"><a href="#状态捕获及其处理" class="headerlink" title="状态捕获及其处理"></a>状态捕获及其处理</h2><p>状态，是SQL语句的执行状态，尤其指一些出错状态，有时程序需要知道这些状态并进行处理</p>
+<p>嵌入式SQL中，状态捕获及其处理由三部分构成</p>
+<ul>
+<li><p>设置SQL通信去：一般在嵌入式SQL程序的开始处便设置</p>
+<ul>
+<li>exec sql include sqlca</li>
+</ul>
+</li>
+<li><p>设置状态捕获语句 在嵌入式程序任何位置都可设置，可以多次设置，但是由作用域</p>
+<ul>
+<li>exec sql whenever sqlerror goto report_error</li>
+</ul>
+</li>
+<li><p>状态处理语句：某一段程序以应对SQL操作的某种状态</p>
+<ul>
+<li>report_error:exec sql rollback</li>
+</ul>
+</li>
+</ul>
+<h3 id="SQL通信机制：SQLCA"><a href="#SQL通信机制：SQLCA" class="headerlink" title="SQL通信机制：SQLCA"></a>SQL通信机制：SQLCA</h3><p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128172220301.png" alt="SQLCA"></p>
+<h4 id="状态捕获语句"><a href="#状态捕获语句" class="headerlink" title="状态捕获语句"></a>状态捕获语句</h4><p>exec sql whenever condition action;</p>
+<p>Whenever语句是设置一个”条件陷阱，条件语句会由Exec SQL 语句所引起的对数据库系统的调用自动检查是否满足条件（condition）“</p>
+<ul>
+<li>SQLERROR：检测是否有SQL语句出错，并具体意义依赖于特定的DBMS</li>
+<li>INOT　FOUND：执行某一SQL语句后，没有相应的结果记录出现</li>
+<li>SQLWARNING：不是错误，但应该引起注意的条件</li>
+</ul>
+<p>如果满足condition,则要采取一些动作(由action指出)</p>
+<ul>
+<li>CONTINUE:忽略条件或错误，继续执行</li>
+<li>GOTO标号:转移到标号所指示的语句，去进行相应的处理</li>
+<li>STOP:终止程序运行、撤消当前的工作、断开数据库的连接</li>
+<li>DO函数或CALL函数:调用宿主程序的函数进行处理，函数返回后从引发该condition的Exec SQL语句之后的语句继续进行</li>
+</ul>
+<p>Whenever语句的范围是其后所有的Exec SQL语句，一直到程序中出现另外一条相同条件的Whenever为止，后面的覆盖前面的</p>
+<p><img src="/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/image-20210128173336071.png" alt="image-20210128173336071"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2022/01/18/10%20%E5%B5%8C%E5%85%A5%E5%BC%8FSQL/" title="嵌入式SQL">http://yokeso.github.io/2022/01/18/10 嵌入式SQL/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"><i class="fa fa-tag"></i> 数据库</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/11%20%E5%8A%A8%E6%80%81SQL%E7%9A%84%E6%A6%82%E5%BF%B5/" rel="prev" title="动态SQL的概念">
+                  <i class="fa fa-chevron-left"></i> 动态SQL的概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/18/09%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%89%E5%85%A8%E6%80%A7/" rel="next" title="数据库安全性">
+                  数据库安全性 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

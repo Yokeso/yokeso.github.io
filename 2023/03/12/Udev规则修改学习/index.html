@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="Udev规则修改学习0x01 udev简介udev的全称是Dynamic device management,也就是曾经的devfs的继任者。udev的主要目的是为动态&#x2F;dev目录提供用户空间的解决方案，以及实现持久的设备命名。 在典型的linux系统上，&#x2F;dev目录主要用于存储类似文件的设备节点，在这个目录下的每个节点都指向系统设备的一部分，这部分可能存在，也可能不存在。用户的应用程序就是通过使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Udev规则修改学习">
+<meta property="og:url" content="http://yokeso.github.io/2023/03/12/Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="Udev规则修改学习0x01 udev简介udev的全称是Dynamic device management,也就是曾经的devfs的继任者。udev的主要目的是为动态&#x2F;dev目录提供用户空间的解决方案，以及实现持久的设备命名。 在典型的linux系统上，&#x2F;dev目录主要用于存储类似文件的设备节点，在这个目录下的每个节点都指向系统设备的一部分，这部分可能存在，也可能不存在。用户的应用程序就是通过使">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-12T02:03:41.000Z">
+<meta property="article:modified_time" content="2023-04-01T11:15:02.099Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="Udev规则">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2023/03/12/Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Udev规则修改学习 | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">Udev规则修改学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-udev%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 udev简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E8%A7%84%E5%88%99%E6%96%87%E4%BB%B6%E5%92%8C%E8%AF%AD%E4%B9%89"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 规则文件和语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x21-%E8%A7%84%E5%88%99%E6%96%87%E4%BB%B6%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">0x21 规则文件介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x22-%E8%AF%AD%E6%B3%95%E8%A7%84%E5%88%99"><span class="nav-number">1.2.2.</span> <span class="nav-text">0x22 语法规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x23-udev-key-value%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">1.2.3.</span> <span class="nav-text">0x23 udev key&#x2F;value操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x24-udev%E8%A7%84%E5%88%99%E5%8C%B9%E9%85%8D%E9%94%AE"><span class="nav-number">1.2.4.</span> <span class="nav-text">0x24 udev规则匹配键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x25-%E5%80%BC%E5%92%8C%E5%8F%AF%E6%9B%BF%E6%8D%A2%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">1.2.5.</span> <span class="nav-text">0x25 值和可替换操作符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E8%A7%84%E5%88%99%E6%96%87%E4%BB%B6%E7%9A%84%E7%BC%96%E5%86%99"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 规则文件的编写</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2023/03/12/Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Udev规则修改学习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-12 10:03:41" itemprop="dateCreated datePublished" datetime="2023-03-12T10:03:41+08:00">2023-03-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-04-01 19:15:02" itemprop="dateModified" datetime="2023-04-01T19:15:02+08:00">2023-04-01</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2023/03/12/Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2023/03/12/Udev规则修改学习/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Udev规则修改学习"><a href="#Udev规则修改学习" class="headerlink" title="Udev规则修改学习"></a>Udev规则修改学习</h1><h2 id="0x01-udev简介"><a href="#0x01-udev简介" class="headerlink" title="0x01 udev简介"></a>0x01 udev简介</h2><p>udev的全称是Dynamic device management,也就是曾经的<code>devfs</code>的继任者。<code>udev</code>的主要目的是为动态<code>/dev</code>目录提供用户空间的解决方案，以及实现持久的设备命名。</p>
+<p>在典型的linux系统上，<code>/dev</code>目录主要用于存储类似文件的设备节点，在这个目录下的每个节点都指向系统设备的一部分，这部分可能存在，也可能不存在。用户的应用程序就是通过使用这些设备节点来与系统的硬件进行交互的。这里引用中文文档中的一些原话</p>
+<blockquote>
+<p>最初的/dev目录只是用可能出现在系统中的每个设备填充。由于这个原因，/dev目录通常非常大。devfs提供了一种更易于管理的方法(值得注意的是，它只使用插入系统的硬件来填充/dev)，以及一些其他功能，但是系统被证明存在一些难以修复的问题。</p>
+<p>udev是管理/dev目录的“新”方法，旨在清除以前/dev实现中的一些问题，并提供一个健壮的前进路径。为了创建和命名与系统中存在的设备相对应的/dev设备节点，udev依赖于sysfs提供的信息与用户提供的规则进行匹配。</p>
+</blockquote>
+<p>那说了这么多，udev的真正作用是什么呢？对于标准设备而言，udev很可能是一个永远触碰不到的东西。但是对于新的或者外来的设备而言，如果不进行配置修改，这些设备可能会导致无法访问。或者说linux本身会给这些设备分配不恰当的名字，所属或者权限来创建设备文件。包括RS-232串口以及音视频设备的属组或者权限都可以在udev中进行更改。</p>
+<h2 id="0x02-规则文件和语义"><a href="#0x02-规则文件和语义" class="headerlink" title="0x02 规则文件和语义"></a>0x02 规则文件和语义</h2><h3 id="0x21-规则文件介绍"><a href="#0x21-规则文件介绍" class="headerlink" title="0x21 规则文件介绍"></a>0x21 规则文件介绍</h3><p>在决定如何命名设备以及执行哪些附加操作时，udev会读取一系列的规则文件。这些文件保存在<code>/etc/udev/rules.d</code>中。文件的后缀名均为<code>.rules</code>。</p>
+<p>其中要注意的是<code>50-udev.rules</code>。这个文件中存放的是默认的udev存储规则，所以用户不应该将规则直接写入这个文件中。在这个文件中包含了一些示例以及一些证明<code>devfs</code>样式<code>/dev</code>布局的默认规则。</p>
+<p><code>rules.d</code>中的文件按照此法顺序解析。所以在某些情况下，解析的规则非常重要。这里还是引用一下文档中的说法</p>
+<blockquote>
+<p>通常，您希望在缺省值之前解析您自己的规则，因此我建议您在/etc/udev/rules.d/10-local.rules上创建一个文件，并将所有规则写入该文件。</p>
+</blockquote>
+<p>在规则文件中，以<code>#</code>开头的行被视为注释。每隔一个非空行就是一个规则，规则之间不能跨越多行。</p>
+<p>一个设备可以由多个规则机型匹配。udev在发现匹配规则时不会停止处理，会继续搜索并且尝试应用它所知道的每个规则。</p>
+<h3 id="0x22-语法规则"><a href="#0x22-语法规则" class="headerlink" title="0x22 语法规则"></a>0x22 语法规则</h3><p>每个规则都由一系列的<code>key-value</code>对组成。这些对之间由都好分割。识别规则所适用设备的条件是键的匹配。一个规则至少要有一个匹配键和一个赋值键。</p>
+<p>下面举一个简单的例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KERNEL==&quot;hdb&quot;,NAME=&quot;my_spare_disk&quot;</span><br></pre></td></tr></table></figure>
+<p>这里包括了一个匹配键和一个赋值键。匹配键使用的相等运算符进行匹配<code>==</code>（后续会进行详细介绍）。赋值键通过赋值运算符<code>=</code>进行值的赋予。</p>
+<blockquote>
+<p>注意udev不支持任何形式的行延续。不要在您的规则中插入任何换行符，因为这将导致udev将您的一个规则视为多个规则，并且不能按预期工作。</p>
+</blockquote>
+<h3 id="0x23-udev-key-value操作符"><a href="#0x23-udev-key-value操作符" class="headerlink" title="0x23 udev key/value操作符"></a>0x23 udev key/value操作符</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">操作符</th>
+<th style="text-align:center">匹配或赋值</th>
+<th style="text-align:center">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">==</td>
+<td style="text-align:center">匹配</td>
+<td style="text-align:center">相等比较</td>
+</tr>
+<tr>
+<td style="text-align:center">!=</td>
+<td style="text-align:center">匹配</td>
+<td style="text-align:center">不等比较</td>
+</tr>
+<tr>
+<td style="text-align:center">=</td>
+<td style="text-align:center">赋值</td>
+<td style="text-align:center">分配一个特定的值给该键，他可以覆盖之前的赋值。</td>
+</tr>
+<tr>
+<td style="text-align:center">+=</td>
+<td style="text-align:center">赋值</td>
+<td style="text-align:center">追加特定的值给已经存在的键</td>
+</tr>
+<tr>
+<td style="text-align:center">:=      赋值       。</td>
+<td style="text-align:center">赋值</td>
+<td style="text-align:center">分配一个特定的值给该键，后面的规则不可能覆盖它</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="0x24-udev规则匹配键"><a href="#0x24-udev规则匹配键" class="headerlink" title="0x24 udev规则匹配键"></a>0x24 udev规则匹配键</h3><blockquote>
+<p>ACTION： 事件 (uevent) 的行为，例如：add( 添加设备 )、remove( 删除设备 )。</p>
+<p>KERNEL： 内核设备名称，例如：sda, cdrom。</p>
+<p>DEVPATH：设备的 devpath 路径。</p>
+<p>SUBSYSTEM： 设备的子系统名称，例如：sda 的子系统为 block。</p>
+<p>BUS： 设备在 devpath 里的总线名称，例如：usb。</p>
+<p>DRIVER： 设备在 devpath 里的设备驱动名称，例如：ide-cdrom。</p>
+<p>ID： 设备在 devpath 里的识别号。</p>
+<p>SYSFS{filename}： 设备的 devpath 路径下，设备的属性文件“filename”里的内容。</p>
+<p>例如：SYSFS{model}==“ST936701SS”表示：如果设备的型号为 ST936701SS，则该设备匹配该 匹配键。</p>
+<p>在一条规则中，可以设定最多五条 SYSFS 的 匹配键。</p>
+<p>ENV{key}： 环境变量。在一条规则中，可以设定最多五条环境变量的 匹配键。</p>
+<p>PROGRAM：调用外部命令。</p>
+<p>RESULT： 外部命令 PROGRAM 的返回结果。</p>
+</blockquote>
+<p>例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PROGRAM==&quot;/lib/udev/scsi_id -g -s $devpath&quot;, RESULT==&quot;35000c50000a7ef67&quot;</span><br></pre></td></tr></table></figure>
+<p>可以解释为调用外部命令 /lib/udev/scsi_id查询设备的 SCSI ID，如果返回结果为 35000c50000a7ef67，则该设备匹配该 匹配键。</p>
+<h3 id="0x25-值和可替换操作符"><a href="#0x25-值和可替换操作符" class="headerlink" title="0x25 值和可替换操作符"></a>0x25 值和可替换操作符</h3><p>介绍完操作符以及键后，我们还要来介绍规则文件中的值。在udev中，用户可以直接定制udev规则文件的值，也可以引用下列操作替换符来进行。</p>
+<blockquote>
+<p>$kernel, %k：设备的内核设备名称，例如：sda、cdrom。</p>
+<p>$number, %n：设备的内核号码，例如：sda3 的内核号码是 3。</p>
+<p>$devpath, %p：设备的 devpath路径。</p>
+<p>$id, %b：设备在 devpath里的 ID 号。</p>
+<p>$sysfs{file}, %s{file}：设备的 sysfs里 file 的内容。其实就是设备的属性值。</p>
+<p>例如：$sysfs{size} 表示该设备 ( 磁盘 ) 的大小。</p>
+<p>$env{key}, %E{key}：一个环境变量的值。</p>
+<p>$major, %M：设备的 major 号。</p>
+<p>$minor %m：设备的 minor 号。</p>
+<p>$result, %c：PROGRAM 返回的结果。</p>
+<p>$parent, %P：父设备的设备文件名。</p>
+<p>$root, %r：udev_root的值，默认是 /dev/。</p>
+<p>$tempnode, %N：临时设备名。</p>
+<p>%%：符号 % 本身。</p>
+<p>$$：符号 $ 本身。</p>
+</blockquote>
+<h2 id="0x03-规则文件的编写"><a href="#0x03-规则文件的编写" class="headerlink" title="0x03 规则文件的编写"></a>0x03 规则文件的编写</h2><p>从上面的介绍和学习来说，可以见到udev的规则和语法都较为简单。只要有了匹配键和赋值键就能编写我们想要的规则文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KERNEL==&quot;tty&quot;, NAME=&quot;%k&quot;, GROUP=&quot;tty&quot;, MODE=&quot;0666&quot;, OPTIONS=&quot;last_rule&quot;</span><br></pre></td></tr></table></figure>
+<p>该规则说明：如果有一个设备的内核设备名称为tty(KERNEL==”tty”)，那么设置新的权限为0600(MODE=”0666”)，所在的组是tty(GROUP=”tty”)。它也设置了一个特别的设备文件名:%K。在这里例子里，%k代表设备的内核名字。那也就意味着内核识别出这些设备是什么名字，就创建什么样的设备文件名。</p>
+<p>在这里的关键就是<code>==</code>的匹配情况。那么对于一个设备怎么获取设备的属性呢？udevadm提供了一种方式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">udevadm info -q path -n $(filepath) </span><br><span class="line">udevadm info -a -p $(filepath)</span><br></pre></td></tr></table></figure>
+<p>其中<code>udevadm info -q path -n $(filepath)</code> 能够返回sysfs中的设备路径，将这一设备路径放入<code>udevadm info -a -p $(filepath)</code>的<code>filepath</code>中就能获得设备的结果信息。例子如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost samples]# udevadm info -q path -n /dev/nr0lun0</span><br><span class="line">/devices/virtual/block/nr0lun0</span><br><span class="line">[root@localhost samples]# udevadm info -a -p /devices/virtual/block/nr0lun0</span><br><span class="line"></span><br><span class="line">Udevadm info starts with the device specified by the devpath and then</span><br><span class="line">walks up the chain of parent devices. It prints for every device</span><br><span class="line">found, all possible attributes in the udev rules key format.</span><br><span class="line">A rule to match, can be composed by the attributes of the device</span><br><span class="line">and the attributes from one single parent device.</span><br><span class="line"></span><br><span class="line">  looking at device &#x27;/devices/virtual/block/nr0lun0&#x27;:</span><br><span class="line">    KERNEL==&quot;nr0lun0&quot;</span><br><span class="line">    SUBSYSTEM==&quot;block&quot;</span><br><span class="line">    DRIVER==&quot;&quot;</span><br><span class="line">    ATTR&#123;alignment_offset&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;capability&#125;==&quot;10&quot;</span><br><span class="line">    ATTR&#123;discard_alignment&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;ext_range&#125;==&quot;64&quot;</span><br><span class="line">    ATTR&#123;hidden&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;inflight&#125;==&quot;       0        0&quot;</span><br><span class="line">    ATTR&#123;range&#125;==&quot;64&quot;</span><br><span class="line">    ATTR&#123;removable&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;ro&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;size&#125;==&quot;15628107776&quot;</span><br><span class="line">    ATTR&#123;stat&#125;==&quot;    4457        0    47216      616     6364        0  8391544 11071107        0    21985 11071723        0        0        0        0 &quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这样我们就可以通过信息去进行匹配。比如上面这个设备我们就可以匹配 <code>KERNEL==&quot;nr[0-9]lun0&quot;</code></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2023/03/12/Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0/" title="Udev规则修改学习">http://yokeso.github.io/2023/03/12/Udev规则修改学习/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Udev%E8%A7%84%E5%88%99/" rel="tag"><i class="fa fa-tag"></i> Udev规则</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/" rel="prev" title="嵌入式开发技巧汇总">
+                  <i class="fa fa-chevron-left"></i> 嵌入式开发技巧汇总
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>

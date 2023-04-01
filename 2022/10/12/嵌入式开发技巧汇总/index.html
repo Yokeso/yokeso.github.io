@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Muse","version":"8.2.2","exturl":false,"sidebar":{"position":"right","display":"always","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="嵌入式开发技巧汇总宏定义相关#errorerror 可以直接在编译器中打出error，用于必须的配置文件中使用。例如1#error  &quot;please select device name&quot; 嵌入式中实现配置文件的方法（工程文件的方式）首先建立一个扩展名文件 DEVINFO.txt，扔进文件夹 12345&#x2F;&#x2F;DEVINFO.txt&#x2F;&#x2F; 设备名，字符串#define DEV_NAM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式开发技巧汇总">
+<meta property="og:url" content="http://yokeso.github.io/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="嵌入式开发技巧汇总宏定义相关#errorerror 可以直接在编译器中打出error，用于必须的配置文件中使用。例如1#error  &quot;please select device name&quot; 嵌入式中实现配置文件的方法（工程文件的方式）首先建立一个扩展名文件 DEVINFO.txt，扔进文件夹 12345&#x2F;&#x2F;DEVINFO.txt&#x2F;&#x2F; 设备名，字符串#define DEV_NAM">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-12T02:03:41.000Z">
+<meta property="article:modified_time" content="2023-04-01T11:14:33.191Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="技巧">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>嵌入式开发技巧汇总 | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB"><span class="nav-number">1.</span> <span class="nav-text">嵌入式开发技巧汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8F%E5%AE%9A%E4%B9%89%E7%9B%B8%E5%85%B3"><span class="nav-number">1.1.</span> <span class="nav-text">宏定义相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#error"><span class="nav-number">1.1.1.</span> <span class="nav-text">#error</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#error-%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%9C%A8%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%AD%E6%89%93%E5%87%BAerror%EF%BC%8C%E7%94%A8%E4%BA%8E%E5%BF%85%E9%A1%BB%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%AD%E4%BD%BF%E7%94%A8%E3%80%82%E4%BE%8B%E5%A6%82"><span class="nav-number">2.</span> <span class="nav-text">error 可以直接在编译器中打出error，用于必须的配置文件中使用。例如</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E4%B8%AD%E5%AE%9E%E7%8E%B0%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%88%E5%B7%A5%E7%A8%8B%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-number">2.0.1.</span> <span class="nav-text">嵌入式中实现配置文件的方法（工程文件的方式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E5%A5%87%E7%89%B9%E7%9A%84%E5%AE%8F"><span class="nav-number">2.0.2.</span> <span class="nav-text">一些比较奇特的宏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#print%E6%98%AF%E5%90%A6%E8%BE%93%E5%87%BA%E8%AE%BE%E7%BD%AE"><span class="nav-number">2.0.3.</span> <span class="nav-text">print是否输出设置</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
+    发表
+  </a>
+  </div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          嵌入式开发技巧汇总
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-12 10:03:41" itemprop="dateCreated datePublished" datetime="2022-10-12T10:03:41+08:00">2022-10-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-04-01 19:14:33" itemprop="dateModified" datetime="2023-04-01T19:14:33+08:00">2023-04-01</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2022/10/12/嵌入式开发技巧汇总/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="嵌入式开发技巧汇总"><a href="#嵌入式开发技巧汇总" class="headerlink" title="嵌入式开发技巧汇总"></a>嵌入式开发技巧汇总</h1><h2 id="宏定义相关"><a href="#宏定义相关" class="headerlink" title="宏定义相关"></a>宏定义相关</h2><h3 id="error"><a href="#error" class="headerlink" title="#error"></a>#error</h3><h1 id="error-可以直接在编译器中打出error，用于必须的配置文件中使用。例如"><a href="#error-可以直接在编译器中打出error，用于必须的配置文件中使用。例如" class="headerlink" title="error 可以直接在编译器中打出error，用于必须的配置文件中使用。例如"></a>error 可以直接在编译器中打出error，用于必须的配置文件中使用。例如</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">error</span>  <span class="meta-string">&quot;please select device name&quot;</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="嵌入式中实现配置文件的方法（工程文件的方式）"><a href="#嵌入式中实现配置文件的方法（工程文件的方式）" class="headerlink" title="嵌入式中实现配置文件的方法（工程文件的方式）"></a>嵌入式中实现配置文件的方法（工程文件的方式）</h3><p>首先建立一个扩展名文件 DEVINFO.txt，扔进文件夹</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//DEVINFO.txt</span></span><br><span class="line"><span class="comment">// 设备名，字符串</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEV_NAME    DEFAULT</span></span><br><span class="line"><span class="comment">// 设备ID，U32</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEV_ID      0</span></span><br></pre></td></tr></table></figure>
+<p>在.h文件中声明</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//device.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _DEVICE_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _DEVICE_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> DEVINFO_FILENAME</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEVINFO_FILENAME DEVINFO.txt</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Device_printfMsg</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>就可以在.c文件中使用了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//device.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;device.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _STR(s)  #s</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MollocDefineToStr(mal)  _STR(mal)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> MollocDefineToStr(DEVINFO_FILENAME) </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> devType[] = MollocDefineToStr(DEV_NAME);</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">uint32_t</span> devID = DEV_ID;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> devDName[] = MollocDefineToStr(DEV_NAME) <span class="string">&quot;_&quot;</span> MollocDefineToStr(DEV_ID) <span class="string">&quot;.local&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Device_printfMsg</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Device: %s\r\n&quot;</span> , devType);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;DevID: %u\r\n&quot;</span> , devID);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;DomainName: %s\r\n&quot;</span> , devDName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在.c文件中最重要的是这样一句话</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> MollocDefineToStr(DEVINFO_FILENAME) </span></span><br></pre></td></tr></table></figure>
+<p>这句话在经过编译器编译后会变成  #include “DEVINFO.txt”。这种成组绑定，固定的配置信息很适合用这种方式耦合进不同的配置文件中去。</p>
+<h3 id="一些比较奇特的宏"><a href="#一些比较奇特的宏" class="headerlink" title="一些比较奇特的宏"></a>一些比较奇特的宏</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __JOIN(x,y) x##y	<span class="comment">// 连接标识符(非字符串连接成非字符串，字符串连接成字符串)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __CHAR(x)   #@x		<span class="comment">// 将参数转换成字符(x长度小于5，否则会溢出)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __S(x)   #x			<span class="comment">// 将x变成字符串（如果x是宏也不展开）</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __ST(x)   _T(#x)	<span class="comment">// 将x变成T字符串（如果x是宏也不展开）</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _S(x)   __S(x)		<span class="comment">// 将x变成字符串（如果x是宏，展开)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _ST(x)   __ST(x)	<span class="comment">// 将x变成字符串（如果x是宏，展开)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _TO_STR(x, y) _S(x) <span class="meta-string">&quot;&quot;</span> _S(y)	<span class="comment">// 将参数连接并转成字符串(遇宏则展开)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _TO_STRT(x, y) _T( _S(x) <span class="meta-string">&quot;&quot;</span> _S(y) )</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">testStrMacro</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ab = <span class="number">12</span>;</span><br><span class="line">    assert(__JOIN(<span class="number">1</span>, <span class="number">2</span>) == <span class="number">12</span>); <span class="comment">// 常量连接组合</span></span><br><span class="line">    assert(__JOIN(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>) == <span class="string">&quot;ab&quot;</span>); <span class="comment">// 字符串连接</span></span><br><span class="line">    assert(__JOIN(a, b) == <span class="number">12</span>); <span class="comment">// 变量组合连接</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> a = __CHAR(<span class="number">65</span>);</span><br><span class="line">    assert(a == &#x27;65&#x27;);</span><br><span class="line">    assert(__CHAR(中国) == &#x27;中国&#x27;);</span><br><span class="line">    <span class="keyword">auto</span> cc = __CHAR(PNG);</span><br><span class="line">    assert(__CHAR(PNG) == <span class="number">0x504e47</span>);<span class="comment">// PNG 的 hex即是 0x504e47</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 直接转成字符串</span></span><br><span class="line">    assert(__S(<span class="number">65</span>) == <span class="string">&quot;65&quot;</span>);</span><br><span class="line">    assert(__ST(<span class="number">65</span>) == _T(<span class="string">&quot;65&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> test a</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> test_s <span class="meta-string">&quot;a&quot;</span> </span></span><br><span class="line">    assert(__S(test) == <span class="string">&quot;test&quot;</span>); <span class="comment">// test是宏，但__S里有#，所以后续内容不展开</span></span><br><span class="line">    assert(__ST(test) == _T(<span class="string">&quot;test&quot;</span>)); <span class="comment">// test是宏，但__S里有#，所以后续内容不展开</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 宏展开转换成字符串</span></span><br><span class="line">    assert(_S(test) == <span class="string">&quot;a&quot;</span>);</span><br><span class="line">    assert(_ST(test) == _T(<span class="string">&quot;a&quot;</span>));</span><br><span class="line">    assert(_TO_STRT(test, <span class="number">123</span>) == _T(<span class="string">&quot;a123&quot;</span>));</span><br><span class="line">    assert(_TO_STR(test, <span class="number">123</span>) == <span class="string">&quot;a123&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 宏嵌套效果</span></span><br><span class="line">    <span class="keyword">auto</span> b = _TO_STR(__S(test), <span class="number">123</span>);</span><br><span class="line">    assert(_TO_STR(__S(test), <span class="number">123</span>) == <span class="string">&quot;\&quot;test\&quot;123&quot;</span>);</span><br><span class="line">    <span class="keyword">auto</span> c = _TO_STR(_S(test), <span class="number">123</span>);</span><br><span class="line">    assert(_TO_STR(_S(test), <span class="number">123</span>) == <span class="string">&quot;\&quot;a\&quot;123&quot;</span>);  <span class="comment">//_S(test) 展开成了a</span></span><br><span class="line">    assert(_TO_STR(_S(test), _TO_STR(<span class="number">123</span>, <span class="number">456</span>)) == <span class="string">&quot;\&quot;a\&quot;\&quot;123\&quot; \&quot;\&quot; \&quot;456\&quot;&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="print是否输出设置"><a href="#print是否输出设置" class="headerlink" title="print是否输出设置"></a>print是否输出设置</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _DEBUG_MSG_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _DEBUG_MSG_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _DEBUG</span></span><br><span class="line">  <span class="meta">#<span class="meta-keyword">define</span> _dbg_printf0(format)                   ((void)printf(format))</span></span><br><span class="line">  <span class="meta">#<span class="meta-keyword">define</span> _dbg_printf1(format,p1)                ((void)printf(format,p1))</span></span><br><span class="line">  ……</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">  <span class="meta">#<span class="meta-keyword">define</span> _dbg_printf0(format)</span></span><br><span class="line">  <span class="meta">#<span class="meta-keyword">define</span> _dbg_printf1(format,p1)</span></span><br><span class="line">  ……</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>这样，只要在各个模块中引用这个文件就可以用统一的接口输出调试信息。在主配置文件中定义_DEBUG 所有的调试printf就是真实的printf，否则作为空语句无意义。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;DebugMsg.h&quot;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Device_printfMsg</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line">  _dbg_printf0(<span class="string">&quot;Device_printfMsg called.\r\n&quot;</span>);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;Device: %s\r\n&quot;</span> , devType);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;DevID: %u\r\n&quot;</span> , devID);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;DomainName: %s\r\n&quot;</span> , devDName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/" title="嵌入式开发技巧汇总">http://yokeso.github.io/2022/10/12/嵌入式开发技巧汇总/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" rel="tag"><i class="fa fa-tag"></i> 嵌入式</a>
+              <a href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag"><i class="fa fa-tag"></i> 技巧</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/18/04%20%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0/" rel="prev" title="关系代数">
+                  <i class="fa fa-chevron-left"></i> 关系代数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/12/Udev%E8%A7%84%E5%88%99%E4%BF%AE%E6%94%B9%E5%AD%A6%E4%B9%A0/" rel="next" title="Udev规则修改学习">
+                  Udev规则修改学习 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">139k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:06</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>
