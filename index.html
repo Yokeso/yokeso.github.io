@@ -761,6 +761,194 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="post-title-link" itemprop="url">数据库完整性概念及其分类</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:44" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="cy_cmt_count" data-xid="2022/01/18/08 数据库完整性概念及其分类/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="数据库完整性概念及其分类"><a href="#数据库完整性概念及其分类" class="headerlink" title="数据库完整性概念及其分类"></a>数据库完整性概念及其分类</h1><h2 id="数据库完整性"><a href="#数据库完整性" class="headerlink" title="数据库完整性"></a>数据库完整性</h2><p>数据库完整性是指DBMS应保证DB的一种特性——在仍任何情况下的正确性，有效性和一致性</p>
+<ul>
+<li>广义完整性：语义的完整性，并发控制。安全控制，DB故障恢复等</li>
+<li>狭义完整性：专指语义的完整性，DBMS通常由专门的完整性管理机制与程序来处理语义完整i性问题</li>
+</ul>
+<h3 id="关系模型中的完整性要求："><a href="#关系模型中的完整性要求：" class="headerlink" title="关系模型中的完整性要求："></a>关系模型中的完整性要求：</h3><ul>
+<li>实体完整性</li>
+<li>参照完整性</li>
+<li>用户自定义完整性</li>
+</ul>
+<p>引发数据库完整性问题的原因主要是因为不正当的数据库操作（比如输入错误，操作错误，程序处理失误等）</p>
+<h3 id="数据库完整性的作用："><a href="#数据库完整性的作用：" class="headerlink" title="数据库完整性的作用："></a>数据库完整性的作用：</h3><ul>
+<li><p>防止和避免数据库中不合理数据的出现</p>
+</li>
+<li><p>DBMS应尽可能地自动防止DB中语义不合理现象</p>
+<ul>
+<li>DBMS允许用户定义一些完整性约束规则（用SQL-DDL定义）</li>
+<li>当有DB更新操作时，DBMS自动按照完整性约束条件进行检查，以确保更新操作符合语义完整性</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126211831403.png" alt="数据库完整性作用"></p>
+<h3 id="完整性约束条件的一般形式"><a href="#完整性约束条件的一般形式" class="headerlink" title="完整性约束条件的一般形式"></a>完整性约束条件的一般形式</h3><p><strong>Integrity Constraint ::=(O,P,A,R)</strong></p>
+<ul>
+<li>O 数据集合：约束的对象</li>
+<li>P 谓词条件：什么样的约束</li>
+<li>A 触发条件： 什么时候检查</li>
+<li>R 相应动作：不满足怎么办</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126212743875.png" alt="约束的一般形式"></p>
+<h2 id="数据库完整性分类"><a href="#数据库完整性分类" class="headerlink" title="数据库完整性分类"></a>数据库完整性分类</h2><h3 id="域完整性约束条件"><a href="#域完整性约束条件" class="headerlink" title="域完整性约束条件"></a>域完整性约束条件</h3><ul>
+<li>施加于某一列上，对给定列上所要更新的某一后选址是否可以接受进行约束条件判断，这是孤立进行的</li>
+</ul>
+<h3 id="关系完整性约束条件"><a href="#关系完整性约束条件" class="headerlink" title="关系完整性约束条件"></a>关系完整性约束条件</h3><ul>
+<li>施加于关系/table上，对给定table上所要更新的某一候选元组是否可以接受进行约束条件判断，或是对一个关系中的若干元组和另一关系中的若干元组和另一个关系中的若干元组之间联系是否可以接受进行约束条件判断</li>
+</ul>
+<h3 id="按约束来源分类"><a href="#按约束来源分类" class="headerlink" title="按约束来源分类"></a>按约束来源分类</h3><p>结构约束</p>
+<ul>
+<li>来自于模型的约束，例如函数依赖约束、主键约束（实体完整性）、外键约束（参照完整性）、只关心数值是否相等，是否允许空值等</li>
+</ul>
+<p>内容约束</p>
+<ul>
+<li>来自于用户的约束，如用户自定义完整性，关系元组或属性的取值范围。</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122311851.png" alt="内容约束"></p>
+<h3 id="按约束状态分类"><a href="#按约束状态分类" class="headerlink" title="按约束状态分类"></a>按约束状态分类</h3><p>静态约束</p>
+<ul>
+<li>要求DB在任一时候均应该满足的约束</li>
+</ul>
+<p>动态约束</p>
+<ul>
+<li>要求DB从一状态变为另一状态时必须完成的约束</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122527453.png" alt="动态约束"></p>
+<h2 id="SQL实现完整性"><a href="#SQL实现完整性" class="headerlink" title="SQL实现完整性"></a>SQL实现完整性</h2><h3 id="SQL支持以下几种约束"><a href="#SQL支持以下几种约束" class="headerlink" title="SQL支持以下几种约束"></a>SQL支持以下几种约束</h3><ul>
+<li><p>静态约束</p>
+<ul>
+<li>列完整性-域完整性约束</li>
+<li>表完整性-关系完整性约束</li>
+</ul>
+</li>
+<li><p>动态约束</p>
+<ul>
+<li>触发器</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122742173.png" alt="SQL支持的约束"></p>
+<h3 id="SQL实现约束方法-Creat-Table"><a href="#SQL实现约束方法-Creat-Table" class="headerlink" title="SQL实现约束方法-Creat Table"></a>SQL实现约束方法-Creat Table</h3><p>Creat Table 有三种功能:定义关系模式,定义完整性约束和定义物理存储特性</p>
+<p>定义完整性约束条件</p>
+<ul>
+<li>列完整性</li>
+<li>表完整性</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127123243248.png" alt="列约束和表约束"></p>
+<h4 id="Col-constr列约束"><a href="#Col-constr列约束" class="headerlink" title="Col_constr列约束"></a>Col_constr列约束</h4><p>列约束是一种域约束类型,可以对单一列进行约束</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;NOT NULL|                         //列值非空</span><br><span class="line">    [<span class="keyword">CONSTRAINT</span> constraintname]    <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">         &#123;UNIQUE                   //列值是唯一</span><br><span class="line">          <span class="operator">|</span><span class="keyword">PRIMARY</span> KEY             <span class="operator">/</span><span class="operator">/</span>列为主键</span><br><span class="line">          <span class="operator">|</span><span class="keyword">CHECK</span>(search_cond)      <span class="operator">/</span><span class="operator">/</span>列值满足条件,条件只能使用当前列值</span><br><span class="line">          <span class="operator">|</span><span class="keyword">REFERENCES</span> tablename [(colname)]</span><br><span class="line">                [ON DELETE&#123;CASCADE|SET NULL&#125;]&#125;&#125;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>引用另一表tablename的列colname的值，如有<span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE或<span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">SET</span> <span class="keyword">NULL</span>语句，则删除被引用表的某列值v时，要将本表该列值为v的记录删除或列值更新为<span class="keyword">null</span>;缺省为无操作。</span><br></pre></td></tr></table></figure>
+<p>Col_constr 列约束:只能应用在单一列 上，其后面的约束如UNIQUE,PRIMARY KEY及search_cond 只能是单一列唯一、单一列为主键、和单一列相关</p>
+<h4 id="table-constr表约束"><a href="#table-constr表约束" class="headerlink" title="table_constr表约束"></a>table_constr表约束</h4><p>表约束是一种关系型约束.对多列或多元组的值进行约束,列约束是其特例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">CONSTRAINT</span> constraintname]              <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">     &#123;UNIQUE  (colname &#123;.colname...&#125;)    //几列值合一起是唯一</span><br><span class="line">      |PRIMARY KEY (colname &#123;.colname...&#125;) //几列联合为主键</span><br><span class="line">      <span class="operator">|</span><span class="keyword">CHECK</span>(search_condition)      <span class="operator">/</span><span class="operator">/</span>元组多列值共同满足条件,</span><br><span class="line">  								<span class="operator">/</span><span class="operator">/</span>条件中只能使用同一元组不同列当前值</span><br><span class="line">      |FOREIGN KEY (colname &#123;.colname...&#125;)</span><br><span class="line">           REFERENCES tablename [(colname &#123;.colname...&#125;)]</span><br><span class="line">            [ON DELETE CASCADE]&#125;&#125;</span><br><span class="line">       					<span class="operator">/</span><span class="operator">/</span>引用另一表tablename的若干列键值作为外键</span><br></pre></td></tr></table></figure>
+<h2 id="断言ASSERTION"><a href="#断言ASSERTION" class="headerlink" title="断言ASSERTION"></a>断言ASSERTION</h2><p>一个断言就是一个谓词表达式,它表达了希望数据库总能满足的条件.表约束和列约束就是一种特殊的断言</p>
+<p>SQL提供了复杂条件表达的断言.其语法形式为:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> ASSERTION <span class="operator">&lt;</span>assertion_name<span class="operator">&gt;</span> <span class="keyword">CHECK</span> <span class="operator">&lt;</span>predicate<span class="operator">&gt;</span></span><br></pre></td></tr></table></figure>
+<p>当一个断言创建后,系统将检测其有效性,并在每一次更新中测试更新是否违背断言</p>
+<p><strong>断言测试增加了数据库维护的负担,所以要小心的使用断言</strong></p>
+<h2 id="触发器Trigger"><a href="#触发器Trigger" class="headerlink" title="触发器Trigger"></a>触发器Trigger</h2><ul>
+<li>Create Table中的表约束和列约束基本上都是静态的约束，也基本上都是对单一列或单一元组的约束(尽管有参照完整性)，为实现动态约束以及多个元组之间的完整性约束，就需要触发器技术Trigger</li>
+<li>Trigger是一种过程完整性约束(相比之下，Create Table中定义的都是非过程性约束)，是一段程序，该程序可以在特定的时刻被自动触发执行，比如在一次更新操作之前执行，或在更新操作之后执行。</li>
+</ul>
+<p>基本语法:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trigger_name BEFORE<span class="operator">|</span>AFTER</span><br><span class="line">    &#123;INSERT|DELETE|UPDATE [OF folname&#123;,colname...&#125;]&#125;</span><br><span class="line">    ON tablename [REFERENCING corr_name_def &#123;col_name_def&#125;]</span><br><span class="line">    [<span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span><span class="operator">|</span><span class="keyword">FOR</span> <span class="keyword">EACH</span> STATEMENT]   <span class="operator">/</span><span class="operator">/</span>更新操作的每一条结果(前者),或者整个更新操作完成(后者)</span><br><span class="line">    [<span class="keyword">WHEN</span> (search_condition)]           <span class="operator">/</span><span class="operator">/</span>检查条件,如满足执行下面程序</span><br><span class="line">           &#123;statement                   //单行程序直接书写,多行程序要用下行方式</span><br><span class="line">           |BEGIN ATOMIC statement;(statement;..)END&#125;</span><br></pre></td></tr></table></figure>
+<p>触发器Trigger意义:当某一时间发生时(Before|After),对事件产生的结果(或是每一元组,或者操作的所有元组),检查条件search_condition,如果满足条件,则执行后面程序段,条件或程序段中引用的变量可用corr_name_def来限定</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1199,194 +1387,6 @@
 <p>对于由单一Table子集构成的视图，即如果视图是从单个基本表使用选择，投影操作的，并且包含了基本表的主键，则可以更新</p>
 <h3 id="SQL-视图的撤销"><a href="#SQL-视图的撤销" class="headerlink" title="SQL-视图的撤销"></a>SQL-视图的撤销</h3><p>已经定义的视图可以撤销</p>
 <h6 id="撤销视图"><a href="#撤销视图" class="headerlink" title="撤销视图"></a>撤销视图</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Drop</span> <span class="keyword">View</span> view_name</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="BigtreeLiu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yokeso">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="post-title-link" itemprop="url">数据库完整性概念及其分类</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:44" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan：</span>
-    
-    
-      <a title="changyan" href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="cy_cmt_count" data-xid="2022/01/18/08 数据库完整性概念及其分类/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="数据库完整性概念及其分类"><a href="#数据库完整性概念及其分类" class="headerlink" title="数据库完整性概念及其分类"></a>数据库完整性概念及其分类</h1><h2 id="数据库完整性"><a href="#数据库完整性" class="headerlink" title="数据库完整性"></a>数据库完整性</h2><p>数据库完整性是指DBMS应保证DB的一种特性——在仍任何情况下的正确性，有效性和一致性</p>
-<ul>
-<li>广义完整性：语义的完整性，并发控制。安全控制，DB故障恢复等</li>
-<li>狭义完整性：专指语义的完整性，DBMS通常由专门的完整性管理机制与程序来处理语义完整i性问题</li>
-</ul>
-<h3 id="关系模型中的完整性要求："><a href="#关系模型中的完整性要求：" class="headerlink" title="关系模型中的完整性要求："></a>关系模型中的完整性要求：</h3><ul>
-<li>实体完整性</li>
-<li>参照完整性</li>
-<li>用户自定义完整性</li>
-</ul>
-<p>引发数据库完整性问题的原因主要是因为不正当的数据库操作（比如输入错误，操作错误，程序处理失误等）</p>
-<h3 id="数据库完整性的作用："><a href="#数据库完整性的作用：" class="headerlink" title="数据库完整性的作用："></a>数据库完整性的作用：</h3><ul>
-<li><p>防止和避免数据库中不合理数据的出现</p>
-</li>
-<li><p>DBMS应尽可能地自动防止DB中语义不合理现象</p>
-<ul>
-<li>DBMS允许用户定义一些完整性约束规则（用SQL-DDL定义）</li>
-<li>当有DB更新操作时，DBMS自动按照完整性约束条件进行检查，以确保更新操作符合语义完整性</li>
-</ul>
-</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126211831403.png" alt="数据库完整性作用"></p>
-<h3 id="完整性约束条件的一般形式"><a href="#完整性约束条件的一般形式" class="headerlink" title="完整性约束条件的一般形式"></a>完整性约束条件的一般形式</h3><p><strong>Integrity Constraint ::=(O,P,A,R)</strong></p>
-<ul>
-<li>O 数据集合：约束的对象</li>
-<li>P 谓词条件：什么样的约束</li>
-<li>A 触发条件： 什么时候检查</li>
-<li>R 相应动作：不满足怎么办</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126212743875.png" alt="约束的一般形式"></p>
-<h2 id="数据库完整性分类"><a href="#数据库完整性分类" class="headerlink" title="数据库完整性分类"></a>数据库完整性分类</h2><h3 id="域完整性约束条件"><a href="#域完整性约束条件" class="headerlink" title="域完整性约束条件"></a>域完整性约束条件</h3><ul>
-<li>施加于某一列上，对给定列上所要更新的某一后选址是否可以接受进行约束条件判断，这是孤立进行的</li>
-</ul>
-<h3 id="关系完整性约束条件"><a href="#关系完整性约束条件" class="headerlink" title="关系完整性约束条件"></a>关系完整性约束条件</h3><ul>
-<li>施加于关系/table上，对给定table上所要更新的某一候选元组是否可以接受进行约束条件判断，或是对一个关系中的若干元组和另一关系中的若干元组和另一个关系中的若干元组之间联系是否可以接受进行约束条件判断</li>
-</ul>
-<h3 id="按约束来源分类"><a href="#按约束来源分类" class="headerlink" title="按约束来源分类"></a>按约束来源分类</h3><p>结构约束</p>
-<ul>
-<li>来自于模型的约束，例如函数依赖约束、主键约束（实体完整性）、外键约束（参照完整性）、只关心数值是否相等，是否允许空值等</li>
-</ul>
-<p>内容约束</p>
-<ul>
-<li>来自于用户的约束，如用户自定义完整性，关系元组或属性的取值范围。</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122311851.png" alt="内容约束"></p>
-<h3 id="按约束状态分类"><a href="#按约束状态分类" class="headerlink" title="按约束状态分类"></a>按约束状态分类</h3><p>静态约束</p>
-<ul>
-<li>要求DB在任一时候均应该满足的约束</li>
-</ul>
-<p>动态约束</p>
-<ul>
-<li>要求DB从一状态变为另一状态时必须完成的约束</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122527453.png" alt="动态约束"></p>
-<h2 id="SQL实现完整性"><a href="#SQL实现完整性" class="headerlink" title="SQL实现完整性"></a>SQL实现完整性</h2><h3 id="SQL支持以下几种约束"><a href="#SQL支持以下几种约束" class="headerlink" title="SQL支持以下几种约束"></a>SQL支持以下几种约束</h3><ul>
-<li><p>静态约束</p>
-<ul>
-<li>列完整性-域完整性约束</li>
-<li>表完整性-关系完整性约束</li>
-</ul>
-</li>
-<li><p>动态约束</p>
-<ul>
-<li>触发器</li>
-</ul>
-</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122742173.png" alt="SQL支持的约束"></p>
-<h3 id="SQL实现约束方法-Creat-Table"><a href="#SQL实现约束方法-Creat-Table" class="headerlink" title="SQL实现约束方法-Creat Table"></a>SQL实现约束方法-Creat Table</h3><p>Creat Table 有三种功能:定义关系模式,定义完整性约束和定义物理存储特性</p>
-<p>定义完整性约束条件</p>
-<ul>
-<li>列完整性</li>
-<li>表完整性</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127123243248.png" alt="列约束和表约束"></p>
-<h4 id="Col-constr列约束"><a href="#Col-constr列约束" class="headerlink" title="Col_constr列约束"></a>Col_constr列约束</h4><p>列约束是一种域约束类型,可以对单一列进行约束</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;NOT NULL|                         //列值非空</span><br><span class="line">    [<span class="keyword">CONSTRAINT</span> constraintname]    <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">         &#123;UNIQUE                   //列值是唯一</span><br><span class="line">          <span class="operator">|</span><span class="keyword">PRIMARY</span> KEY             <span class="operator">/</span><span class="operator">/</span>列为主键</span><br><span class="line">          <span class="operator">|</span><span class="keyword">CHECK</span>(search_cond)      <span class="operator">/</span><span class="operator">/</span>列值满足条件,条件只能使用当前列值</span><br><span class="line">          <span class="operator">|</span><span class="keyword">REFERENCES</span> tablename [(colname)]</span><br><span class="line">                [ON DELETE&#123;CASCADE|SET NULL&#125;]&#125;&#125;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>引用另一表tablename的列colname的值，如有<span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE或<span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">SET</span> <span class="keyword">NULL</span>语句，则删除被引用表的某列值v时，要将本表该列值为v的记录删除或列值更新为<span class="keyword">null</span>;缺省为无操作。</span><br></pre></td></tr></table></figure>
-<p>Col_constr 列约束:只能应用在单一列 上，其后面的约束如UNIQUE,PRIMARY KEY及search_cond 只能是单一列唯一、单一列为主键、和单一列相关</p>
-<h4 id="table-constr表约束"><a href="#table-constr表约束" class="headerlink" title="table_constr表约束"></a>table_constr表约束</h4><p>表约束是一种关系型约束.对多列或多元组的值进行约束,列约束是其特例</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">CONSTRAINT</span> constraintname]              <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">     &#123;UNIQUE  (colname &#123;.colname...&#125;)    //几列值合一起是唯一</span><br><span class="line">      |PRIMARY KEY (colname &#123;.colname...&#125;) //几列联合为主键</span><br><span class="line">      <span class="operator">|</span><span class="keyword">CHECK</span>(search_condition)      <span class="operator">/</span><span class="operator">/</span>元组多列值共同满足条件,</span><br><span class="line">  								<span class="operator">/</span><span class="operator">/</span>条件中只能使用同一元组不同列当前值</span><br><span class="line">      |FOREIGN KEY (colname &#123;.colname...&#125;)</span><br><span class="line">           REFERENCES tablename [(colname &#123;.colname...&#125;)]</span><br><span class="line">            [ON DELETE CASCADE]&#125;&#125;</span><br><span class="line">       					<span class="operator">/</span><span class="operator">/</span>引用另一表tablename的若干列键值作为外键</span><br></pre></td></tr></table></figure>
-<h2 id="断言ASSERTION"><a href="#断言ASSERTION" class="headerlink" title="断言ASSERTION"></a>断言ASSERTION</h2><p>一个断言就是一个谓词表达式,它表达了希望数据库总能满足的条件.表约束和列约束就是一种特殊的断言</p>
-<p>SQL提供了复杂条件表达的断言.其语法形式为:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> ASSERTION <span class="operator">&lt;</span>assertion_name<span class="operator">&gt;</span> <span class="keyword">CHECK</span> <span class="operator">&lt;</span>predicate<span class="operator">&gt;</span></span><br></pre></td></tr></table></figure>
-<p>当一个断言创建后,系统将检测其有效性,并在每一次更新中测试更新是否违背断言</p>
-<p><strong>断言测试增加了数据库维护的负担,所以要小心的使用断言</strong></p>
-<h2 id="触发器Trigger"><a href="#触发器Trigger" class="headerlink" title="触发器Trigger"></a>触发器Trigger</h2><ul>
-<li>Create Table中的表约束和列约束基本上都是静态的约束，也基本上都是对单一列或单一元组的约束(尽管有参照完整性)，为实现动态约束以及多个元组之间的完整性约束，就需要触发器技术Trigger</li>
-<li>Trigger是一种过程完整性约束(相比之下，Create Table中定义的都是非过程性约束)，是一段程序，该程序可以在特定的时刻被自动触发执行，比如在一次更新操作之前执行，或在更新操作之后执行。</li>
-</ul>
-<p>基本语法:</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trigger_name BEFORE<span class="operator">|</span>AFTER</span><br><span class="line">    &#123;INSERT|DELETE|UPDATE [OF folname&#123;,colname...&#125;]&#125;</span><br><span class="line">    ON tablename [REFERENCING corr_name_def &#123;col_name_def&#125;]</span><br><span class="line">    [<span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span><span class="operator">|</span><span class="keyword">FOR</span> <span class="keyword">EACH</span> STATEMENT]   <span class="operator">/</span><span class="operator">/</span>更新操作的每一条结果(前者),或者整个更新操作完成(后者)</span><br><span class="line">    [<span class="keyword">WHEN</span> (search_condition)]           <span class="operator">/</span><span class="operator">/</span>检查条件,如满足执行下面程序</span><br><span class="line">           &#123;statement                   //单行程序直接书写,多行程序要用下行方式</span><br><span class="line">           |BEGIN ATOMIC statement;(statement;..)END&#125;</span><br></pre></td></tr></table></figure>
-<p>触发器Trigger意义:当某一时间发生时(Before|After),对事件产生的结果(或是每一元组,或者操作的所有元组),检查条件search_condition,如果满足条件,则执行后面程序段,条件或程序段中引用的变量可用corr_name_def来限定</p>
 
       
     </div>
