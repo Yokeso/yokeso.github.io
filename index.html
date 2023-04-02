@@ -124,8 +124,8 @@
 <nav class="site-nav">
   <ul class="main-menu menu">
         <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">17</span></a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">38</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">39</span></a></li>
         <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
   </ul>
 </nav>
@@ -171,12 +171,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -420,6 +420,176 @@
 <p>其中<code>udevadm info -q path -n $(filepath)</code> 能够返回sysfs中的设备路径，将这一设备路径放入<code>udevadm info -a -p $(filepath)</code>的<code>filepath</code>中就能获得设备的结果信息。例子如下</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost samples]# udevadm info -q path -n /dev/nr0lun0</span><br><span class="line">/devices/virtual/block/nr0lun0</span><br><span class="line">[root@localhost samples]# udevadm info -a -p /devices/virtual/block/nr0lun0</span><br><span class="line"></span><br><span class="line">Udevadm info starts with the device specified by the devpath and then</span><br><span class="line">walks up the chain of parent devices. It prints for every device</span><br><span class="line">found, all possible attributes in the udev rules key format.</span><br><span class="line">A rule to match, can be composed by the attributes of the device</span><br><span class="line">and the attributes from one single parent device.</span><br><span class="line"></span><br><span class="line">  looking at device &#x27;/devices/virtual/block/nr0lun0&#x27;:</span><br><span class="line">    KERNEL==&quot;nr0lun0&quot;</span><br><span class="line">    SUBSYSTEM==&quot;block&quot;</span><br><span class="line">    DRIVER==&quot;&quot;</span><br><span class="line">    ATTR&#123;alignment_offset&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;capability&#125;==&quot;10&quot;</span><br><span class="line">    ATTR&#123;discard_alignment&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;ext_range&#125;==&quot;64&quot;</span><br><span class="line">    ATTR&#123;hidden&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;inflight&#125;==&quot;       0        0&quot;</span><br><span class="line">    ATTR&#123;range&#125;==&quot;64&quot;</span><br><span class="line">    ATTR&#123;removable&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;ro&#125;==&quot;0&quot;</span><br><span class="line">    ATTR&#123;size&#125;==&quot;15628107776&quot;</span><br><span class="line">    ATTR&#123;stat&#125;==&quot;    4457        0    47216      616     6364        0  8391544 11071107        0    21985 11071723        0        0        0        0 &quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>这样我们就可以通过信息去进行匹配。比如上面这个设备我们就可以匹配 <code>KERNEL==&quot;nr[0-9]lun0&quot;</code></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">linux驱动学习之驱动代码结构</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-05 16:59:06" itemprop="dateCreated datePublished" datetime="2023-03-05T16:59:06+08:00">2023-03-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-04-02 23:39:45" itemprop="dateModified" datetime="2023-04-02T23:39:45+08:00">2023-04-02</time>
+      </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::http://yokeso.github.io/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/" class="cy_cmt_count" data-xid="2023/03/05/linux内核驱动代码学习/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="linux驱动学习：驱动代码结构"><a href="#linux驱动学习：驱动代码结构" class="headerlink" title="linux驱动学习：驱动代码结构"></a>linux驱动学习：驱动代码结构</h1><h2 id="0x01-前言"><a href="#0x01-前言" class="headerlink" title="0x01.前言"></a>0x01.前言</h2><p>对刚开始接触Linux驱动代码的新人来说，最困难的是面对着一个项目无从下手。对于传统的单片机来说，许多操作需要做的只是向对应的寄存器中写入所需的数值。然而同样的代码到了linux驱动中，就需要许多的回调函数，指针和结构体。而且伴随着驱动操作的逐渐复杂化，面对着一个驱动中的诸多文件更是不知所云。所以对于初学者来说最重要的就是要了解：linux驱动代码究竟做了什么，linux驱动代码结构究竟是什么？</p>
+<p>借用找教程时候看到的一段话：</p>
+<blockquote>
+<p>说易行难，很多新人、甚至工作1-2年的开发者刚接触Linux内核时，别说写了，看内核代码可能都是一脸懵逼：明明是C语言，但是就是看不懂是什么意思，除了根据函数名、函数参数、函数的返回值以及注释，了解整个函数的基本功能外，一旦分析其细节，你会发现，寸步难行，每一行代码似乎都深不可测，仿佛蕴含着极大的能量</p>
+</blockquote>
+<p>从我开始学习linux驱动的时候，这些问题就一直环绕着我。但是却没有在网上找到一篇全面的扫盲文章。现在我希望以初学者的身份来完善出一篇专门针对于入门小白的文章。希望这篇文章能帮助到需要入门linux驱动的人。</p>
+<p>第二章简要介绍了一点基础性的知识，需要直接看内核代码结构的可以直接前往第三章观看。</p>
+<h2 id="0x02-基础知识"><a href="#0x02-基础知识" class="headerlink" title="0x02.基础知识"></a>0x02.基础知识</h2><h3 id="0x21-设备驱动类型"><a href="#0x21-设备驱动类型" class="headerlink" title="0x21 设备驱动类型"></a>0x21 设备驱动类型</h3><p>学习Linux驱动，首先不得不提的就是linux系统本身。</p>
+<p>Linux遵循着一切皆文件的守则，把所有的外部设备都看作是文件，可以使用与调用文件系统相同的方法来读写外部设备。但外部设备的种类千奇百怪，怎么才能让用户无差别使用这些设备呢？这就是驱动存在的意义：通过内部定义好的编程接口，对用户隐藏了设备的工作细节，从而可以使用户通过一套标准化调用来使用设备。</p>
+<p>对于多种多样的设备类型，Linux做了一件艰难而又伟大的事情，把他们的驱动归结为三大类：字符设备驱动，块设备驱动以及网络设备驱动。</p>
+<p><strong>字符设备</strong>：需要字节顺序读写的设备。不能随机读写。字符设备是面向流的设备。常见的如鼠标，键盘，led等。</p>
+<p><strong>块设备驱动</strong>：可以从设备的任意位置读取一定长度的数据设备，比如硬盘，SD卡等设备均是块设备。</p>
+<p><strong>网络设备</strong>：网络设备不会在<code>/dev</code>中列出，不是针对文件的操作，而是使用专门的网络接口实现。应用设备不能直接访问网络驱动程序。</p>
+<p>三种设备在Linux中的位置可以用一张图片来描述。如图所示：</p>
+<p><img src="/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/image-20230228174416669.png" alt="Linux系统结构图"></p>
+<h3 id="0x22-Linux驱动编译和加载"><a href="#0x22-Linux驱动编译和加载" class="headerlink" title="0x22 Linux驱动编译和加载"></a>0x22 Linux驱动编译和加载</h3><p>linux设备驱动属于内核的一部分，所以编译加载的时候都需要内核的帮助。Linux内核的一个模块可以通过两种方式被编译和加载。</p>
+<ul>
+<li>直接编译进内核，同Linux启动的同时进行加载</li>
+<li>单独编译成模块，需要的时候动态加载到内核中，不需要的时候进行卸载</li>
+</ul>
+<p>对于正常的C程序来说，需要有一个main函数来提供程序的入口。所以说很多初学者在看内核源码的时候最迷茫的就是寻找不到函数入口。</p>
+<p>这是因为对于驱动程序来说，程序不是一直运行的。驱动程序运行在内核中的内核态。会在初始化完成之后不再运行，等待系统调用的时候再执行相应操作。也正是因为驱动程序属于内核的一部分。所以驱动程序不能用标准的C库，而要使用linux内核库进行开发。这也是开发C程序的人开始看内核代码时迷茫的原因之一。</p>
+<p>驱动编译和加载的具体步骤在这里不作为详述内容。后续我会再写一篇文章来讲述这个具体步骤。（挖坑）</p>
+<h2 id="0x03-驱动代码的结构"><a href="#0x03-驱动代码的结构" class="headerlink" title="0x03 驱动代码的结构"></a>0x03 驱动代码的结构</h2><h3 id="0x31-驱动的加载和卸载（入口函数）"><a href="#0x31-驱动的加载和卸载（入口函数）" class="headerlink" title="0x31 驱动的加载和卸载（入口函数）"></a>0x31 驱动的加载和卸载（入口函数）</h3><p>有了上面的这些信息，我们就可以来简单的了解以下Linux驱动的结构了。由于我个人最近在看NV的开源项目，所以直接用这个项目作为例子进行描述。</p>
+<p>驱动最重要的就是要进行注册操作。注册操作使用的是<code>__init</code>宏，比如英伟达开放的某个仓库中的<code>nvfs-core.c</code>文件中的初始化函数就为</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Initialize nvfs driver</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> __init <span class="title">nvfs_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>在初始化中最重要的是注册，注册中重要的是调用内核中的函数<code>register_chrdev()</code>函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pr_info(<span class="string">&quot;nvidia_fs: Initializing nvfs driver module\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">major_number = register_chrdev(<span class="number">0</span>, DEVICE_NAME, &amp;nvfs_dev_fops);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (major_number &lt; <span class="number">0</span>) &#123;</span><br><span class="line">	pr_err(<span class="string">&quot;nvidia_fs: failed to register a major number\n&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> major_number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上面代码为例，注册函数注册了驱动的名称<code>DEVICE_NAME</code>，以及驱动的操作跳转表<code>nvfs_dev_fops</code>，操作跳转表是整个驱动的灵魂。我会在后续说明。</p>
+<p>调用注册函数之后，还会再调用一些初始化函数，这个地方不同的驱动需要初始化的数据不尽相同，需要用户自行定义。</p>
+<p>在NVIDIA的这个驱动中，由于需要注册多个设备，驱动中还调用了两个内核函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nvfs_class = class_create(THIS_MODULE, CLASS_NAME);</span><br><span class="line">nvfs_device[i] = device_create(nvfs_class, <span class="literal">NULL</span>, MKDEV(major_number, i), <span class="literal">NULL</span>, DEVICE_NAME<span class="string">&quot;%d&quot;</span>, i);</span><br></pre></td></tr></table></figure>
+<p>他们的原型分别是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">linux<span class="number">-2.6</span><span class="number">.22</span>/include/linux/device.h</span><br><span class="line"><span class="function">struct class *<span class="title">class_create</span><span class="params">(struct <span class="keyword">module</span> *owner, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span></span><br><span class="line">    class_create - create a struct class structure</span><br><span class="line">    @owner: pointer to the <span class="keyword">module</span> that is to <span class="string">&quot;own&quot;</span> <span class="keyword">this</span> <span class="class"><span class="keyword">struct</span> <span class="keyword">class</span></span></span><br><span class="line"><span class="class">    @<span class="title">name</span>:</span> pointer to a <span class="built_in">string</span> <span class="keyword">for</span> the name of <span class="keyword">this</span> class.</span><br><span class="line">        </span><br><span class="line">linux<span class="number">-2.6</span><span class="number">.22</span>/include/linux/device.h</span><br><span class="line"><span class="function">struct device *<span class="title">device_create</span><span class="params">(struct class *cls, </span></span></span><br><span class="line"><span class="function"><span class="params">                             struct device *parent, </span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">dev_t</span> devt, </span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">void</span> *drvdata, </span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">const</span> <span class="keyword">char</span> *fmt, ...)</span></span>;</span><br><span class="line"></span><br><span class="line">    class_device_create - creates a <span class="class"><span class="keyword">class</span> <span class="title">device</span> <span class="title">and</span> <span class="title">registers</span> <span class="title">it</span> <span class="title">with</span> <span class="title">sysfs</span></span></span><br><span class="line"><span class="class">    @<span class="title">cls</span>:</span> pointer to the <span class="class"><span class="keyword">struct</span> <span class="keyword">class</span> <span class="title">that</span> <span class="title">this</span> <span class="title">device</span> <span class="title">should</span> <span class="title">be</span> <span class="title">registered</span> <span class="title">to</span>.</span></span><br><span class="line"><span class="class">    @<span class="title">parent</span>:</span> pointer to the parent <span class="class"><span class="keyword">struct</span> <span class="title">class_device</span> <span class="title">of</span> <span class="title">this</span> <span class="title">new</span> <span class="title">device</span>, <span class="title">if</span> <span class="title">any</span>.</span></span><br><span class="line"><span class="class">    @<span class="title">devt</span>:</span> the <span class="keyword">dev_t</span> <span class="keyword">for</span> the <span class="keyword">char</span> device to be added.</span><br><span class="line">    @device: a pointer to a <span class="class"><span class="keyword">struct</span> <span class="title">device</span> <span class="title">that</span> <span class="title">is</span> <span class="title">assiociated</span> <span class="title">with</span> <span class="title">this</span> <span class="keyword">class</span> <span class="title">device</span>.</span></span><br><span class="line"><span class="class">    @<span class="title">fmt</span>:</span> <span class="built_in">string</span> <span class="keyword">for</span> the <span class="class"><span class="keyword">class</span> <span class="title">device</span>&#x27;<span class="title">s</span> <span class="title">name</span></span></span><br></pre></td></tr></table></figure>
+<p>通过两个函数原型以及描述可以看出，<code>class_create</code>的目的是创建一个驱动类，然后通过<code>device_create</code>函数为类创建一个或多个设备。</p>
+<p>总结下来来看，入口<code>__init</code>函数的流程就清晰了很多。最后把整个函数放上来，帮助把流程捋顺。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Initialize nvfs driver</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> __init <span class="title">nvfs_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">	pr_info(<span class="string">&quot;nvidia_fs: Initializing nvfs driver module\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	major_number = register_chrdev(<span class="number">0</span>, DEVICE_NAME, &amp;nvfs_dev_fops);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (major_number &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		pr_err(<span class="string">&quot;nvidia_fs: failed to register a major number\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> major_number;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pr_info(<span class="string">&quot;nvidia_fs: registered correctly with major number %d\n&quot;</span>,</span><br><span class="line">			major_number);</span><br><span class="line"></span><br><span class="line">	nvfs_class = class_create(THIS_MODULE, CLASS_NAME);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (IS_ERR(nvfs_class)) &#123;</span><br><span class="line">		unregister_chrdev(major_number, DEVICE_NAME);</span><br><span class="line">		pr_err(<span class="string">&quot;nvidia_fs: Failed to register device class\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> PTR_ERR(nvfs_class);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	nvfs_class-&gt;devnode = nvfs_devnode;</span><br><span class="line"></span><br><span class="line">	nvfs_set_device_count(nvfs_max_devices);</span><br><span class="line"></span><br><span class="line">	nvfs_curr_devices = nvfs_get_device_count();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; nvfs_curr_devices; i++) &#123;</span><br><span class="line">		nvfs_device[i] = device_create(nvfs_class, <span class="literal">NULL</span>,</span><br><span class="line">				MKDEV(major_number, i),</span><br><span class="line">				<span class="literal">NULL</span>, DEVICE_NAME<span class="string">&quot;%d&quot;</span>, i);</span><br><span class="line">		<span class="keyword">if</span> (IS_ERR(nvfs_device[i])) &#123;</span><br><span class="line">			class_destroy(nvfs_class);</span><br><span class="line">			unregister_chrdev(major_number, DEVICE_NAME);</span><br><span class="line">			pr_err(<span class="string">&quot;nvidia_fs: Failed to create the device\n&quot;</span>);</span><br><span class="line">			i -= <span class="number">1</span>;</span><br><span class="line">			<span class="comment">// Cleanup all the previous devices</span></span><br><span class="line">			<span class="keyword">goto</span> error;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// initialize meta group data structures</span></span><br><span class="line">        nvfs_mgroup_init();</span><br><span class="line">	atomic_set(&amp;nvfs_shutdown, <span class="number">0</span>);</span><br><span class="line">	init_waitqueue_head(&amp;wq);</span><br><span class="line">	nvfs_proc_init();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_FAULT_INJECTION</span></span><br><span class="line">	nvfs_init_debugfs();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	nvfs_stat_init();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> TEST_DISCONTIG_ADDR</span></span><br><span class="line">	nvfs_init_simulated_address();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	nvfs_fill_gpu2peer_distance_table_once();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">error:</span><br><span class="line">	<span class="keyword">while</span> (i &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">		device_destroy(nvfs_class, MKDEV(major_number,i));</span><br><span class="line">		i -= <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对驱动的入口函数有一个简要的了解之后，最好奇的应该是出口函数的书写方式。一般来说，出口函数和入口函数都会放在同一个文件的上下函数。现在就来看一下。</p>
+<p>与入口函数相同，驱动的出口函数也会有宏标识<code>__exit</code>，并且执行了与注册函数几乎完全相反的操作。</p>
+<p>正常来说除了用户自定义的注销函数之外，还需要调用<code>unregister_chrdev</code>函数进行注销，流程就结束了。</p>
+<p>但是对于NV的这个驱动来说，由于他在注册的时候注册了多个设备，所以在注销的时候需要多两个步骤。也就是设备的注销以及类的注销。</p>
+<p>由于注销函数很短，所以不做过多讲述。直接把整个函数贴过来留作查看。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> __exit <span class="title">nvfs_exit</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">	atomic_set(&amp;nvfs_shutdown, <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">do</span> &#123;</span><br><span class="line">		wait_event_interruptible_timeout(wq,</span><br><span class="line">			(nvfs_count_ops() == <span class="number">0</span>),</span><br><span class="line">			msecs_to_jiffies(NVFS_HOLD_TIME));</span><br><span class="line">			nvfs_dbg(<span class="string">&quot;count_ops :%lu\n&quot;</span>, nvfs_count_ops());</span><br><span class="line">	&#125; <span class="keyword">while</span> (nvfs_count_ops());</span><br><span class="line">	nvfs_proc_cleanup();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_FAULT_INJECTION</span></span><br><span class="line">	nvfs_free_debugfs();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	nvfs_stat_destroy();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; nvfs_curr_devices; i++) &#123;</span><br><span class="line">		device_destroy(nvfs_class, MKDEV(major_number, i));</span><br><span class="line">	&#125;</span><br><span class="line">	class_destroy(nvfs_class);</span><br><span class="line">	unregister_chrdev(major_number, DEVICE_NAME);</span><br><span class="line">	pr_info(<span class="string">&quot;nvidia_fs: driver unloaded successfully\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，声明两个函数后还需要调用一下，调用函数通常在文件的结尾处。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">module_init(nvfs_init);</span><br><span class="line">module_exit(nvfs_exit);</span><br></pre></td></tr></table></figure>
+<p>这样程序的出入口环节就彻底结束了。</p>
+<h3 id="0x32-驱动中的重要内核数据"><a href="#0x32-驱动中的重要内核数据" class="headerlink" title="0x32 驱动中的重要内核数据"></a>0x32 驱动中的重要内核数据</h3><p>大部分的基础性的驱动操作包括3个重要的内核数据结构，称为file_operations，file，和inode。</p>
+<h4 id="file-operation"><a href="#file-operation" class="headerlink" title="file_operation"></a>file_operation</h4><p>在上一节的入口函数中，我们曾经提及过操作跳转表这个概念。当时是在驱动注册时调用的。现在就是揭开这部分神秘面纱的时候了。</p>
+<p>操作跳转表这个概念其实是我个人的翻译，实际上来说这个是一个叫做<code>file_operation</code>的结构体。这个结构体是将系统调用以及驱动程序关联起来的重要数据结构。操作表中的每个成员都对应着一个函数的指针。而名称则对应着一个系统调用。（对于不支持的操作留作null.）通过这种绑定方式，当系统调用发生时，系统读取跳转表中与调用相应的函数的指针，然后将控制权转交给函数。这样就完成了Linux设备的驱动工作。NV的代码中结构体初始化如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> <span class="title">nvfs_dev_fops</span> =</span> &#123;</span><br><span class="line">	.compat_ioctl = nvfs_ioctl,</span><br><span class="line">	.unlocked_ioctl = nvfs_ioctl,</span><br><span class="line">	.open = nvfs_open,</span><br><span class="line">	.release = nvfs_close,</span><br><span class="line">        .mmap = nvfs_mgroup_mmap,</span><br><span class="line">        .owner = THIS_MODULE,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="file"><a href="#file" class="headerlink" title="file"></a>file</h4><ul>
+<li>file 结构代表一个打开的文件，它的特点是一个文件可以对应多个file结构。它由内核再open时创建，并传递给在该文件上操作的所有函数，直到最后close函数，在文件的所有实例都被关闭之后，内核才释放这个数据结构。</li>
+<li>在内核源代码中，指向 struct file 的指针通常比称为filp，file结构有以下几个重要的成员：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="class"><span class="keyword">struct</span> <span class="title">file</span>&#123;</span></span><br><span class="line"> <span class="number">2</span> </span><br><span class="line"> <span class="number">3</span> <span class="keyword">mode_t</span> fmode; <span class="comment">/*文件模式，如FMODE_READ，FMODE_WRITE*/</span></span><br><span class="line"> <span class="number">4</span> </span><br><span class="line"> <span class="number">5</span> ......</span><br><span class="line"> <span class="number">6</span> </span><br><span class="line"> <span class="number">7</span> <span class="keyword">loff_t</span> f_pos; <span class="comment">/*loff_t 是一个64位的数，需要时，须强制转换为32位*/</span></span><br><span class="line"> <span class="number">8</span> </span><br><span class="line"> <span class="number">9</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> f_flags; <span class="comment">/*文件标志，如：O_NONBLOCK*/</span></span><br><span class="line"><span class="number">10</span> </span><br><span class="line"><span class="number">11</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> *<span class="title">f_op</span>;</span></span><br><span class="line"><span class="number">12</span> </span><br><span class="line"><span class="number">13</span> <span class="keyword">void</span> *private_data; <span class="comment">/*非常重要，用于存放转换后的设备描述结构指针*/</span></span><br><span class="line"><span class="number">14</span> </span><br><span class="line"><span class="number">15</span> .......</span><br><span class="line"><span class="number">16</span> </span><br><span class="line"><span class="number">17</span> &#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="inode"><a href="#inode" class="headerlink" title="inode"></a>inode</h4><ul>
+<li>内核用inode 结构在内部表示文件，它是实实在在的表示物理硬件上的某一个文件，且一个文件仅有一个inode与之对应，同样它有二个比较重要的成员：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span> <span class="class"><span class="keyword">struct</span> <span class="title">inode</span>&#123;</span></span><br><span class="line"> <span class="number">2</span> </span><br><span class="line"> <span class="number">3</span> <span class="keyword">dev_t</span> i_rdev; <span class="comment">/*设备编号*/</span></span><br><span class="line"> <span class="number">4</span> </span><br><span class="line"> <span class="number">5</span> <span class="class"><span class="keyword">struct</span> <span class="title">cdev</span> *<span class="title">i_cdev</span>;</span> <span class="comment">/*cdev 是表示字符设备的内核的内部结构*/</span></span><br><span class="line"> <span class="number">6</span> </span><br><span class="line"> <span class="number">7</span> &#125;;</span><br><span class="line"> <span class="number">8</span> </span><br><span class="line"> <span class="number">9</span> 可以从inode中获取主次设备号，使用下面二个宏：</span><br><span class="line"><span class="number">10</span> </span><br><span class="line"><span class="number">11</span> <span class="comment">/*驱动工程师一般不关心这两个宏*/</span></span><br><span class="line"><span class="number">12</span> </span><br><span class="line"><span class="number">13</span> <span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">imajor</span><span class="params">(struct inode *inode)</span></span>;</span><br><span class="line"><span class="number">14</span> </span><br><span class="line"><span class="number">15</span> <span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">iminor</span><span class="params">(struct inode *inode)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="0x33-驱动中的模块参数组"><a href="#0x33-驱动中的模块参数组" class="headerlink" title="0x33 驱动中的模块参数组"></a>0x33 驱动中的模块参数组</h3><p>我们可以利用module_param(参数名、参数类型、参数读写属性) 为模块定义一个参数，例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> *string_test = “<span class="keyword">this</span> is a test”;</span><br><span class="line"><span class="keyword">static</span> num_test = <span class="number">1000</span>;</span><br><span class="line">module_param (num_test,<span class="keyword">int</span>,S_IRUGO);</span><br><span class="line">module_param (steing_test,charp,S_ITUGO);</span><br></pre></td></tr></table></figure>
+<p>在装载模块时，用户可以给模块传递参数，形式为：<code>insmod 模块名 参数名=参数值</code>，如果不传递，则参数使用默认的参数值</p>
+<p>参数的类型可以是：byte,short,ushort,int,uint,long,ulong,charp,bool；</p>
+<p>权限：定义在<code>linux/stat.h</code>中，控制存取权限，<code>S_IRUGO</code>表示所有用户只读；</p>
+<p>模块被加载后，在<code>sys/module/</code>下会出现以此模块命名的目录，当读写权限为零时：表示此参数不存在sysfs文件系统下的文件节点，当读写权限不为零时：此模块的目录下会存在<code>parameters</code>目录，包含一系列以参数名命名的文件节点，这些文件节点的权限值就是传入<code>module_param()</code>的参数读/写权限，而该文件的内容为参数的值。</p>
+<p>除此之外，模块也可以拥有参数数组，形式为：<code>module_param_array(数组名、数组类型、数组长、参数读写权限等)</code>，当不需要保存实际的输入的数组元素的个数时，可以设置“数组长“为0。</p>
+<p>运行insmod时，使用逗号分隔输入的数组元素。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">MODULE_VERSION(TO_STR(MOD_VERS(NVFS_DRIVER_MAJOR_VERSION, NVFS_DRIVER_MINOR_VERSION, NVFS_DRIVER_PATCH_VERSION)));</span><br><span class="line">MODULE_LICENSE(<span class="string">&quot;GPL v2&quot;</span>);</span><br><span class="line">MODULE_DESCRIPTION(<span class="string">&quot;NVIDIA GPUDirect Storage&quot;</span>);</span><br><span class="line">module_param_named(max_devices, nvfs_max_devices, uint, S_IWUSR | S_IRUGO);</span><br><span class="line">MODULE_PARM_DESC(nvfs_max_devices, <span class="string">&quot;number of character devices to expose&quot;</span>);</span><br><span class="line">module_param_named(dbg_enabled, nvfs_dbg_enabled, uint, S_IWUSR | S_IRUGO);</span><br><span class="line">MODULE_PARM_DESC(nvfs_dbg_enabled, <span class="string">&quot;enable debug tracing&quot;</span>);</span><br><span class="line">module_param_named(info_enabled, nvfs_info_enabled, uint, S_IWUSR | S_IRUGO);</span><br><span class="line">MODULE_PARM_DESC(nvfs_info_enabled, <span class="string">&quot;enable info tracing&quot;</span>);</span><br><span class="line">module_param_named(peer_stats_enabled, nvfs_peer_stats_enabled, uint, S_IWUSR | S_IRUGO);</span><br><span class="line">MODULE_PARM_DESC(nvfs_peer_stats_enabled, <span class="string">&quot;enable peer stats&quot;</span>);</span><br><span class="line">module_param_named(rw_stats_enabled, nvfs_rw_stats_enabled, uint, S_IWUSR | S_IRUGO);</span><br><span class="line">MODULE_PARM_DESC(nvfs_rw_stats_enabled, <span class="string">&quot;enable read-write stats&quot;</span>);</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -735,194 +905,6 @@
 </li>
 </ul>
 <p><img src="/2022/01/18/04%20%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0/image-20210120161645722.png" alt="image-20210120161645722"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="BigtreeLiu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yokeso">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="post-title-link" itemprop="url">数据库完整性概念及其分类</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:44" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan：</span>
-    
-    
-      <a title="changyan" href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="cy_cmt_count" data-xid="2022/01/18/08 数据库完整性概念及其分类/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="数据库完整性概念及其分类"><a href="#数据库完整性概念及其分类" class="headerlink" title="数据库完整性概念及其分类"></a>数据库完整性概念及其分类</h1><h2 id="数据库完整性"><a href="#数据库完整性" class="headerlink" title="数据库完整性"></a>数据库完整性</h2><p>数据库完整性是指DBMS应保证DB的一种特性——在仍任何情况下的正确性，有效性和一致性</p>
-<ul>
-<li>广义完整性：语义的完整性，并发控制。安全控制，DB故障恢复等</li>
-<li>狭义完整性：专指语义的完整性，DBMS通常由专门的完整性管理机制与程序来处理语义完整i性问题</li>
-</ul>
-<h3 id="关系模型中的完整性要求："><a href="#关系模型中的完整性要求：" class="headerlink" title="关系模型中的完整性要求："></a>关系模型中的完整性要求：</h3><ul>
-<li>实体完整性</li>
-<li>参照完整性</li>
-<li>用户自定义完整性</li>
-</ul>
-<p>引发数据库完整性问题的原因主要是因为不正当的数据库操作（比如输入错误，操作错误，程序处理失误等）</p>
-<h3 id="数据库完整性的作用："><a href="#数据库完整性的作用：" class="headerlink" title="数据库完整性的作用："></a>数据库完整性的作用：</h3><ul>
-<li><p>防止和避免数据库中不合理数据的出现</p>
-</li>
-<li><p>DBMS应尽可能地自动防止DB中语义不合理现象</p>
-<ul>
-<li>DBMS允许用户定义一些完整性约束规则（用SQL-DDL定义）</li>
-<li>当有DB更新操作时，DBMS自动按照完整性约束条件进行检查，以确保更新操作符合语义完整性</li>
-</ul>
-</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126211831403.png" alt="数据库完整性作用"></p>
-<h3 id="完整性约束条件的一般形式"><a href="#完整性约束条件的一般形式" class="headerlink" title="完整性约束条件的一般形式"></a>完整性约束条件的一般形式</h3><p><strong>Integrity Constraint ::=(O,P,A,R)</strong></p>
-<ul>
-<li>O 数据集合：约束的对象</li>
-<li>P 谓词条件：什么样的约束</li>
-<li>A 触发条件： 什么时候检查</li>
-<li>R 相应动作：不满足怎么办</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126212743875.png" alt="约束的一般形式"></p>
-<h2 id="数据库完整性分类"><a href="#数据库完整性分类" class="headerlink" title="数据库完整性分类"></a>数据库完整性分类</h2><h3 id="域完整性约束条件"><a href="#域完整性约束条件" class="headerlink" title="域完整性约束条件"></a>域完整性约束条件</h3><ul>
-<li>施加于某一列上，对给定列上所要更新的某一后选址是否可以接受进行约束条件判断，这是孤立进行的</li>
-</ul>
-<h3 id="关系完整性约束条件"><a href="#关系完整性约束条件" class="headerlink" title="关系完整性约束条件"></a>关系完整性约束条件</h3><ul>
-<li>施加于关系/table上，对给定table上所要更新的某一候选元组是否可以接受进行约束条件判断，或是对一个关系中的若干元组和另一关系中的若干元组和另一个关系中的若干元组之间联系是否可以接受进行约束条件判断</li>
-</ul>
-<h3 id="按约束来源分类"><a href="#按约束来源分类" class="headerlink" title="按约束来源分类"></a>按约束来源分类</h3><p>结构约束</p>
-<ul>
-<li>来自于模型的约束，例如函数依赖约束、主键约束（实体完整性）、外键约束（参照完整性）、只关心数值是否相等，是否允许空值等</li>
-</ul>
-<p>内容约束</p>
-<ul>
-<li>来自于用户的约束，如用户自定义完整性，关系元组或属性的取值范围。</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122311851.png" alt="内容约束"></p>
-<h3 id="按约束状态分类"><a href="#按约束状态分类" class="headerlink" title="按约束状态分类"></a>按约束状态分类</h3><p>静态约束</p>
-<ul>
-<li>要求DB在任一时候均应该满足的约束</li>
-</ul>
-<p>动态约束</p>
-<ul>
-<li>要求DB从一状态变为另一状态时必须完成的约束</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122527453.png" alt="动态约束"></p>
-<h2 id="SQL实现完整性"><a href="#SQL实现完整性" class="headerlink" title="SQL实现完整性"></a>SQL实现完整性</h2><h3 id="SQL支持以下几种约束"><a href="#SQL支持以下几种约束" class="headerlink" title="SQL支持以下几种约束"></a>SQL支持以下几种约束</h3><ul>
-<li><p>静态约束</p>
-<ul>
-<li>列完整性-域完整性约束</li>
-<li>表完整性-关系完整性约束</li>
-</ul>
-</li>
-<li><p>动态约束</p>
-<ul>
-<li>触发器</li>
-</ul>
-</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122742173.png" alt="SQL支持的约束"></p>
-<h3 id="SQL实现约束方法-Creat-Table"><a href="#SQL实现约束方法-Creat-Table" class="headerlink" title="SQL实现约束方法-Creat Table"></a>SQL实现约束方法-Creat Table</h3><p>Creat Table 有三种功能:定义关系模式,定义完整性约束和定义物理存储特性</p>
-<p>定义完整性约束条件</p>
-<ul>
-<li>列完整性</li>
-<li>表完整性</li>
-</ul>
-<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127123243248.png" alt="列约束和表约束"></p>
-<h4 id="Col-constr列约束"><a href="#Col-constr列约束" class="headerlink" title="Col_constr列约束"></a>Col_constr列约束</h4><p>列约束是一种域约束类型,可以对单一列进行约束</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;NOT NULL|                         //列值非空</span><br><span class="line">    [<span class="keyword">CONSTRAINT</span> constraintname]    <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">         &#123;UNIQUE                   //列值是唯一</span><br><span class="line">          <span class="operator">|</span><span class="keyword">PRIMARY</span> KEY             <span class="operator">/</span><span class="operator">/</span>列为主键</span><br><span class="line">          <span class="operator">|</span><span class="keyword">CHECK</span>(search_cond)      <span class="operator">/</span><span class="operator">/</span>列值满足条件,条件只能使用当前列值</span><br><span class="line">          <span class="operator">|</span><span class="keyword">REFERENCES</span> tablename [(colname)]</span><br><span class="line">                [ON DELETE&#123;CASCADE|SET NULL&#125;]&#125;&#125;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>引用另一表tablename的列colname的值，如有<span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE或<span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">SET</span> <span class="keyword">NULL</span>语句，则删除被引用表的某列值v时，要将本表该列值为v的记录删除或列值更新为<span class="keyword">null</span>;缺省为无操作。</span><br></pre></td></tr></table></figure>
-<p>Col_constr 列约束:只能应用在单一列 上，其后面的约束如UNIQUE,PRIMARY KEY及search_cond 只能是单一列唯一、单一列为主键、和单一列相关</p>
-<h4 id="table-constr表约束"><a href="#table-constr表约束" class="headerlink" title="table_constr表约束"></a>table_constr表约束</h4><p>表约束是一种关系型约束.对多列或多元组的值进行约束,列约束是其特例</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">CONSTRAINT</span> constraintname]              <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">     &#123;UNIQUE  (colname &#123;.colname...&#125;)    //几列值合一起是唯一</span><br><span class="line">      |PRIMARY KEY (colname &#123;.colname...&#125;) //几列联合为主键</span><br><span class="line">      <span class="operator">|</span><span class="keyword">CHECK</span>(search_condition)      <span class="operator">/</span><span class="operator">/</span>元组多列值共同满足条件,</span><br><span class="line">  								<span class="operator">/</span><span class="operator">/</span>条件中只能使用同一元组不同列当前值</span><br><span class="line">      |FOREIGN KEY (colname &#123;.colname...&#125;)</span><br><span class="line">           REFERENCES tablename [(colname &#123;.colname...&#125;)]</span><br><span class="line">            [ON DELETE CASCADE]&#125;&#125;</span><br><span class="line">       					<span class="operator">/</span><span class="operator">/</span>引用另一表tablename的若干列键值作为外键</span><br></pre></td></tr></table></figure>
-<h2 id="断言ASSERTION"><a href="#断言ASSERTION" class="headerlink" title="断言ASSERTION"></a>断言ASSERTION</h2><p>一个断言就是一个谓词表达式,它表达了希望数据库总能满足的条件.表约束和列约束就是一种特殊的断言</p>
-<p>SQL提供了复杂条件表达的断言.其语法形式为:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> ASSERTION <span class="operator">&lt;</span>assertion_name<span class="operator">&gt;</span> <span class="keyword">CHECK</span> <span class="operator">&lt;</span>predicate<span class="operator">&gt;</span></span><br></pre></td></tr></table></figure>
-<p>当一个断言创建后,系统将检测其有效性,并在每一次更新中测试更新是否违背断言</p>
-<p><strong>断言测试增加了数据库维护的负担,所以要小心的使用断言</strong></p>
-<h2 id="触发器Trigger"><a href="#触发器Trigger" class="headerlink" title="触发器Trigger"></a>触发器Trigger</h2><ul>
-<li>Create Table中的表约束和列约束基本上都是静态的约束，也基本上都是对单一列或单一元组的约束(尽管有参照完整性)，为实现动态约束以及多个元组之间的完整性约束，就需要触发器技术Trigger</li>
-<li>Trigger是一种过程完整性约束(相比之下，Create Table中定义的都是非过程性约束)，是一段程序，该程序可以在特定的时刻被自动触发执行，比如在一次更新操作之前执行，或在更新操作之后执行。</li>
-</ul>
-<p>基本语法:</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trigger_name BEFORE<span class="operator">|</span>AFTER</span><br><span class="line">    &#123;INSERT|DELETE|UPDATE [OF folname&#123;,colname...&#125;]&#125;</span><br><span class="line">    ON tablename [REFERENCING corr_name_def &#123;col_name_def&#125;]</span><br><span class="line">    [<span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span><span class="operator">|</span><span class="keyword">FOR</span> <span class="keyword">EACH</span> STATEMENT]   <span class="operator">/</span><span class="operator">/</span>更新操作的每一条结果(前者),或者整个更新操作完成(后者)</span><br><span class="line">    [<span class="keyword">WHEN</span> (search_condition)]           <span class="operator">/</span><span class="operator">/</span>检查条件,如满足执行下面程序</span><br><span class="line">           &#123;statement                   //单行程序直接书写,多行程序要用下行方式</span><br><span class="line">           |BEGIN ATOMIC statement;(statement;..)END&#125;</span><br></pre></td></tr></table></figure>
-<p>触发器Trigger意义:当某一时间发生时(Before|After),对事件产生的结果(或是每一元组,或者操作的所有元组),检查条件search_condition,如果满足条件,则执行后面程序段,条件或程序段中引用的变量可用corr_name_def来限定</p>
 
       
     </div>
@@ -1387,6 +1369,194 @@
 <p>对于由单一Table子集构成的视图，即如果视图是从单个基本表使用选择，投影操作的，并且包含了基本表的主键，则可以更新</p>
 <h3 id="SQL-视图的撤销"><a href="#SQL-视图的撤销" class="headerlink" title="SQL-视图的撤销"></a>SQL-视图的撤销</h3><p>已经定义的视图可以撤销</p>
 <h6 id="撤销视图"><a href="#撤销视图" class="headerlink" title="撤销视图"></a>撤销视图</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Drop</span> <span class="keyword">View</span> view_name</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="post-title-link" itemprop="url">数据库完整性概念及其分类</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:44" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/#SOHUCS" itemprop="discussionUrl">
+        <span id="url::http://yokeso.github.io/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" class="cy_cmt_count" data-xid="2022/01/18/08 数据库完整性概念及其分类/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="数据库完整性概念及其分类"><a href="#数据库完整性概念及其分类" class="headerlink" title="数据库完整性概念及其分类"></a>数据库完整性概念及其分类</h1><h2 id="数据库完整性"><a href="#数据库完整性" class="headerlink" title="数据库完整性"></a>数据库完整性</h2><p>数据库完整性是指DBMS应保证DB的一种特性——在仍任何情况下的正确性，有效性和一致性</p>
+<ul>
+<li>广义完整性：语义的完整性，并发控制。安全控制，DB故障恢复等</li>
+<li>狭义完整性：专指语义的完整性，DBMS通常由专门的完整性管理机制与程序来处理语义完整i性问题</li>
+</ul>
+<h3 id="关系模型中的完整性要求："><a href="#关系模型中的完整性要求：" class="headerlink" title="关系模型中的完整性要求："></a>关系模型中的完整性要求：</h3><ul>
+<li>实体完整性</li>
+<li>参照完整性</li>
+<li>用户自定义完整性</li>
+</ul>
+<p>引发数据库完整性问题的原因主要是因为不正当的数据库操作（比如输入错误，操作错误，程序处理失误等）</p>
+<h3 id="数据库完整性的作用："><a href="#数据库完整性的作用：" class="headerlink" title="数据库完整性的作用："></a>数据库完整性的作用：</h3><ul>
+<li><p>防止和避免数据库中不合理数据的出现</p>
+</li>
+<li><p>DBMS应尽可能地自动防止DB中语义不合理现象</p>
+<ul>
+<li>DBMS允许用户定义一些完整性约束规则（用SQL-DDL定义）</li>
+<li>当有DB更新操作时，DBMS自动按照完整性约束条件进行检查，以确保更新操作符合语义完整性</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126211831403.png" alt="数据库完整性作用"></p>
+<h3 id="完整性约束条件的一般形式"><a href="#完整性约束条件的一般形式" class="headerlink" title="完整性约束条件的一般形式"></a>完整性约束条件的一般形式</h3><p><strong>Integrity Constraint ::=(O,P,A,R)</strong></p>
+<ul>
+<li>O 数据集合：约束的对象</li>
+<li>P 谓词条件：什么样的约束</li>
+<li>A 触发条件： 什么时候检查</li>
+<li>R 相应动作：不满足怎么办</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210126212743875.png" alt="约束的一般形式"></p>
+<h2 id="数据库完整性分类"><a href="#数据库完整性分类" class="headerlink" title="数据库完整性分类"></a>数据库完整性分类</h2><h3 id="域完整性约束条件"><a href="#域完整性约束条件" class="headerlink" title="域完整性约束条件"></a>域完整性约束条件</h3><ul>
+<li>施加于某一列上，对给定列上所要更新的某一后选址是否可以接受进行约束条件判断，这是孤立进行的</li>
+</ul>
+<h3 id="关系完整性约束条件"><a href="#关系完整性约束条件" class="headerlink" title="关系完整性约束条件"></a>关系完整性约束条件</h3><ul>
+<li>施加于关系/table上，对给定table上所要更新的某一候选元组是否可以接受进行约束条件判断，或是对一个关系中的若干元组和另一关系中的若干元组和另一个关系中的若干元组之间联系是否可以接受进行约束条件判断</li>
+</ul>
+<h3 id="按约束来源分类"><a href="#按约束来源分类" class="headerlink" title="按约束来源分类"></a>按约束来源分类</h3><p>结构约束</p>
+<ul>
+<li>来自于模型的约束，例如函数依赖约束、主键约束（实体完整性）、外键约束（参照完整性）、只关心数值是否相等，是否允许空值等</li>
+</ul>
+<p>内容约束</p>
+<ul>
+<li>来自于用户的约束，如用户自定义完整性，关系元组或属性的取值范围。</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122311851.png" alt="内容约束"></p>
+<h3 id="按约束状态分类"><a href="#按约束状态分类" class="headerlink" title="按约束状态分类"></a>按约束状态分类</h3><p>静态约束</p>
+<ul>
+<li>要求DB在任一时候均应该满足的约束</li>
+</ul>
+<p>动态约束</p>
+<ul>
+<li>要求DB从一状态变为另一状态时必须完成的约束</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122527453.png" alt="动态约束"></p>
+<h2 id="SQL实现完整性"><a href="#SQL实现完整性" class="headerlink" title="SQL实现完整性"></a>SQL实现完整性</h2><h3 id="SQL支持以下几种约束"><a href="#SQL支持以下几种约束" class="headerlink" title="SQL支持以下几种约束"></a>SQL支持以下几种约束</h3><ul>
+<li><p>静态约束</p>
+<ul>
+<li>列完整性-域完整性约束</li>
+<li>表完整性-关系完整性约束</li>
+</ul>
+</li>
+<li><p>动态约束</p>
+<ul>
+<li>触发器</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127122742173.png" alt="SQL支持的约束"></p>
+<h3 id="SQL实现约束方法-Creat-Table"><a href="#SQL实现约束方法-Creat-Table" class="headerlink" title="SQL实现约束方法-Creat Table"></a>SQL实现约束方法-Creat Table</h3><p>Creat Table 有三种功能:定义关系模式,定义完整性约束和定义物理存储特性</p>
+<p>定义完整性约束条件</p>
+<ul>
+<li>列完整性</li>
+<li>表完整性</li>
+</ul>
+<p><img src="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/image-20210127123243248.png" alt="列约束和表约束"></p>
+<h4 id="Col-constr列约束"><a href="#Col-constr列约束" class="headerlink" title="Col_constr列约束"></a>Col_constr列约束</h4><p>列约束是一种域约束类型,可以对单一列进行约束</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;NOT NULL|                         //列值非空</span><br><span class="line">    [<span class="keyword">CONSTRAINT</span> constraintname]    <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">         &#123;UNIQUE                   //列值是唯一</span><br><span class="line">          <span class="operator">|</span><span class="keyword">PRIMARY</span> KEY             <span class="operator">/</span><span class="operator">/</span>列为主键</span><br><span class="line">          <span class="operator">|</span><span class="keyword">CHECK</span>(search_cond)      <span class="operator">/</span><span class="operator">/</span>列值满足条件,条件只能使用当前列值</span><br><span class="line">          <span class="operator">|</span><span class="keyword">REFERENCES</span> tablename [(colname)]</span><br><span class="line">                [ON DELETE&#123;CASCADE|SET NULL&#125;]&#125;&#125;</span><br><span class="line"><span class="operator">/</span><span class="operator">/</span>引用另一表tablename的列colname的值，如有<span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE或<span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">SET</span> <span class="keyword">NULL</span>语句，则删除被引用表的某列值v时，要将本表该列值为v的记录删除或列值更新为<span class="keyword">null</span>;缺省为无操作。</span><br></pre></td></tr></table></figure>
+<p>Col_constr 列约束:只能应用在单一列 上，其后面的约束如UNIQUE,PRIMARY KEY及search_cond 只能是单一列唯一、单一列为主键、和单一列相关</p>
+<h4 id="table-constr表约束"><a href="#table-constr表约束" class="headerlink" title="table_constr表约束"></a>table_constr表约束</h4><p>表约束是一种关系型约束.对多列或多元组的值进行约束,列约束是其特例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">CONSTRAINT</span> constraintname]              <span class="operator">/</span><span class="operator">/</span>为约束命名.便于以后撤销</span><br><span class="line">     &#123;UNIQUE  (colname &#123;.colname...&#125;)    //几列值合一起是唯一</span><br><span class="line">      |PRIMARY KEY (colname &#123;.colname...&#125;) //几列联合为主键</span><br><span class="line">      <span class="operator">|</span><span class="keyword">CHECK</span>(search_condition)      <span class="operator">/</span><span class="operator">/</span>元组多列值共同满足条件,</span><br><span class="line">  								<span class="operator">/</span><span class="operator">/</span>条件中只能使用同一元组不同列当前值</span><br><span class="line">      |FOREIGN KEY (colname &#123;.colname...&#125;)</span><br><span class="line">           REFERENCES tablename [(colname &#123;.colname...&#125;)]</span><br><span class="line">            [ON DELETE CASCADE]&#125;&#125;</span><br><span class="line">       					<span class="operator">/</span><span class="operator">/</span>引用另一表tablename的若干列键值作为外键</span><br></pre></td></tr></table></figure>
+<h2 id="断言ASSERTION"><a href="#断言ASSERTION" class="headerlink" title="断言ASSERTION"></a>断言ASSERTION</h2><p>一个断言就是一个谓词表达式,它表达了希望数据库总能满足的条件.表约束和列约束就是一种特殊的断言</p>
+<p>SQL提供了复杂条件表达的断言.其语法形式为:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> ASSERTION <span class="operator">&lt;</span>assertion_name<span class="operator">&gt;</span> <span class="keyword">CHECK</span> <span class="operator">&lt;</span>predicate<span class="operator">&gt;</span></span><br></pre></td></tr></table></figure>
+<p>当一个断言创建后,系统将检测其有效性,并在每一次更新中测试更新是否违背断言</p>
+<p><strong>断言测试增加了数据库维护的负担,所以要小心的使用断言</strong></p>
+<h2 id="触发器Trigger"><a href="#触发器Trigger" class="headerlink" title="触发器Trigger"></a>触发器Trigger</h2><ul>
+<li>Create Table中的表约束和列约束基本上都是静态的约束，也基本上都是对单一列或单一元组的约束(尽管有参照完整性)，为实现动态约束以及多个元组之间的完整性约束，就需要触发器技术Trigger</li>
+<li>Trigger是一种过程完整性约束(相比之下，Create Table中定义的都是非过程性约束)，是一段程序，该程序可以在特定的时刻被自动触发执行，比如在一次更新操作之前执行，或在更新操作之后执行。</li>
+</ul>
+<p>基本语法:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> trigger_name BEFORE<span class="operator">|</span>AFTER</span><br><span class="line">    &#123;INSERT|DELETE|UPDATE [OF folname&#123;,colname...&#125;]&#125;</span><br><span class="line">    ON tablename [REFERENCING corr_name_def &#123;col_name_def&#125;]</span><br><span class="line">    [<span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="type">ROW</span><span class="operator">|</span><span class="keyword">FOR</span> <span class="keyword">EACH</span> STATEMENT]   <span class="operator">/</span><span class="operator">/</span>更新操作的每一条结果(前者),或者整个更新操作完成(后者)</span><br><span class="line">    [<span class="keyword">WHEN</span> (search_condition)]           <span class="operator">/</span><span class="operator">/</span>检查条件,如满足执行下面程序</span><br><span class="line">           &#123;statement                   //单行程序直接书写,多行程序要用下行方式</span><br><span class="line">           |BEGIN ATOMIC statement;(statement;..)END&#125;</span><br></pre></td></tr></table></figure>
+<p>触发器Trigger意义:当某一时间发生时(Before|After),对事件产生的结果(或是每一元组,或者操作的所有元组),检查条件search_condition,如果满足条件,则执行后面程序段,条件或程序段中引用的变量可用corr_name_def来限定</p>
 
       
     </div>
@@ -1944,160 +2114,6 @@ AccesRule::=(S,O,t,P)</script><ul>
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="BigtreeLiu">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Yokeso">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">数据建模与数据库设计</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:47:56" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Changyan：</span>
-    
-    
-      <a title="changyan" href="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/#SOHUCS" itemprop="discussionUrl">
-        <span id="url::http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/" class="cy_cmt_count" data-xid="2022/01/18/12　数据建模与数据库设计/" itemprop="commentCount"></span>
-      </a>
-    
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="数据建模与数据库设计"><a href="#数据建模与数据库设计" class="headerlink" title="数据建模与数据库设计"></a>数据建模与数据库设计</h1><h2 id="数据模型与概念模型"><a href="#数据模型与概念模型" class="headerlink" title="数据模型与概念模型"></a>数据模型与概念模型</h2><p>表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/Users\Yokeso\AppData\Roaming\Typora\typora-user-images\image-20210129224502779.png" alt="image-20210129224502779"></p>
-<h2 id="实体与实例"><a href="#实体与实例" class="headerlink" title="实体与实例"></a>实体与实例</h2><h3 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h3><p>实体：客观存在并可相互区分的事务</p>
-<p>实体有类（实体，实体的型）和个体（实体的实例。实体的值）的概念</p>
-<p>实体用<strong>属性</strong>来刻画  <strong>属性</strong>是实体具有的某一方面的特性</p>
-<h5 id="属性分类"><a href="#属性分类" class="headerlink" title="属性分类"></a>属性分类</h5><ul>
-<li><strong>单一属性和复合属性</strong>，在关系模型中，复合属性一定要转化为单一属性（关系中的1范式）</li>
-<li><strong>单值属性和多值属性</strong>：每个实例的该属性值是一个还是多个</li>
-<li><strong>可空值属性和非空值属性</strong></li>
-<li><strong>导出属性</strong>（由其他属性通过计算得到）</li>
-</ul>
-<p>属性最重要的特点的<strong>关键字/码</strong>，表示实体中能够哟弄个其值唯一区分开每一实例的属性或属性组合</p>
-<p>实体之间是有<strong>联系</strong>的，<strong>联系</strong>是指一个实体的实例和其他实体实例之间所可能发生的联系。</p>
-<p><strong>角色</strong>：实体在联系中的作用</p>
-<p>实体之间的联系可以有很多种类</p>
-<h5 id="二元联系"><a href="#二元联系" class="headerlink" title="二元联系"></a>二元联系</h5><p>一对一，一对多，多对多</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130103226008.png" alt="二元联系"></p>
-<p>联系的<strong>基数</strong>：实体实例之间联系的数量，即一个实体的实例通过一个联系能与另一实体中相关联的实例的数目</p>
-<p>进一步，联系的基数还要区分0个，1个，不定数目的多个还是固定数目的多个（即每个实体的实例而言是否必须存在）</p>
-<p>通常以实体参与联系的最小基数和最大基数来标记（MInCard..MaxCard）</p>
-<ul>
-<li><strong>书架</strong>参与<strong>存放图书</strong>联系的基数为(0..m)，而图书参与此联系的基数为（1..1）</li>
-<li>一个书架可以存放0或多本图书，但一本图书只能存放在一个书架</li>
-</ul>
-<p>完全参与联系，即该端实例至少有一个参与到联系中，最小基数为1（1..m）;</p>
-<p>部分参与联系：即该端实例可以不参与联系，最小基数为0（0..m）</p>
-<h2 id="E-R模型"><a href="#E-R模型" class="headerlink" title="E-R模型"></a>E-R模型</h2><h3 id="E-R模型表达方法之chen方法"><a href="#E-R模型表达方法之chen方法" class="headerlink" title="E-R模型表达方法之chen方法"></a>E-R模型表达方法之chen方法</h3><p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130105208413.png" alt="chen方法"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130105355140.png" alt="联系的区分"> </p>
-<h3 id="E-R模型表达方法之Crow’s-foot方法"><a href="#E-R模型表达方法之Crow’s-foot方法" class="headerlink" title="E-R模型表达方法之Crow’s foot方法"></a>E-R模型表达方法之Crow’s foot方法</h3><p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130173504426.png" alt="Crow&#39;s foot"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130173548589.png" alt="联系"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130173630366.png" alt="联系的基数表示"></p>
-<h2 id="数据库设计的抽象"><a href="#数据库设计的抽象" class="headerlink" title="数据库设计的抽象"></a>数据库设计的抽象</h2><p>型与值</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130190431385.png" alt="不同层次的抽象"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130190629696.png" alt="数据模型与概念模型"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130191305331.png" alt="分层级抽象"></p>
-<h2 id="建模的不同层次：模型与元模型，模型（型）与实例（值）"><a href="#建模的不同层次：模型与元模型，模型（型）与实例（值）" class="headerlink" title="建模的不同层次：模型与元模型，模型（型）与实例（值）"></a>建模的不同层次：模型与元模型，模型（型）与实例（值）</h2><p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131094716351.png" alt="建模层次"></p>
-<h2 id="IDEF1x"><a href="#IDEF1x" class="headerlink" title="IDEF1x"></a>IDEF1x</h2><h4 id="实体-1"><a href="#实体-1" class="headerlink" title="实体"></a>实体</h4><p>实体表示现实和抽象事物的集合，这些事物必须具有相同的属性和特征。这个集合的一个元素就是该实体的一个实例</p>
-<ul>
-<li>实体分为独立实体和从属实体</li>
-<li>在扩展E-R图中，<strong>独立实体</strong>又称为强实体，<strong>从属实体</strong>又称弱实体</li>
-</ul>
-<p>独立实体：一个实体的实例都被唯一的标识而不决定与它与其他实体的联系</p>
-<p>从属实体：一个实体的实例唯一标识需要依赖于该实体与其他实体之间的联系</p>
-<p>从属实体需要从其他实体继承属性作为关键字的一部分</p>
-<h3 id="关于实体的规则"><a href="#关于实体的规则" class="headerlink" title="关于实体的规则"></a>关于实体的规则</h3><p>关于实体的规则：工程化要求</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131103736957.png" alt="实体规则"></p>
-<h3 id="标定联系与非标定联系"><a href="#标定联系与非标定联系" class="headerlink" title="标定联系与非标定联系"></a>标定联系与非标定联系</h3><p>子实体的实例能够被唯一标识而无需依赖与其实体的联系，父实体的主关键字不视子实体的主关键字</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131110031592.png" alt="image-20210131110031592"></p>
-<h3 id="分类联系"><a href="#分类联系" class="headerlink" title="分类联系"></a>分类联系</h3><p>分类联系：一个实体实例是由一个一般实体实例及多个分类实体实例构成的</p>
-<ul>
-<li>一个一般实体是若干具体实体（分类实体）的类</li>
-<li>分类实体与一般实体具有相同的主关键字</li>
-<li>不同分类实体除具有一啊不能是实体特征外，各自还可能具有不同的属性特征</li>
-</ul>
-<h3 id="具体化"><a href="#具体化" class="headerlink" title="具体化"></a>具体化</h3><p>实体的实例集中，某些实例子集具有区别于该实例集内其他实例的特性，可以根据这些差异特性对该实例进行分组，这一分组的过程称为具体化</p>
-<p>自顶向下，逐步求精</p>
-<h3 id="泛化"><a href="#泛化" class="headerlink" title="泛化"></a>泛化</h3><p>若干个实体根据共有的性质，可以合成一个较高层的实体</p>
-<p><strong>泛化和具体化在E-R图中用标记为ISa的三角形标识</strong></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -2145,14 +2161,14 @@ AccesRule::=(S,O,t,P)</script><ul>
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">139k</span>
+    <span title="站点总字数">147k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">2:06</span>
+    <span title="站点阅读时长">2:14</span>
   </span>
 </div>
 <div class="busuanzi-count">
