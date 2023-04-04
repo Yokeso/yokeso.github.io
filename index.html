@@ -124,9 +124,9 @@
 <nav class="site-nav">
   <ul class="main-menu menu">
         <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">18</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">22</span></a></li>
         <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">39</span></a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
   </ul>
 </nav>
 
@@ -176,15 +176,13 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">18</span>
-        <span class="site-state-item-name">标签</span>
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
-  <div class="sidebar-button site-overview-item animated"><i class="fa fa-comment"></i>
-    发表
-  </a>
-  </div>
   <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
@@ -477,7 +475,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-04-02 23:39:45" itemprop="dateModified" datetime="2023-04-02T23:39:45+08:00">2023-04-02</time>
+        <time title="修改时间：2023-04-05 00:49:34" itemprop="dateModified" datetime="2023-04-05T00:49:34+08:00">2023-04-05</time>
       </span>
 
   
@@ -536,7 +534,7 @@
 <p><strong>块设备驱动</strong>：可以从设备的任意位置读取一定长度的数据设备，比如硬盘，SD卡等设备均是块设备。</p>
 <p><strong>网络设备</strong>：网络设备不会在<code>/dev</code>中列出，不是针对文件的操作，而是使用专门的网络接口实现。应用设备不能直接访问网络驱动程序。</p>
 <p>三种设备在Linux中的位置可以用一张图片来描述。如图所示：</p>
-<p><img src="/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/image-20230228174416669.png" alt="Linux系统结构图"></p>
+<p><img src="/2023/03/05/linux%E5%86%85%E6%A0%B8%E9%A9%B1%E5%8A%A8%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/image-20230228174416669-1680624988488.png" alt="Linux系统结构图"></p>
 <h3 id="0x22-Linux驱动编译和加载"><a href="#0x22-Linux驱动编译和加载" class="headerlink" title="0x22 Linux驱动编译和加载"></a>0x22 Linux驱动编译和加载</h3><p>linux设备驱动属于内核的一部分，所以编译加载的时候都需要内核的帮助。Linux内核的一个模块可以通过两种方式被编译和加载。</p>
 <ul>
 <li>直接编译进内核，同Linux启动的同时进行加载</li>
