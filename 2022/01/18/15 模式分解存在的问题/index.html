@@ -26,18 +26,18 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":30,"offset":30},"copycode":true,"bookmark":{"enable":true,"color":"#9400D3","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="模式分解存在的问题模式分解模式分解是指用R的一组子集来替代这个关系 投影链接 模式分解需要关注： R与p在数据内容方面是否等价：分解的无损连接性 R与p在数据依赖方面是否等价：分解的保持依赖性  无损链接分解对于关系模式R(U,F),U是全局属性，F是函数依赖集合，$p&#x3D;{R_1,…,R_k}$是R 的一个分解，如果对于R的任何满足函数依赖集F的关系r，有  r&#x3D;m_\rho(r)则称$\rho$">
+<meta name="description" content="模式分解存在的问题模式分解模式分解是指用R的一组子集来替代这个关系">
 <meta property="og:type" content="article">
 <meta property="og:title" content="模式分解存在的问题">
 <meta property="og:url" content="http://yokeso.github.io/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Yokeso">
-<meta property="og:description" content="模式分解存在的问题模式分解模式分解是指用R的一组子集来替代这个关系 投影链接 模式分解需要关注： R与p在数据内容方面是否等价：分解的无损连接性 R与p在数据依赖方面是否等价：分解的保持依赖性  无损链接分解对于关系模式R(U,F),U是全局属性，F是函数依赖集合，$p&#x3D;{R_1,…,R_k}$是R 的一个分解，如果对于R的任何满足函数依赖集F的关系r，有  r&#x3D;m_\rho(r)则称$\rho$">
+<meta property="og:description" content="模式分解存在的问题模式分解模式分解是指用R的一组子集来替代这个关系">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203113352039.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203114626676.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203120557755.png">
 <meta property="article:published_time" content="2022-01-18T02:22:28.000Z">
-<meta property="article:modified_time" content="2022-01-18T02:46:32.000Z">
+<meta property="article:modified_time" content="2023-05-16T16:15:02.291Z">
 <meta property="article:author" content="BigtreeLiu">
 <meta property="article:tag" content="Bolg,Yokeso,BigtreeLiu">
 <meta name="twitter:card" content="summary">
@@ -273,10 +273,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:46:32" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:15:02" itemprop="dateModified" datetime="2023-05-17T00:15:02+08:00">2023-05-17</time>
+      </span>
 
   
     <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -328,6 +334,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="模式分解存在的问题"><a href="#模式分解存在的问题" class="headerlink" title="模式分解存在的问题"></a>模式分解存在的问题</h1><h2 id="模式分解"><a href="#模式分解" class="headerlink" title="模式分解"></a>模式分解</h2><p>模式分解是指用R的一组子集来替代这个关系</p>
+<span id="more"></span>
 <h3 id="投影链接"><a href="#投影链接" class="headerlink" title="投影链接"></a>投影链接</h3><p><img src="/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203113352039.png" alt="image-20210203113352039"></p>
 <p>模式分解需要关注：</p>
 <p>R与p在数据内容方面是否等价：分解的无损连接性</p>

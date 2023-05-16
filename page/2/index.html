@@ -263,10 +263,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:47:56" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:14:45" itemprop="dateModified" datetime="2023-05-17T00:14:45+08:00">2023-05-17</time>
+      </span>
 
   
   
@@ -311,64 +317,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="数据建模与数据库设计"><a href="#数据建模与数据库设计" class="headerlink" title="数据建模与数据库设计"></a>数据建模与数据库设计</h1><h2 id="数据模型与概念模型"><a href="#数据模型与概念模型" class="headerlink" title="数据模型与概念模型"></a>数据模型与概念模型</h2><p>表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/Users\Yokeso\AppData\Roaming\Typora\typora-user-images\image-20210129224502779.png" alt="image-20210129224502779"></p>
-<h2 id="实体与实例"><a href="#实体与实例" class="headerlink" title="实体与实例"></a>实体与实例</h2><h3 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h3><p>实体：客观存在并可相互区分的事务</p>
-<p>实体有类（实体，实体的型）和个体（实体的实例。实体的值）的概念</p>
-<p>实体用<strong>属性</strong>来刻画  <strong>属性</strong>是实体具有的某一方面的特性</p>
-<h5 id="属性分类"><a href="#属性分类" class="headerlink" title="属性分类"></a>属性分类</h5><ul>
-<li><strong>单一属性和复合属性</strong>，在关系模型中，复合属性一定要转化为单一属性（关系中的1范式）</li>
-<li><strong>单值属性和多值属性</strong>：每个实例的该属性值是一个还是多个</li>
-<li><strong>可空值属性和非空值属性</strong></li>
-<li><strong>导出属性</strong>（由其他属性通过计算得到）</li>
-</ul>
-<p>属性最重要的特点的<strong>关键字/码</strong>，表示实体中能够哟弄个其值唯一区分开每一实例的属性或属性组合</p>
-<p>实体之间是有<strong>联系</strong>的，<strong>联系</strong>是指一个实体的实例和其他实体实例之间所可能发生的联系。</p>
-<p><strong>角色</strong>：实体在联系中的作用</p>
-<p>实体之间的联系可以有很多种类</p>
-<h5 id="二元联系"><a href="#二元联系" class="headerlink" title="二元联系"></a>二元联系</h5><p>一对一，一对多，多对多</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130103226008.png" alt="二元联系"></p>
-<p>联系的<strong>基数</strong>：实体实例之间联系的数量，即一个实体的实例通过一个联系能与另一实体中相关联的实例的数目</p>
-<p>进一步，联系的基数还要区分0个，1个，不定数目的多个还是固定数目的多个（即每个实体的实例而言是否必须存在）</p>
-<p>通常以实体参与联系的最小基数和最大基数来标记（MInCard..MaxCard）</p>
-<ul>
-<li><strong>书架</strong>参与<strong>存放图书</strong>联系的基数为(0..m)，而图书参与此联系的基数为（1..1）</li>
-<li>一个书架可以存放0或多本图书，但一本图书只能存放在一个书架</li>
-</ul>
-<p>完全参与联系，即该端实例至少有一个参与到联系中，最小基数为1（1..m）;</p>
-<p>部分参与联系：即该端实例可以不参与联系，最小基数为0（0..m）</p>
-<h2 id="E-R模型"><a href="#E-R模型" class="headerlink" title="E-R模型"></a>E-R模型</h2><h3 id="E-R模型表达方法之chen方法"><a href="#E-R模型表达方法之chen方法" class="headerlink" title="E-R模型表达方法之chen方法"></a>E-R模型表达方法之chen方法</h3><p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130105208413.png" alt="chen方法"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130105355140.png" alt="联系的区分"> </p>
-<h3 id="E-R模型表达方法之Crow’s-foot方法"><a href="#E-R模型表达方法之Crow’s-foot方法" class="headerlink" title="E-R模型表达方法之Crow’s foot方法"></a>E-R模型表达方法之Crow’s foot方法</h3><p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130173504426.png" alt="Crow&#39;s foot"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130173548589.png" alt="联系"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130173630366.png" alt="联系的基数表示"></p>
-<h2 id="数据库设计的抽象"><a href="#数据库设计的抽象" class="headerlink" title="数据库设计的抽象"></a>数据库设计的抽象</h2><p>型与值</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130190431385.png" alt="不同层次的抽象"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130190629696.png" alt="数据模型与概念模型"></p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130191305331.png" alt="分层级抽象"></p>
-<h2 id="建模的不同层次：模型与元模型，模型（型）与实例（值）"><a href="#建模的不同层次：模型与元模型，模型（型）与实例（值）" class="headerlink" title="建模的不同层次：模型与元模型，模型（型）与实例（值）"></a>建模的不同层次：模型与元模型，模型（型）与实例（值）</h2><p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131094716351.png" alt="建模层次"></p>
-<h2 id="IDEF1x"><a href="#IDEF1x" class="headerlink" title="IDEF1x"></a>IDEF1x</h2><h4 id="实体-1"><a href="#实体-1" class="headerlink" title="实体"></a>实体</h4><p>实体表示现实和抽象事物的集合，这些事物必须具有相同的属性和特征。这个集合的一个元素就是该实体的一个实例</p>
-<ul>
-<li>实体分为独立实体和从属实体</li>
-<li>在扩展E-R图中，<strong>独立实体</strong>又称为强实体，<strong>从属实体</strong>又称弱实体</li>
-</ul>
-<p>独立实体：一个实体的实例都被唯一的标识而不决定与它与其他实体的联系</p>
-<p>从属实体：一个实体的实例唯一标识需要依赖于该实体与其他实体之间的联系</p>
-<p>从属实体需要从其他实体继承属性作为关键字的一部分</p>
-<h3 id="关于实体的规则"><a href="#关于实体的规则" class="headerlink" title="关于实体的规则"></a>关于实体的规则</h3><p>关于实体的规则：工程化要求</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131103736957.png" alt="实体规则"></p>
-<h3 id="标定联系与非标定联系"><a href="#标定联系与非标定联系" class="headerlink" title="标定联系与非标定联系"></a>标定联系与非标定联系</h3><p>子实体的实例能够被唯一标识而无需依赖与其实体的联系，父实体的主关键字不视子实体的主关键字</p>
-<p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131110031592.png" alt="image-20210131110031592"></p>
-<h3 id="分类联系"><a href="#分类联系" class="headerlink" title="分类联系"></a>分类联系</h3><p>分类联系：一个实体实例是由一个一般实体实例及多个分类实体实例构成的</p>
-<ul>
-<li>一个一般实体是若干具体实体（分类实体）的类</li>
-<li>分类实体与一般实体具有相同的主关键字</li>
-<li>不同分类实体除具有一啊不能是实体特征外，各自还可能具有不同的属性特征</li>
-</ul>
-<h3 id="具体化"><a href="#具体化" class="headerlink" title="具体化"></a>具体化</h3><p>实体的实例集中，某些实例子集具有区别于该实例集内其他实例的特性，可以根据这些差异特性对该实例进行分组，这一分组的过程称为具体化</p>
-<p>自顶向下，逐步求精</p>
-<h3 id="泛化"><a href="#泛化" class="headerlink" title="泛化"></a>泛化</h3><p>若干个实体根据共有的性质，可以合成一个较高层的实体</p>
-<p><strong>泛化和具体化在E-R图中用标记为ISa的三角形标识</strong></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -417,10 +373,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:47:42" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:14:55" itemprop="dateModified" datetime="2023-05-17T00:14:55+08:00">2023-05-17</time>
+      </span>
 
   
   
@@ -467,16 +429,14 @@
           <h1 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h1><h2 id="函数依赖"><a href="#函数依赖" class="headerlink" title="函数依赖"></a>函数依赖</h2><p>函数依赖的定义：设R(U)是属性集合</p>
 <script type="math/tex; mode=display">
 U=\{A_1,A_2...A_n\}</script><p>上的一个关系模式，X，Y是U上两个子集，若对R(U)的任意一个可能的关系r，r中不可能有两个元组满足在X中的属性值相等而在Y中的属性值不等，则称“X函数决定Y”或“Y函数依赖于X”记作X-&gt;Y </p>
-<h3 id="函数依赖的特性"><a href="#函数依赖的特性" class="headerlink" title="函数依赖的特性"></a>函数依赖的特性</h3><p><img src="/2022/01/18/13%20%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB/image-20210202151717689.png" alt></p>
-<h3 id="完全函数依赖与传递函数依赖"><a href="#完全函数依赖与传递函数依赖" class="headerlink" title="完全函数依赖与传递函数依赖"></a>完全函数依赖与传递函数依赖</h3><p><img src="/2022/01/18/13%20%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB/image-20210202155400640.png" alt="image-20210202155400640"></p>
-<p><img src="/2022/01/18/13%20%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB/image-20210202155942263.png" alt="image-20210202155942263"></p>
-<h3 id="函数相关的几个重要概念"><a href="#函数相关的几个重要概念" class="headerlink" title="函数相关的几个重要概念"></a>函数相关的几个重要概念</h3><p>候选键</p>
-<p><img src="/2022/01/18/13%20%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB/image-20210202160300991.png" alt="image-20210202160300991"></p>
-<p>外来键</p>
-<p><img src="/2022/01/18/13%20%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB/image-20210202160436387.png" alt="image-20210202160436387"></p>
-<p>闭包</p>
-<p>被F逻辑蕴含的所有函数依赖的集合称为F的闭包，记作F’</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/18/13%20%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -525,10 +485,16 @@ U=\{A_1,A_2...A_n\}</script><p>上的一个关系模式，X，Y是U上两个子�
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:46:32" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:15:02" itemprop="dateModified" datetime="2023-05-17T00:15:02+08:00">2023-05-17</time>
+      </span>
 
   
   
@@ -573,16 +539,14 @@ U=\{A_1,A_2...A_n\}</script><p>上的一个关系模式，X，Y是U上两个子�
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="模式分解存在的问题"><a href="#模式分解存在的问题" class="headerlink" title="模式分解存在的问题"></a>模式分解存在的问题</h1><h2 id="模式分解"><a href="#模式分解" class="headerlink" title="模式分解"></a>模式分解</h2><p>模式分解是指用R的一组子集来替代这个关系</p>
-<h3 id="投影链接"><a href="#投影链接" class="headerlink" title="投影链接"></a>投影链接</h3><p><img src="/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203113352039.png" alt="image-20210203113352039"></p>
-<p>模式分解需要关注：</p>
-<p>R与p在数据内容方面是否等价：分解的无损连接性</p>
-<p>R与p在数据依赖方面是否等价：分解的保持依赖性</p>
-<p><img src="/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203114626676.png" alt="image-20210203114626676"></p>
-<h2 id="无损链接分解"><a href="#无损链接分解" class="headerlink" title="无损链接分解"></a>无损链接分解</h2><p>对于关系模式R(U,F),U是全局属性，F是函数依赖集合，$p={R_1,…,R_k}$是R 的一个分解，如果对于R的任何满足函数依赖集F的关系r，有</p>
-<script type="math/tex; mode=display">
-r=m_\rho(r)</script><p>则称$\rho$是R相对于F的一个无损链接分解，其中</p>
-<p><img src="/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/image-20210203120557755.png" alt="image-20210203120557755"></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/18/15%20%E6%A8%A1%E5%BC%8F%E5%88%86%E8%A7%A3%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -631,10 +595,16 @@ r=m_\rho(r)</script><p>则称$\rho$是R相对于F的一个无损链接分解，�
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:49:14" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:08:15" itemprop="dateModified" datetime="2023-05-17T00:08:15+08:00">2023-05-17</time>
+      </span>
 
   
   
@@ -678,68 +648,15 @@ r=m_\rho(r)</script><p>则称$\rho$是R相对于F的一个无损链接分解，�
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="2-关系数据库模型"><a href="#2-关系数据库模型" class="headerlink" title="[2] 关系数据库模型"></a>[2] 关系数据库模型</h1><h2 id="2-1什么是关系"><a href="#2-1什么是关系" class="headerlink" title="2.1什么是关系"></a>2.1什么是关系</h2><h3 id="1-什么是表"><a href="#1-什么是表" class="headerlink" title="1.什么是表"></a>1.什么是表</h3><p><img src="/2022/01/18/2.%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%9E%8B/image-20210118152305959.png" alt="image-20210118152305959" style="zoom:50%;"></p>
-<h3 id="域"><a href="#域" class="headerlink" title="域"></a>域</h3><p>域：列的取值范围，是一组值的集合，这组值具有相同的数据类型</p>
-<ul>
-<li>如：整数的集合，字符串的集合</li>
-<li>集合中的元素的个数叫做域的<strong>基数</strong></li>
-</ul>
-<h3 id="笛卡儿积"><a href="#笛卡儿积" class="headerlink" title="笛卡儿积"></a>笛卡儿积</h3><ul>
-<li><p>一组域D1，D2…Dn的笛卡尔积的笛卡尔积为：</p>
-<script type="math/tex; mode=display">
-D_1\times D_2\times.....\times D_n=\{ (d_1,d_2,....,d_n)|d_i\in D_i,i=1,....n\}</script></li>
-<li><p>笛卡尔积的每个元素$(d_1,d_2,….d_n)$称作一个n-元组</p>
-</li>
-<li><p>元组$(d_1,d_2,….d_n)$的每一个值$d_i$叫做一个分量</p>
-</li>
-<li>元组$(d_1,d_2,….d_n)$是从每个域任取一个值形成的组合，笛卡尔积是所有这种可能组合的集合，即笛卡儿积是由n个域形成的所有可能的n-元组的集合</li>
-<li>若$D_i$的奇数为$m_i$则笛卡尔积的奇数即元组个数即为：$m_1 \times m_2 \times… \times m_n$</li>
-</ul>
-<h3 id="关系"><a href="#关系" class="headerlink" title="关系"></a>关系</h3><p>关系：一组域D1，D2…Dn的笛卡尔积的子集，笛卡尔积中具有某一方面意义的元组被称为一个关系</p>
-<ul>
-<li>理论上，关系的任两个元组不能完全相同，现实应用中，表(Table)可能并不完全遵守此特性</li>
-<li>关系可用$R(A_1:D_1,A_2:D_2,….A_n:D_n,)$表示，可简记为$R(A_1,A_2,….A_n,)$,这种描述又称为<strong>关系模式</strong>或表标题<ul>
-<li>其中R是关系的名字，$A_i$是属性，$D_i$是属性对应的域，n是关系的<strong>度</strong>或<strong>目</strong>，关系中的元组的数目称为关系的<strong>基数</strong></li>
-</ul>
-</li>
-</ul>
-<h5 id="关系的特性："><a href="#关系的特性：" class="headerlink" title="关系的特性："></a>关系的特性：</h5><ul>
-<li>每一列中的分量来自同一域，是同一类型的数据</li>
-<li>不同的列可以来自同一个域，其中的每一个列为一个属性，不同的属性要基于不同的属性名</li>
-<li>行列的互换性（区分不是靠位置而是靠值）</li>
-<li>理论上关系的任意两个元组不能完全相同</li>
-<li>关系第一范式：属性不可再分</li>
-</ul>
-<h3 id="候选键（candidate-key-）"><a href="#候选键（candidate-key-）" class="headerlink" title="候选键（candidate key ）"></a>候选键（candidate key ）</h3><ul>
-<li><p>一个<strong>属性组</strong>， 其值能唯一标识一个元组，若从该属性组中去掉任何一个属性，它就不具备这一性质了，这样的属性组称为<strong>候选键</strong></p>
-</li>
-<li><p>有时关系中有很多组候选码</p>
-</li>
-</ul>
-<h3 id="主键（primany-key）"><a href="#主键（primany-key）" class="headerlink" title="主键（primany key）"></a>主键（primany key）</h3><p>有多个候选码时，可以选一个作为主码/主键</p>
-<p>DBMS以主码为主要线索管理关系中的各个元组</p>
-<h3 id="主属性与非主属性"><a href="#主属性与非主属性" class="headerlink" title="主属性与非主属性"></a>主属性与非主属性</h3><p>包含在任何一个候选码中的属性被称作主属性，而其他属性被称作非主属性</p>
-<h3 id="外键"><a href="#外键" class="headerlink" title="外键"></a>外键</h3><ul>
-<li><p>关系R中的一个属性组，它不是R的候选码，但它与另一个关系S的候选 码相对应，则称这个属性组为R的外码或外键</p>
-</li>
-<li><p>两个关系是靠外码连接起来的</p>
-</li>
-</ul>
-<h2 id="完整性"><a href="#完整性" class="headerlink" title="完整性"></a>完整性</h2><p><strong>实体完整性</strong></p>
-<ul>
-<li>关系中主码的属性值不能为空（空值：不知道或无意义的值）</li>
-<li>其他情况下存在空值需要特殊处理，需要特别注意</li>
-</ul>
-<p><strong>参照完整性</strong></p>
-<ul>
-<li>如果关系R1的外码Fk与关系R2的主码Pk相对应，则R1中的每一个元组的 Fk值或者等于R2 中某个元组的Pk 值， 或者为空值</li>
-</ul>
-<p><strong>用户自定义完整性</strong></p>
-<ul>
-<li>如S#要求是10位整数</li>
-<li>性别只能是男/女</li>
-</ul>
-
+          <h1 id="2-关系数据库模型"><a href="#2-关系数据库模型" class="headerlink" title="[2] 关系数据库模型"></a>[2] 关系数据库模型</h1><h2 id="2-1什么是关系"><a href="#2-1什么是关系" class="headerlink" title="2.1什么是关系"></a>2.1什么是关系</h2><h3 id="1-什么是表"><a href="#1-什么是表" class="headerlink" title="1.什么是表"></a>1.什么是表</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/18/2.%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%9E%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1128,7 +1045,7 @@ D_1\times D_2\times.....\times D_n=\{ (d_1,d_2,....,d_n)|d_i\in D_i,i=1,....n\}<
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-03-18 23:40:20" itemprop="dateModified" datetime="2021-03-18T23:40:20+08:00">2021-03-18</time>
+        <time title="修改时间：2023-05-17 00:16:15" itemprop="dateModified" datetime="2023-05-17T00:16:15+08:00">2023-05-17</time>
       </span>
 
   

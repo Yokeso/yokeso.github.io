@@ -26,20 +26,20 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":30,"offset":30},"copycode":true,"bookmark":{"enable":true,"color":"#9400D3","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="关系模型之关系演算1.关系演算之元组演算 关系演算以数理逻辑中的谓词演算为基础 是描述关系运算的另一种思维方式 关系演算根据谓词变量不同，分为关系元组演算和关系域演算 基本形式：${t|P(t)}$表示使用谓词P为真的元组t的集合 t是元组变量 $t\in r$表示元组在关系r中 t[A]表示元组t的分量，即t在属性A上的值 P是与谓词逻辑相似的公式，P(t)表示以元组t为变量的公式 可以递归定义">
+<meta name="description" content="关系模型之关系演算1.关系演算之元组演算 关系演算以数理逻辑中的谓词演算为基础 是描述关系运算的另一种思维方式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关系模型之关系演算">
 <meta property="og:url" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/index.html">
 <meta property="og:site_name" content="Yokeso">
-<meta property="og:description" content="关系模型之关系演算1.关系演算之元组演算 关系演算以数理逻辑中的谓词演算为基础 是描述关系运算的另一种思维方式 关系演算根据谓词变量不同，分为关系元组演算和关系域演算 基本形式：${t|P(t)}$表示使用谓词P为真的元组t的集合 t是元组变量 $t\in r$表示元组在关系r中 t[A]表示元组t的分量，即t在属性A上的值 P是与谓词逻辑相似的公式，P(t)表示以元组t为变量的公式 可以递归定义">
+<meta property="og:description" content="关系模型之关系演算1.关系演算之元组演算 关系演算以数理逻辑中的谓词演算为基础 是描述关系运算的另一种思维方式">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120162850304.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210120194242429.png">
-<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122184553797.png">
+<meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122184553797-1684253458546.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122190150563.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122205710899.png">
 <meta property="article:published_time" content="2022-01-18T02:22:28.000Z">
-<meta property="article:modified_time" content="2022-01-18T02:48:38.000Z">
+<meta property="article:modified_time" content="2023-05-16T16:11:19.142Z">
 <meta property="article:author" content="BigtreeLiu">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
@@ -275,10 +275,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:48:38" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:11:19" itemprop="dateModified" datetime="2023-05-17T00:11:19+08:00">2023-05-17</time>
+      </span>
 
   
     <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -332,6 +338,9 @@
         <h1 id="关系模型之关系演算"><a href="#关系模型之关系演算" class="headerlink" title="关系模型之关系演算"></a>关系模型之关系演算</h1><h2 id="1-关系演算之元组演算"><a href="#1-关系演算之元组演算" class="headerlink" title="1.关系演算之元组演算"></a>1.关系演算之元组演算</h2><ul>
 <li>关系演算以数理逻辑中的谓词演算为基础</li>
 <li>是描述关系运算的另一种思维方式</li>
+</ul>
+<span id="more"></span>
+<ul>
 <li>关系演算根据谓词变量不同，分为关系元组演算和关系域演算</li>
 <li>基本形式：${t|P(t)}$表示使用谓词P为真的元组t的集合<ul>
 <li>t是元组变量</li>
@@ -370,7 +379,7 @@
 <p>元组演算是以元组为变量，以元组为基本处理单位，先找到元组，然后找到元组分组，然后再找到元组分量，进行谓词判断。</p>
 <p>域演算是以域变量为基本处理单位，先有域变量，然后再判断由这些域变量组成的元组是否满足谓词判断。</p>
 <p>公式的运算符是相同的，之有其中的变量不同。</p>
-<h2 id="域演算语言QBE"><a href="#域演算语言QBE" class="headerlink" title="域演算语言QBE"></a>域演算语言QBE</h2><p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122184553797.png" alt="image-20210122184553797"></p>
+<h2 id="域演算语言QBE"><a href="#域演算语言QBE" class="headerlink" title="域演算语言QBE"></a>域演算语言QBE</h2><p><img src="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/image-20210122184553797-1684253458546.png" alt="image-20210122184553797"></p>
 <p>QBE操作框架由四个部分组成</p>
 <ul>
 <li>关系名区：用于书写欲待查询的关系名</li>
@@ -461,13 +470,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/01/18/04%20%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0/" rel="prev" title="关系代数">
-                  <i class="fa fa-chevron-left"></i> 关系代数
+                <a href="/2022/01/18/08%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%8C%E6%95%B4%E6%80%A7%E6%A6%82%E5%BF%B5%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" rel="prev" title="数据库完整性概念及其分类">
+                  <i class="fa fa-chevron-left"></i> 数据库完整性概念及其分类
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/" rel="next" title="嵌入式开发技巧汇总">
-                  嵌入式开发技巧汇总 <i class="fa fa-chevron-right"></i>
+                <a href="/2022/01/18/04%20%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0/" rel="next" title="关系代数">
+                  关系代数 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>

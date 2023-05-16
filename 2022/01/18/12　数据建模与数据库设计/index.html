@@ -26,12 +26,12 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":30,"offset":30},"copycode":true,"bookmark":{"enable":true,"color":"#9400D3","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="数据建模与数据库设计数据模型与概念模型表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象  实体与实例实体实体：客观存在并可相互区分的事务 实体有类（实体，实体的型）和个体（实体的实例。实体的值）的概念 实体用属性来刻画  属性是实体具有的某一方面的特性 属性分类 单一属性和复合属性，在关系模型中，复合属性一定要转化为单一属性（关">
+<meta name="description" content="数据建模与数据库设计数据模型与概念模型表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据建模与数据库设计">
 <meta property="og:url" content="http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/index.html">
 <meta property="og:site_name" content="Yokeso">
-<meta property="og:description" content="数据建模与数据库设计数据模型与概念模型表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象  实体与实例实体实体：客观存在并可相互区分的事务 实体有类（实体，实体的型）和个体（实体的实例。实体的值）的概念 实体用属性来刻画  属性是实体具有的某一方面的特性 属性分类 单一属性和复合属性，在关系模型中，复合属性一定要转化为单一属性（关">
+<meta property="og:description" content="数据建模与数据库设计数据模型与概念模型表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/Users/Yokeso/AppData/Roaming/Typora/typora-user-images/image-20210129224502779.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210130103226008.png">
@@ -47,7 +47,7 @@
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131103736957.png">
 <meta property="og:image" content="http://yokeso.github.io/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/image-20210131110031592.png">
 <meta property="article:published_time" content="2022-01-18T02:22:28.000Z">
-<meta property="article:modified_time" content="2022-01-18T02:47:56.000Z">
+<meta property="article:modified_time" content="2023-05-16T16:14:45.181Z">
 <meta property="article:author" content="BigtreeLiu">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
@@ -283,10 +283,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-18 10:22:28 / 修改时间：10:47:56" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
+      <time title="创建时间：2022-01-18 10:22:28" itemprop="dateCreated datePublished" datetime="2022-01-18T10:22:28+08:00">2022-01-18</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-05-17 00:14:45" itemprop="dateModified" datetime="2023-05-17T00:14:45+08:00">2023-05-17</time>
+      </span>
 
   
     <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -338,6 +344,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="数据建模与数据库设计"><a href="#数据建模与数据库设计" class="headerlink" title="数据建模与数据库设计"></a>数据建模与数据库设计</h1><h2 id="数据模型与概念模型"><a href="#数据模型与概念模型" class="headerlink" title="数据模型与概念模型"></a>数据模型与概念模型</h2><p>表达计算机世界的模型乘坐数据模型；表达信息世界的模型称为该奶奶数据模型，简称概念模型，信息世界是对现实世界的理解与抽象</p>
+<span id="more"></span>
 <p><img src="/2022/01/18/12%E3%80%80%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/Users\Yokeso\AppData\Roaming\Typora\typora-user-images\image-20210129224502779.png" alt="image-20210129224502779"></p>
 <h2 id="实体与实例"><a href="#实体与实例" class="headerlink" title="实体与实例"></a>实体与实例</h2><h3 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h3><p>实体：客观存在并可相互区分的事务</p>
 <p>实体有类（实体，实体的型）和个体（实体的实例。实体的值）的概念</p>

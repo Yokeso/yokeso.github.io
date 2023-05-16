@@ -26,15 +26,15 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":30,"offset":30},"copycode":true,"bookmark":{"enable":true,"color":"#9400D3","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="嵌入式开发技巧汇总宏定义相关#errorerror 可以直接在编译器中打出error，用于必须的配置文件中使用。例如1#error  &quot;please select device name&quot; 嵌入式中实现配置文件的方法（工程文件的方式）首先建立一个扩展名文件 DEVINFO.txt，扔进文件夹 12345&#x2F;&#x2F;DEVINFO.txt&#x2F;&#x2F; 设备名，字符串#define DEV_NAM">
+<meta name="description" content="嵌入式开发技巧汇总宏定义相关#errorerror 可以直接在编译器中打出error，用于必须的配置文件中使用。例如1#error  &quot;please select device name&quot;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="嵌入式开发技巧汇总">
 <meta property="og:url" content="http://yokeso.github.io/2022/10/12/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A7%E6%B1%87%E6%80%BB/index.html">
 <meta property="og:site_name" content="Yokeso">
-<meta property="og:description" content="嵌入式开发技巧汇总宏定义相关#errorerror 可以直接在编译器中打出error，用于必须的配置文件中使用。例如1#error  &quot;please select device name&quot; 嵌入式中实现配置文件的方法（工程文件的方式）首先建立一个扩展名文件 DEVINFO.txt，扔进文件夹 12345&#x2F;&#x2F;DEVINFO.txt&#x2F;&#x2F; 设备名，字符串#define DEV_NAM">
+<meta property="og:description" content="嵌入式开发技巧汇总宏定义相关#errorerror 可以直接在编译器中打出error，用于必须的配置文件中使用。例如1#error  &quot;please select device name&quot;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-10-12T02:03:41.000Z">
-<meta property="article:modified_time" content="2023-04-01T11:14:33.191Z">
+<meta property="article:modified_time" content="2023-05-16T16:07:59.473Z">
 <meta property="article:author" content="BigtreeLiu">
 <meta property="article:tag" content="嵌入式">
 <meta property="article:tag" content="技巧">
@@ -278,7 +278,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-04-01 19:14:33" itemprop="dateModified" datetime="2023-04-01T19:14:33+08:00">2023-04-01</time>
+        <time title="修改时间：2023-05-17 00:07:59" itemprop="dateModified" datetime="2023-05-17T00:07:59+08:00">2023-05-17</time>
       </span>
 
   
@@ -331,6 +331,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="嵌入式开发技巧汇总"><a href="#嵌入式开发技巧汇总" class="headerlink" title="嵌入式开发技巧汇总"></a>嵌入式开发技巧汇总</h1><h2 id="宏定义相关"><a href="#宏定义相关" class="headerlink" title="宏定义相关"></a>宏定义相关</h2><h3 id="error"><a href="#error" class="headerlink" title="#error"></a>#error</h3><h1 id="error-可以直接在编译器中打出error，用于必须的配置文件中使用。例如"><a href="#error-可以直接在编译器中打出error，用于必须的配置文件中使用。例如" class="headerlink" title="error 可以直接在编译器中打出error，用于必须的配置文件中使用。例如"></a>error 可以直接在编译器中打出error，用于必须的配置文件中使用。例如</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">error</span>  <span class="meta-string">&quot;please select device name&quot;</span></span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
 <h3 id="嵌入式中实现配置文件的方法（工程文件的方式）"><a href="#嵌入式中实现配置文件的方法（工程文件的方式）" class="headerlink" title="嵌入式中实现配置文件的方法（工程文件的方式）"></a>嵌入式中实现配置文件的方法（工程文件的方式）</h3><p>首先建立一个扩展名文件 DEVINFO.txt，扔进文件夹</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//DEVINFO.txt</span></span><br><span class="line"><span class="comment">// 设备名，字符串</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEV_NAME    DEFAULT</span></span><br><span class="line"><span class="comment">// 设备ID，U32</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEV_ID      0</span></span><br></pre></td></tr></table></figure>
 <p>在.h文件中声明</p>
@@ -378,8 +379,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/01/18/05%20%E5%85%B3%E7%B3%BB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E5%85%B3%E7%B3%BB%E6%BC%94%E7%AE%97/" rel="prev" title="关系模型之关系演算">
-                  <i class="fa fa-chevron-left"></i> 关系模型之关系演算
+                <a href="/2022/01/18/04%20%E5%85%B3%E7%B3%BB%E4%BB%A3%E6%95%B0/" rel="prev" title="关系代数">
+                  <i class="fa fa-chevron-left"></i> 关系代数
                 </a>
             </div>
             <div class="post-nav-item">
