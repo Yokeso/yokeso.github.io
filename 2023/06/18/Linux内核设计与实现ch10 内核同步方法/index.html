@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="manifest" href="/manifest.json">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yokeso.github.io","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":30,"offset":30},"copycode":true,"bookmark":{"enable":true,"color":"#9400D3","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="Linux内核设计与实现ch10 内核同步方法10.1 原子操作原子操作可以保证命令以原子方式执行，不会被打断。内核提供了两组原子操作接口——一组针对整数进行操作，一组针对单独位进行操作。在Linux支持的所有体系结构上都实现了这两组接口。大多数体系结构都会提供支持原子操作的简单算数指令，而有些体系结构缺少简单的原子操作指令，但是也提供了锁存总线的指令。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux内核设计与实现ch10 内核同步方法">
+<meta property="og:url" content="http://yokeso.github.io/2023/06/18/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0ch10%20%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Yokeso">
+<meta property="og:description" content="Linux内核设计与实现ch10 内核同步方法10.1 原子操作原子操作可以保证命令以原子方式执行，不会被打断。内核提供了两组原子操作接口——一组针对整数进行操作，一组针对单独位进行操作。在Linux支持的所有体系结构上都实现了这两组接口。大多数体系结构都会提供支持原子操作的简单算数指令，而有些体系结构缺少简单的原子操作指令，但是也提供了锁存总线的指令。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-18T07:11:22.000Z">
+<meta property="article:modified_time" content="2023-07-26T11:08:21.981Z">
+<meta property="article:author" content="BigtreeLiu">
+<meta property="article:tag" content="Linux内核设计与实现">
+<meta property="article:tag" content="内核同步方法">
+<meta property="article:tag" content="Linux内核">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://yokeso.github.io/2023/06/18/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0ch10%20%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>Linux内核设计与实现ch10 内核同步方法 | Yokeso</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Yokeso" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Yokeso</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">33</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">44</span></a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+	  <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0ch10-%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">Linux内核设计与实现ch10 内核同步方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C"><span class="nav-number">1.0.1.</span> <span class="nav-text">10.1 原子操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.0.2.</span> <span class="nav-text">10.2 自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-3-%E8%AF%BB%E5%86%99%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.0.3.</span> <span class="nav-text">10.3 读写自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-4-%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.0.4.</span> <span class="nav-text">10.4 信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-5-%E8%AF%BB%E5%86%99%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.0.5.</span> <span class="nav-text">10.5 读写信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-6-%E4%BA%92%E6%96%A5%E9%94%81"><span class="nav-number">1.0.6.</span> <span class="nav-text">10.6 互斥锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-7-%E5%AE%8C%E6%88%90%E5%8F%98%E9%87%8F"><span class="nav-number">1.0.7.</span> <span class="nav-text">10.7 完成变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-8-%E9%A1%BA%E5%BA%8F%E9%94%81"><span class="nav-number">1.0.8.</span> <span class="nav-text">10.8 顺序锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-9-%E7%A6%81%E6%AD%A2%E6%8A%A2%E5%8D%A0"><span class="nav-number">1.0.9.</span> <span class="nav-text">10.9 禁止抢占</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-10-%E9%A1%BA%E5%BA%8F%E5%92%8C%E5%B1%8F%E9%9A%9C"><span class="nav-number">1.0.10.</span> <span class="nav-text">10.10 顺序和屏障</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigtreeLiu"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">BigtreeLiu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Yokeso" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Yokeso" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yokeso@foxmail.com" title="E-Mail → mailto:yokeso@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/xing-chen-da-hai-41-66" title="Zhihu → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;xing-chen-da-hai-41-66" rel="noopener" target="_blank"><i class="fab fa-zhihu fa-fw"></i>Zhihu</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+	  <div id="music163player">
+         <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=280 height=86 src="//music.163.com/outchain/player?type=2&id=492926375&auto=1&height=66">
+         </iframe>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/Yokeso" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yokeso.github.io/2023/06/18/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0ch10%20%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="BigtreeLiu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yokeso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux内核设计与实现ch10 内核同步方法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-06-18 15:11:22" itemprop="dateCreated datePublished" datetime="2023-06-18T15:11:22+08:00">2023-06-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-07-26 19:08:21" itemprop="dateModified" datetime="2023-07-26T19:08:21+08:00">2023-07-26</time>
+      </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2023/06/18/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0ch10%20%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2023/06/18/Linux内核设计与实现ch10 内核同步方法/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Linux内核设计与实现ch10-内核同步方法"><a href="#Linux内核设计与实现ch10-内核同步方法" class="headerlink" title="Linux内核设计与实现ch10 内核同步方法"></a>Linux内核设计与实现ch10 内核同步方法</h1><h3 id="10-1-原子操作"><a href="#10-1-原子操作" class="headerlink" title="10.1 原子操作"></a>10.1 原子操作</h3><p>原子操作可以保证命令以原子方式执行，不会被打断。内核提供了两组原子操作接口——一组针对整数进行操作，一组针对单独位进行操作。在Linux支持的所有体系结构上都实现了这两组接口。大多数体系结构都会提供支持原子操作的简单算数指令，而有些体系结构缺少简单的原子操作指令，但是也提供了锁存总线的指令。</p>
+<span id="more"></span>
+<h4 id="10-1-1-原子整数操作"><a href="#10-1-1-原子整数操作" class="headerlink" title="10.1.1 原子整数操作"></a>10.1.1 原子整数操作</h4><p>针对原子整数操作只能对<code>atomic_t</code>（定义在<code>&lt;linux/types.h&gt;</code>中）的数据类型进行处理，在64位系统中也存在类似的<code>atomic64_t</code>。在这里没有直接使用c语言的int类型，是处于几个方面考虑：</p>
+<ul>
+<li>一是希望原子操作只对这种特殊类型起作用，而且该类型的数据不会传给任何非原子数。</li>
+<li>二是确保了编译器不会对相应的值做出优化——使得原子操作最后能收到正确的地址而非别名。</li>
+<li>三是希望在不同结构体系上实现原子操作的时候，<code>atomic_t</code>可以屏蔽其间的差异。</li>
+</ul>
+<p>其定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        <span class="keyword">int</span> counter;</span><br><span class="line">&#125; <span class="keyword">atomic_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_64BIT</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        s64 counter;</span><br><span class="line">&#125; <span class="keyword">atomic64_t</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>尽管Linux支持的所有机器的整形数据都是32位，但是<code>atomic_t</code>只将该类型的数据作为24位来使用。这个限制是因为在<code>SPRAC</code>体系结构上，原子操作实现与其他体系不同。32位int类型的低八位被嵌入了一个锁。<code>SPRAC</code>结构缺乏对原子操作指令集的支持，所以只能用锁来避免原子类型数据被并发访问</p>
+</blockquote>
+<p>使用原子操作需要的类型声明存放在<code>&lt;arch/体系结构名称/include/asm/atomic.h&gt;</code>中。有些体系结构会提供一些只能在该体系结构上的额外原子操作方法，但所有体系结构都能保证内核上使用到的操作的最小集。</p>
+<p>定义一个atomic_t类型的数据很平常，可以在定义的时候给他赋初值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">atomic_t</span> v;</span><br><span class="line"><span class="keyword">atomic_t</span> u = ATOMIC_INT(<span class="number">0</span>);   <span class="comment">/*init and set to zero*/</span></span><br></pre></td></tr></table></figure>
+<p>下表列出了所有的标准原子操作，某些特定的体系结构上实现的操作可以在<code>atomic.h</code>中找到。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">操作函数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">ATOMIC_INIT(int i)</td>
+<td style="text-align:center">声明一个atoimic_t变量时将其初始化为i</td>
+</tr>
+<tr>
+<td style="text-align:center">int atomic_read(atomic_t *v)</td>
+<td style="text-align:center">读取原子变量v并返回其int值</td>
+</tr>
+<tr>
+<td style="text-align:center">void atomic_set(atomic_t *v, int i)</td>
+<td style="text-align:center">原子的将v值设置为i</td>
+</tr>
+<tr>
+<td style="text-align:center">void atomic_add(int i, atomic_t *v)</td>
+<td style="text-align:center">原子地给v加上i</td>
+</tr>
+<tr>
+<td style="text-align:center">void atomic_sub(int i, atomic_t *v)</td>
+<td style="text-align:center">原子地给v减去i</td>
+</tr>
+<tr>
+<td style="text-align:center">int atomic_inc(atomic_t *v)</td>
+<td style="text-align:center">原子地给v加上1</td>
+</tr>
+<tr>
+<td style="text-align:center">int atomic_dec(atomic_t *v)</td>
+<td style="text-align:center">原子地给v减去1</td>
+</tr>
+<tr>
+<td style="text-align:center">void atomic_add_return(int i, atomic_t *v)</td>
+<td style="text-align:center">原子地给v加上i，且返回结果</td>
+</tr>
+<tr>
+<td style="text-align:center">void atomic_sub_return(int i, atomic_t *v)</td>
+<td style="text-align:center">原子地给v减去i，且返回结果</td>
+</tr>
+<tr>
+<td style="text-align:center">int atomic_inc_return(atomic_t *v)</td>
+<td style="text-align:center">原子地给v加上1，且返回结果</td>
+</tr>
+<tr>
+<td style="text-align:center">int atomic_dec_return(atomic_t *v)</td>
+<td style="text-align:center">原子地给v减去1，且返回结果</td>
+</tr>
+<tr>
+<td style="text-align:center">bool atomic_inc_and_test(atomic_t *v)</td>
+<td style="text-align:center">原子地给v加上1，如果结果为0，返回真，否则返回假</td>
+</tr>
+<tr>
+<td style="text-align:center">bool atomic_dec_and_test(atomic_t *v)</td>
+<td style="text-align:center">原子地给v减去1，如果结果为0，返回真，否则返回假</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>原子操作往往是内联函数，通过内嵌汇编指令来实现的。如果某个函数本身就是原子的，那么往往会定义一个宏。例如在大部分体系结构上，读取一个字节本身就是原子操作。</p>
+<blockquote>
+<p>64位的函数只需要在所有的函数中的atomic后面加64，例如atomic64_sub()</p>
+</blockquote>
+<h4 id="10-1-2-原子位操作"><a href="#10-1-2-原子位操作" class="headerlink" title="10.1.2 原子位操作"></a>10.1.2 原子位操作</h4><p>与原子位操作相关的函数定义在<code>&lt;arch/体系结构名称/include/asm/atomic.h&gt;</code>中。这里的位操作函数是对普通的内存地址进行操作的，形参是一个指针加一个位号。并且对位号没有做限制。例如在32位上31位是最高有效位，但可以指定32为下一个字的最低有效位。下面给出了原子位操作的表</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">原子位操作</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">void set_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地设置addr所指对象的第nr位</td>
+</tr>
+<tr>
+<td style="text-align:center">void clear_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地清空addr所指对象的第nr位</td>
+</tr>
+<tr>
+<td style="text-align:center">void change_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地翻转addr所指对象的第nr位</td>
+</tr>
+<tr>
+<td style="text-align:center">int test_and_set_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地设置addr所指对象的第nr位，并返回原先的值</td>
+</tr>
+<tr>
+<td style="text-align:center">int test_and_clear_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地清空addr所指对象的第nr位，并返回原先的值</td>
+</tr>
+<tr>
+<td style="text-align:center">int test_and_change_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地翻转addr所指对象的第nr位，并返回原先的值</td>
+</tr>
+<tr>
+<td style="text-align:center">int test_bit(int nr, void *addr)</td>
+<td style="text-align:center">原子地返回addr所指对象的第nr位</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>为了方便起见，内核还提供了一组与上述对应的非原子性操作，其名字前有两个下华夏，例如set_bit()的非原子对应形式就是__set_bit()。如果不需要原子操作的话，非原子操作可能会执行的更快一些。</p>
+</blockquote>
+<h3 id="10-2-自旋锁"><a href="#10-2-自旋锁" class="headerlink" title="10.2 自旋锁"></a>10.2 自旋锁</h3><p>自旋锁是linux内核中最常见的锁。自旋锁最多只能被一个可执行进程所占有。如果一个执行线程试图获取一个被持有的自旋锁，那么该线程就会一直进行<code>忙循环-旋转-等待锁重新可用</code>。而锁未被持有的话，进程就会立刻得到它。自旋锁的要点是进程等待锁可用时自旋，这种行为特别浪费处理器时间。所以自旋锁不应该被长时间持有。</p>
+<h4 id="10-2-1-自旋锁方法"><a href="#10-2-1-自旋锁方法" class="headerlink" title="10.2.1 自旋锁方法"></a>10.2.1 自旋锁方法</h4><p>自旋锁的实现与体系结构紧密相关，往往通过汇编来实现。这些与体系相关的代码定义在文件<code>&lt;asm/spinlock.h&gt;</code>中，实际需要用到的接口文件在<code>&lt;linux/spinlock.h&gt;</code>中。自旋锁的基本使用形式如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DEFINE_SPINLOCK(mr_lock);</span><br><span class="line">spin_lock(&amp;mr_lock);</span><br><span class="line"><span class="comment">/*临界区*/</span></span><br><span class="line">spin_unlock(&amp;mr_lock);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意在单处理器机器上，编译的时候并不会加入自旋锁。它仅仅被当作一个设置内核抢占机制是否被启用的开关。如果禁止内核抢占，则在编译时自旋锁会被完全剔除内核。</p>
+<p>与其他操作系统不同，Linux内核实现的自旋锁不可递归。所以在设计的时候要注意避免死锁问题！</p>
+</blockquote>
+<p>自旋锁可以使用在中断处理程序中（第七章就使用了自旋锁）。在中断处理程序中使用自旋锁之前一定要先禁止本地中断（当前处理器上的中断）。否则中断处理程序就会打断持有锁的内核代码。有可能导致死锁。</p>
+<p>内核提供了禁止中断并且请求锁的接口，使用起来很方便，其方法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DEFIDEFINE_SPINLOCK(mr_lock);</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> flags;</span><br><span class="line"></span><br><span class="line">spin_lock_irqsave(&amp;mr_lock, flags);</span><br><span class="line"><span class="comment">/*临界区*/</span></span><br><span class="line">spin_unlock_irqrestore(&amp;mr_lock, flags);</span><br></pre></td></tr></table></figure>
+<p>函数<code>spin_lock_irqsave</code>保存中断当前状态，并禁止本地中断，然后再去获取指定的锁。反过来<code>spin_unlock_irqrestore</code>对指定的锁解锁，让中断恢复到加锁前的状态。</p>
+<blockquote>
+<p>这里的flag看起来是传值的，是因为函数实现有些部分是通过宏来实现的。在单处理器上，加锁和解锁能分别禁止和允许内核进行抢占。</p>
+<p>配置选项<code>CONFIG_DEBUG_SPINLOCK</code>为使用自旋锁代码加入了许多调试手段，必须是否使用未初始化的锁以及是否还未加锁时就执行开锁操作。如果需要进一步全程调试锁，则需要打开<code>CONFIG_DEBUG_LOCL_ALLOC</code>选项。</p>
+</blockquote>
+<h4 id="10-2-2-其他针对自旋锁的操作"><a href="#10-2-2-其他针对自旋锁的操作" class="headerlink" title="10.2.2 其他针对自旋锁的操作"></a>10.2.2 其他针对自旋锁的操作</h4><p>自旋锁的初始化可以使用<code>spin_lock_init()</code>来实现。<code>spin_try_lock()</code>试图获得某个特定的锁，如果该锁已被征用，该方法立刻返回一个非0值，不会自旋等待锁释放。如果成功获得了这个自旋锁，则函数返回0。同理，<code>spin_is_locked()</code>方法用于检查待定的锁当前是否被占用，若已占用返回非0值，否则返回0值。但是该方法只做判断，并不实际占用。</p>
+<h4 id="10-2-3-自旋锁和下半部"><a href="#10-2-3-自旋锁和下半部" class="headerlink" title="10.2.3 自旋锁和下半部"></a>10.2.3 自旋锁和下半部</h4><p>由于下半部可以抢占进程上下文中的代码，所以下半部和进程上下文共享数据时，必须对进程上下文中的共享数据进行保护，所以需要加锁的同时禁止下半部的执行(<code>spin_lock_bh()</code>)。<code>spin_unlock_bh()</code>来执行相反操作。</p>
+<p>由于同类的<code>tasklet</code>不可能同时运行，所以对于同类tasklet中的共享数据不需要保护。但是当数据被两个不同种类的tasklet共享时，就需要在访问下半部的数据中先获得一个普通的自旋锁。（因为同一个处理器上不会有testlet抢占的情况出现，所以不需要禁止下半部）</p>
+<h3 id="10-3-读写自旋锁"><a href="#10-3-读写自旋锁" class="headerlink" title="10.3 读写自旋锁"></a>10.3 读写自旋锁</h3><p>为了读写场景的不同需求，内核提供了专门的读-写自旋锁。这种锁为读和写提供了不同的锁。多个读任务可以并发的持有读者锁，而写者锁只能同时被一个写任务持有。读写锁的使用方法类似于普通的自旋锁，通过以下方法进行初始化：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DEFINE_RWLOCK(mr_rwlock);</span><br></pre></td></tr></table></figure>
+<p>在读者代码分支中使用如下函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">read_lock(&amp;mr_rwlock);</span><br><span class="line"><span class="comment">/*临界区（只读）*/</span></span><br><span class="line">read_unlock(&amp;mr_rwlock);</span><br></pre></td></tr></table></figure>
+<p>写者代码分支中使用如下函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">write_lock(&amp;mr_rwlock);</span><br><span class="line"><span class="comment">/*临界区（只读）*/</span></span><br><span class="line">write_unlock(&amp;mr_rwlock);</span><br></pre></td></tr></table></figure>
+<p>通常情况下，读锁和写锁会位于完全割离开的代码分支中，但是要注意不能将一个读锁升级为写锁，否则可能会带来死锁。如果读写不能清晰分开的话更好的方法是使用一般的自旋锁。</p>
+<blockquote>
+<p>要注意在内核中的读写自旋锁中，锁机制照顾读比照顾写多一点，所以如果读锁持有而未被释放时，写操作只能进行等待。但其他读者可以很轻松的占有锁。这样会导致写锁饥饿。所以在设置锁的时候要考虑到这一点。</p>
+</blockquote>
+<h3 id="10-4-信号量"><a href="#10-4-信号量" class="headerlink" title="10.4 信号量"></a>10.4 信号量</h3><p>Linux中的信号量是一种睡眠锁。如果一个任务试图获取一个不可用的信号量时，信号量将会将其推入一个等待队列，并使其休眠，从而让处理器能够执行其他代码。当持有的信号量被释放时，处于等待队列的进程被唤醒，并可以获取该信号量。但是要注意的是信号量的开销要比自旋锁更大。</p>
+<p>从信号量的睡眠特性中可以得出这样一些结论：</p>
+<ul>
+<li>由于征用信号量的进程在等待的时候会进入睡眠，所以信号量适用于锁会被长时间持有的情况。</li>
+<li>与第一条相反，如果锁短时间持有的情况下，由于睡眠，维护等待队列以及选择唤醒的开销会比锁占有的全部时间还要长。</li>
+<li>中断上下文中是不能调度的，所以只有在进程上下文过程中才能获取信号量锁。</li>
+<li>在持有信号量时可以去睡眠，其他进程试图获取该信号量时不会因此死锁。</li>
+<li>在占用信号量的同时不能占用自旋锁。因为信号量机制允许睡眠，而自旋锁不允许睡眠。</li>
+</ul>
+<blockquote>
+<p>要注意信号量不同于自旋锁的地方，信号量不会禁止内核抢占，也就意味着信号量不会对调度的等待时间产生负面影响。</p>
+</blockquote>
+<p>下面是关于信号量的一些使用方法，这些方法定义在<code>&lt;asm/semaphore.h&gt;</code>中。<code>struct semaphore</code>类型来表示信号量。各种操作定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建信号量</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span> <span class="title">name</span>;</span></span><br><span class="line">sema_init(&amp;name, count);</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建互斥信号量</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">DECLARE_MUTEX</span><span class="params">(name)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化指向信号量的间接指针</span></span><br><span class="line">sema_init(sem, count);</span><br><span class="line">init_MUTEX(sem);</span><br><span class="line"></span><br><span class="line"><span class="comment">//试图获取指定的信号量，</span></span><br><span class="line">down_interruptible(&amp;name);   <span class="comment">//如果信号量不可用则进入睡眠。(在获取信号量之后返回-EINTR),睡眠时的状态为TASK_INTERRUPTIBLE(可被中断唤醒)</span></span><br><span class="line">down(&amp;name);                 <span class="comment">//如果信号量不可用则进入睡眠。睡眠时的状态为TASK_UNINTERRUPTIBLE(不可被中断唤醒)</span></span><br><span class="line">down_trylock(&amp;name);         <span class="comment">//以堵塞的方式获取指定信号量，在信号量被占用时立即返回非0值，否则返回0</span></span><br><span class="line"></span><br><span class="line">up(&amp;name);                   <span class="comment">//释放指定信号量，如果睡眠队列不为空，则唤醒一个任务</span></span><br></pre></td></tr></table></figure>
+<h3 id="10-5-读写信号量"><a href="#10-5-读写信号量" class="headerlink" title="10.5 读写信号量"></a>10.5 读写信号量</h3><p>读写信号量是由<code>rw_semaphore</code>结构表示的，定义在文件<code>&lt;linux/rwsem.h&gt;</code>中。以下是函数操作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明读写信号量</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">DECLARE_RWSEM</span><span class="params">(name)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//动态创建读写信号量</span></span><br><span class="line">init_rwsem(struct rw_semaphore *sem);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取用于读的信号量</span></span><br><span class="line">down_read(&amp;mr_rwsem);</span><br><span class="line">down_read_trylock(&amp;mr_rwsem);   <span class="comment">//效果类似于down_trylock(&amp;name);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//释放信号量</span></span><br><span class="line">up_read(&amp;mr_rwsem);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取用于写的信号量</span></span><br><span class="line">down_write(&amp;mr_rwsem);</span><br><span class="line">down_write_trylock(&amp;mr_rwsem);   <span class="comment">//效果类似于down_trylock(&amp;name);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//释放信号量</span></span><br><span class="line">up_write(&amp;mr_rwsem);</span><br><span class="line"></span><br><span class="line">downgrade_write(); <span class="comment">//动态的将写锁转为读锁</span></span><br></pre></td></tr></table></figure>
+<h3 id="10-6-互斥锁"><a href="#10-6-互斥锁" class="headerlink" title="10.6 互斥锁"></a>10.6 互斥锁</h3><p>mutex的实现方式与使用计数为一的信号量类似，但操作接口更加简单，实现也更加高效。而且使用限制更强</p>
+<ul>
+<li>任意一个时刻只能有一个任务可以持有mutex</li>
+<li>给mutex上锁的人要负责解锁（解锁和上锁要在同一个上下文中执行）</li>
+<li>持有一个mutex时进程不可以退出</li>
+<li>mutex不能在下半部分或中断使用</li>
+<li>mutex只能通过官方API管理，不可被拷贝，手动初始化或者重复初始化。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//静态定义mutex</span></span><br><span class="line">DEFINE_MUTEX(name);</span><br><span class="line"><span class="comment">//动态</span></span><br><span class="line">mutex_init(&amp;mutex);</span><br><span class="line"></span><br><span class="line"><span class="comment">//锁定</span></span><br><span class="line">mutex_lock(&amp;mutex);</span><br><span class="line"></span><br><span class="line"><span class="comment">//解锁</span></span><br><span class="line">mutex_unlock(&amp;mutex);</span><br><span class="line"></span><br><span class="line">mutex_trylock(&amp;mutex);</span><br><span class="line">mutex_is_locked(&amp;mutex);</span><br></pre></td></tr></table></figure>
+<h3 id="10-7-完成变量"><a href="#10-7-完成变量" class="headerlink" title="10.7 完成变量"></a>10.7 完成变量</h3><p>完成变量<code>(completion variable)</code>是同步两个任务的简单方法，它使得内核中的一个任务可以发出信号通知另一个任务发生了某个特定事件。如果一个任务要执行一个工作时，另一个任务就会在完成变量上等待。当这个任务完成工作后，会使用完成变量去唤醒在等待的任务。</p>
+<p>事实上，完成变量仅仅提供了代替信号量的一个简单的解决办法，例如：子进程执行或者退出时，<code>vfork()</code>系统调用使用完成变量唤醒父进程。</p>
+<p>完成变量由结构<code>completion</code>表示，定义在<code>&lt;linux/completion.h&gt;</code>中，可以通过<code>DECLARE_COMPLETION(mr_comp)</code>去静态的创建变量并将其初始化。或者通过<code>init_completion()</code>动态创建并初始化完成变量。</p>
+<p>在一个指定的完成变量上，需要等待的任务调用<code>wait_for_completion()</code>来等待特定事件。当特定事件发生后，产生的时间调用<code>complete()</code>来发送信号唤醒正在等待的任务。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">init_completion(struct completion *)</td>
+<td style="text-align:center">初始化指定的动态创建的完成变量</td>
+</tr>
+<tr>
+<td style="text-align:center">wait_for_completion(struct completion *)</td>
+<td style="text-align:center">等待指定的完成变量接收信号</td>
+</tr>
+<tr>
+<td style="text-align:center">complete(struct completion *)</td>
+<td style="text-align:center">发信号唤醒任何等待任务</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>使用完成变量的例子可以参考<code>kernel/sched.c</code>以及<code>kernel/fork.c</code>。完成变量的通常用法是：将完成变量作为数据结构中的一项进行动态创建，而完成数据结构初始化工作的内核代码将调用<code>wait_for_completion()</code>进行等待。初始化完成后，初始化函数调用<code>completion()</code>唤醒在等待的内核任务。</p>
+</blockquote>
+<h3 id="10-8-顺序锁"><a href="#10-8-顺序锁" class="headerlink" title="10.8 顺序锁"></a>10.8 顺序锁</h3><p>顺序锁，也成为seq锁，从linux 2.6版本中引入，这种锁提供了一种很简单的机制，用于读写共享数据。实现这种锁主要依靠一个序列计数器。当有疑义的数据被写入时，会得到一个锁。而且序列值会增加。在读取数据前后会读取序列号。</p>
+<ul>
+<li>如果读取的序列号值相同，说明在读操作进行的过程中没有被写操作打断过，</li>
+<li>如果读取的是偶数，则表明写操作没有发生</li>
+</ul>
+<p>（锁的初始值是0，所以写锁会将值置为奇数，写锁释放的时候会变为偶数）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义seq锁</span></span><br><span class="line">seq_lock mr_seq_lock = DEFINE_SEQOCK(mr_seq_lock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//写锁</span></span><br><span class="line">write_seqlock(&amp;mr_seq_lock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//读锁</span></span><br><span class="line">write_sequnlock(&amp;mr_seq_lock);</span><br><span class="line"></span><br><span class="line"><span class="comment">//在读时与普通自旋锁有很大的不同</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> seq;</span><br><span class="line"><span class="keyword">do</span>&#123;</span><br><span class="line">    seq = read_seqbegin(&amp;mr_seq_lock);</span><br><span class="line">&#125;<span class="keyword">while</span>(read_seqretry(&amp;mr_seq_lock));</span><br></pre></td></tr></table></figure>
+<p>在多个读者和少数写者共享一把锁的时候，seq锁有助于提供一种非常轻量级和具有可扩展性的外观。但是seq锁对写者更有利。只要没有其他写者，写锁总是能被成功获取。挂起的写者会使得读不断循环，直到没有写者持有锁为止。</p>
+<p>Seq锁主要适用于以下几个方向：</p>
+<ul>
+<li>读者比写者多得多，写者很少</li>
+<li>希望优先读，并且不允许读者让写者饥饿</li>
+<li>数据简单，只有简单的结构或者甚至简单的标准类型</li>
+</ul>
+<p>使用seq锁最具有说服力的是jiffies。该变量存储了Linux机器启动到当前时间。该方法的实现就使用了seq锁。</p>
+<h3 id="10-9-禁止抢占"><a href="#10-9-禁止抢占" class="headerlink" title="10.9 禁止抢占"></a>10.9 禁止抢占</h3><p>由于内核是抢占性的，内核中的进程在任何时刻都可能停下来以便另一个具有更高优先权的进程运行。这就意味着一个任务与被抢占的任务可能会在同一个临界区运行。为了避免这种情况，内核抢占代码使用自旋锁作为非抢占区域的标记。如果一个自旋锁被持有，内核便不能进行抢占。如果自旋锁没有被持有，并且内核又是抢占式的，那么一个新的调度任务就可能会访问同一变量，从而引发问题。</p>
+<p>通过<code>preempt_disable()</code>禁止内核抢占，这个函数可以调用任意次，每次调用都要有一个相应的<code>preempt_enable()</code>调用。当最后一次<code>preempt_enable()</code>调用后，内核抢占才重新启用。</p>
+<h3 id="10-10-顺序和屏障"><a href="#10-10-顺序和屏障" class="headerlink" title="10.10 顺序和屏障"></a>10.10 顺序和屏障</h3><p>当处理多处理器或者硬件设备之间的同步问题时，可能需要程序代码中以指定的顺序发出读写内存的指令。在与硬件交互时也时常需要确保一个给定的读操作发生在其他读或者写操作之前，或者在多处理器中可能需要按写数据的顺序进行读取。但是编译器为提高效率可能会对读写进行重新排序。但可能重新排序读写的处理器提供了机器指令来确保顺序要求。同样可以使得编译器不对定点周围指令进行重新排序。这些确保顺序的指令称为屏障。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">屏障</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">rmb()</td>
+<td style="text-align:center">阻止跨越屏障的载入动作发生重排序</td>
+</tr>
+<tr>
+<td style="text-align:center">read_barrier-depends()</td>
+<td style="text-align:center">阻止跨越屏障的具有数据依赖关系的载入动作重排序</td>
+</tr>
+<tr>
+<td style="text-align:center">wmb()</td>
+<td style="text-align:center">阻止跨越屏障的存储动作发生重排序</td>
+</tr>
+<tr>
+<td style="text-align:center">mb()</td>
+<td style="text-align:center">阻止跨越屏障的载入和存储动作发生重排序</td>
+</tr>
+<tr>
+<td style="text-align:center">smp_rmb()</td>
+<td style="text-align:center">在SMP上提供rmb()功能，在UP上提供barrier()功能</td>
+</tr>
+<tr>
+<td style="text-align:center">smp_read_barrier-depends()</td>
+<td style="text-align:center">在SMP上提供read_barrier-depends()功能，在UP上提供barrier()功能</td>
+</tr>
+<tr>
+<td style="text-align:center">smp_wmb()</td>
+<td style="text-align:center">在SMP上提供wmb()功能，在UP上提供barrier()功能</td>
+</tr>
+<tr>
+<td style="text-align:center">smp_mb()</td>
+<td style="text-align:center">在SMP上提供mb()功能，在UP上提供barrier()功能</td>
+</tr>
+<tr>
+<td style="text-align:center">barrier()</td>
+<td style="text-align:center">组织编译器跨屏障对载入或存储操作进行优化</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>注意：对于不同体系结构，屏障的实际效果差别很大。如果一个处理器不会执行乱序存储的话，wmb()函数实际什么都不会做。</p>
+<p>SMP与UP</p>
+<p>在中断处理程序中能避免并发访问的安全代码称作中断安全代码（interrupt-safe），在多对称处理的机器中能避免并发访问的安全代码称为SMP安全代码（SMP-safe），在内核抢占时能避免并发访问的安全代码称为抢占安全代码（preempt-safe）。</p>
+<p>因为Linux内核可在编译时配置，所以可以针对指定机器进行内核剪裁，更重要的是，CONFIG_CMP没被设置时，不必要的代码就不会被编入针对单处理器的内核镜像中。这样可以使单处理器机器避免使用自旋锁带来的开销。CONFIG_PREEMPT这一选项也同样适用。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>BigtreeLiu
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://yokeso.github.io/2023/06/18/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0ch10%20%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" title="Linux内核设计与实现ch10 内核同步方法">http://yokeso.github.io/2023/06/18/Linux内核设计与实现ch10 内核同步方法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="tag"><i class="fa fa-tag"></i> Linux内核设计与实现</a>
+              <a href="/tags/%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 内核同步方法</a>
+              <a href="/tags/Linux%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Linux内核</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/10/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0ch5-ch7/" rel="prev" title="Linux内核设计与实现ch5-7 系统调用">
+                  <i class="fa fa-chevron-left"></i> Linux内核设计与实现ch5-7 系统调用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/20/Linux%E5%86%85%E6%A0%B8%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0ch14/" rel="next" title="Linux内核设计与实现ch14  块IO层">
+                  Linux内核设计与实现ch14  块IO层 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="SOHUCS"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yokeso</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">209k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:10</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script><script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+
+  <script>
+    NProgress.configure({
+      showSpinner: true
+    });
+    NProgress.start();
+    document.addEventListener('readystatechange', () => {
+      if (document.readyState === 'interactive') {
+        NProgress.inc(0.8);
+      }
+      if (document.readyState === 'complete') {
+        NProgress.done();
+      }
+    });
+    document.addEventListener('pjax:send', () => {
+      NProgress.start();
+    });
+    document.addEventListener('pjax:success', () => {
+      NProgress.done();
+    });
+  </script>
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+    <div class="pjax">
+
+  <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'none'
+      },
+      options: {
+        renderActions: {
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.1.2/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+
+
+  <script>
+  NexT.utils.loadComments('#SOHUCS', () => {
+    NexT.utils.getScript('https://changyan.sohu.com/upload/changyan.js', () => {
+      window.changyan.api.config({
+        appid: 'cyvluah7q',
+        conf : '84793d403e5eb2b439376a53be14976e'
+      });
+    });
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+    </div>
+</body>
+</html>
